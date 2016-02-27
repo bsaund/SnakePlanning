@@ -4,13 +4,13 @@ function plotHebiLiveTest
 
     kin = HebiKinematics();
     % for i=1:g.getNumModules
-    for i=1:16
+    for i=13:16
         kin.addBody('FieldableElbowJoint');
     end
 
 
     while(true)
-        plotHebi(kin, g.getNextFeedback.position(1:16), true)
+        plotHebi(kin, g.getNextFeedback.position(13:16), true)
     end
 
 end

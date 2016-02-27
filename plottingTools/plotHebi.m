@@ -12,7 +12,7 @@ function plotHebi(kin, angles, low_res)
     end
 
     if(isFirstrun(PATCH_HANDLES))
-        PATCH_HANDLES = plotInitial(kin, angles, true, ...
+        PATCH_HANDLES = plotInitial(kin, angles, low_res, ...
                                       PATCH_HANDLES);
     else
         updatePlot(kin, angles, low_res, PATCH_HANDLES)
@@ -23,14 +23,23 @@ end
 
 function firstrun = isFirstrun(handles)
 %Returns if this is the first run of the program
+%Exists if the window has been closed
 % This is determined by checking if the handles already exist
+    persistent TIME_SINCE_LAST_CALL
+    
     for i=1:length(handles)
-        if(~ishandle(handles(i)))
-            firstrun = true;
-            return;
+        if(~ishandle(handles(i))) 
+            if( isa(TIME_SINCE_LAST_CALL, 'numeric') && ...
+                toc(TIME_SINCE_LAST_CALL) < .5)
+            
+                error('Window closed, quitting');
+            else
+                firstrun = true;
+                return
+            end
         end
     end
-    
+    TIME_SINCE_LAST_CALL = tic;
     firstrun = length(handles) == 0;
 end
 
@@ -44,14 +53,14 @@ function h = plotInitial(kin, angles, low_res, h)
     p = 1;
     for i=1:kin.getNumBodies()
         h(p) = patch(transformSTL(lower, fk(:,:,i)), ...
-                     'FaceColor', [1,.1,.2],...
+                     'FaceColor', [.5,.1,.2],...
                      'EdgeColor', 'none',...
                      'FaceLighting', 'gouraud', ...
                      'AmbientStrength', 0.3);
         p = p+1;
         
         h(p) = patch(transformSTL(upper, fk(:,:,i)*roty(angles(i))), ...
-                     'FaceColor', [1,.1,.2],...
+                     'FaceColor', [.5,.1,.2],...
                      'EdgeColor', 'none',...
                      'FaceLighting', 'gouraud', ...
                      'AmbientStrength', 0.3);
@@ -62,9 +71,16 @@ function h = plotInitial(kin, angles, low_res, h)
     % save('FieldableKinematicsPatch_low_res','lower','upper')
     
     %Initialize lights, camera, axes
-    camlight('headlight');
+    % camlight('headlight');
+    % camlight()
+    light('Position',[0,0,10]);
+    light('Position',[5,0,10]);
+    light('Position',[-5,0,10]);
+
+    % light('Position',[0,0,10]);
     axis('image');
     view([45, 35]);
+    % camlight()
     xlabel('x');
     ylabel('y');
     zlabel('z');
