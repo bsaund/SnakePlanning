@@ -1,85 +1,109 @@
 %% Plots a Hebi Kinematics object
 % Currently assumes all bodies are Fieldable Elbow Joint
+% @kin: A HebiKinematics object describing the robot to be plotted
+% @angles: A vector of joint angles of the object
 function plotHebi(kin, angles)
-    persistent hebiPatchHandles
-    h = hebiPatchHandles;
-    disp('Starting tic')
-    tic
-
-    for i=1:length(h)
-        if(ishandle(h(i)))
-            % delete(h(i));
-        else
-            hebiPatchHandles = [];
-            break;
-        end
-    end
-    
-    % toc
-    firstrun = length(hebiPatchHandles) == 0;
-    
-    fk = kin.getForwardKinematics('CoM',angles);
-    
-    % toc
-    % lower = stlread('stl/rotary_input.stl');
-    % upper = stlread('stl/rotary_output.stl');
-    % toc
-        
-    % lower = transformSTL(lower, rotx(pi/2));
-    % upper = transformSTL(upper, rotx(pi/2));
-    meshes = load('FieldableKinematicsPatch');
-    lower = meshes.lower;
-    upper = meshes.upper;
-    % toc
-    % disp('stl acquired');
+    persistent PATCH_HANDLES IS_LOW_RES PREV_TIME_TAKEN
+    t0 = tic;
+    firstrun = isFirstrun(PATCH_HANDLES);
     if(firstrun)
-        p = 1;
-        for i=1:kin.getNumBodies()
-            hebiPatchHandles(p) = ...
-                patch(transformSTL(lower, fk(:,:,i)), ...
-                      'FaceColor', [1,.1,.2],...
-                      'EdgeColor', 'none',...
-                      'FaceLighting', 'gouraud', ...
-                      'AmbientStrength', 0.3);
-            p = p+1;
-            
-            hebiPatchHandles(p) = ...
-                patch(transformSTL(upper, fk(:,:,i)*roty(angles(i))), ...
-                      'FaceColor', [1,.1,.2],...
-                      'EdgeColor', 'none',...
-                      'FaceLighting', 'gouraud', ...
-                      'AmbientStrength', 0.3);
-            p = p+1;
-        end
+        IS_LOW_RES = false;
+        PATCH_HANDLES = plotInitial(kin, angles, true, ...
+                                      PATCH_HANDLES)
+        PREV_TIME_TAKEN = 0;
     else
-        p=1;
-        for i=1:kin.getNumBodies()
-            fv = transformSTL(lower, fk(:,:,i));
-            set(h(p), 'Vertices', fv.vertices(:,:));
-            p = p+1;
-            fv = transformSTL(upper, fk(:,:,i)*roty(angles(i)));
-            set(h(p), 'Vertices', fv.vertices(:,:));
-            p = p+1;
-        end
-            
+        updatePlot(kin, angles, IS_LOW_RES, PATCH_HANDLES)
     end
-    toc
-    disp('all patches finished')
-    
-    if(firstrun)
-        
-        % save('FieldableKinematicsPatch','lower','upper')
-        camlight('headlight');
-        
-        axis('image');
-        view([45, 35]);
-        xlabel('x');
-        ylabel('y');
-        zlabel('z');
-    end
-    
+    drawnow
+    PREV_TIME_TAKEN = .9*PREV_TIME_TAKEN + .1*toc(t0);
+    IS_LOW_RES = adjustResolution(PREV_TIME_TAKEN, IS_LOW_RES)
 end
 
+function low_res = adjustResolution(time_taken, currently_low_res)
+    time_taken
+    if(currently_low_res)
+        low_res = time_taken > 0.05;
+    else
+        low_res = time_taken > 0.1;
+    end
+end
+
+function firstrun = isFirstrun(handles)
+    for i=1:length(handles)
+        if(~ishandle(handles(i)))
+            firstrun = true;
+            return;
+        end
+    end
+    
+    firstrun = length(handles) == 0;
+end
+
+function h = plotInitial(kin, angles, low_res, h)
+
+    fk = kin.getForwardKinematics('CoM',angles);
+    [upper, lower] = loadMeshes(low_res);
+
+    p = 1;
+    for i=1:kin.getNumBodies()
+        h(p) = patch(transformSTL(lower, fk(:,:,i)), ...
+                     'FaceColor', [1,.1,.2],...
+                     'EdgeColor', 'none',...
+                     'FaceLighting', 'gouraud', ...
+                     'AmbientStrength', 0.3);
+        p = p+1;
+        
+        h(p) = patch(transformSTL(upper, fk(:,:,i)*roty(angles(i))), ...
+                     'FaceColor', [1,.1,.2],...
+                     'EdgeColor', 'none',...
+                     'FaceLighting', 'gouraud', ...
+                     'AmbientStrength', 0.3);
+        p = p+1;
+    end
+
+    % save('FieldableKinematicsPatch_low_res','lower','upper')
+    camlight('headlight');
+    axis('image');
+    view([45, 35]);
+    xlabel('x');
+    ylabel('y');
+    zlabel('z');
+end
+
+function updatePlot(kin, angles, low_res, h)
+    fk = kin.getForwardKinematics('CoM',angles);
+    [upper, lower] = loadMeshes(low_res);
+
+    p=1;
+    for i=1:kin.getNumBodies()
+        fv = transformSTL(lower, fk(:,:,i));
+        set(h(p), 'Vertices', fv.vertices(:,:));
+        set(h(p), 'Faces', fv.faces);
+        p = p+1;
+        fv = transformSTL(upper, fk(:,:,i)*roty(angles(i)));
+        set(h(p), 'Vertices', fv.vertices(:,:));
+        set(h(p), 'Faces', fv.faces);
+        p = p+1;
+    end
+end
+
+
+
+function [upper, lower] = loadMeshes(low_res)
+    % lower = stlread('stl/rotary_input_low_res.stl');
+    % upper = stlread('stl/rotary_output_low_res.stl');
+    
+    % lower = transformSTL(lower, rotx(pi/2));
+    % upper = transformSTL(upper, rotx(pi/2));
+    if(low_res)
+        meshes = load('FieldableKinematicsPatchLowRes');
+    else
+        meshes = load('FieldableKinematicsPatch');
+    end
+    lower = meshes.lower;
+    upper = meshes.upper;
+
+end
 
 function fv = transformSTL(fv, trans)
     fv.vertices = (trans * [fv.vertices, ones(size(fv.vertices,1), ...
