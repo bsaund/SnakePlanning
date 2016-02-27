@@ -1,34 +1,29 @@
-%% Plots a Hebi Kinematics object
+function plotHebi(kin, angles, low_res)
+% Plots a Hebi Kinematics object
 % Currently assumes all bodies are Fieldable Elbow Joint
 % @kin: A HebiKinematics object describing the robot to be plotted
 % @angles: A vector of joint angles of the object
-function plotHebi(kin, angles)
-    persistent PATCH_HANDLES IS_LOW_RES PREV_TIME_TAKEN
-    t0 = tic;
-    firstrun = isFirstrun(PATCH_HANDLES);
-    if(firstrun)
-        IS_LOW_RES = false;
-        PATCH_HANDLES = plotInitial(kin, angles, true, ...
-                                      PATCH_HANDLES)
-        PREV_TIME_TAKEN = 0;
-    else
-        updatePlot(kin, angles, IS_LOW_RES, PATCH_HANDLES)
-    end
-    drawnow
-    PREV_TIME_TAKEN = .9*PREV_TIME_TAKEN + .1*toc(t0);
-    IS_LOW_RES = adjustResolution(PREV_TIME_TAKEN, IS_LOW_RES)
-end
+% @low_res: Optional parameter to use low resolution meshes for
+% faster plotting    
 
-function low_res = adjustResolution(time_taken, currently_low_res)
-    time_taken
-    if(currently_low_res)
-        low_res = time_taken > 0.05;
-    else
-        low_res = time_taken > 0.1;
+    persistent PATCH_HANDLES 
+    if(nargin < 3)
+        low_res = false;
     end
+
+    if(isFirstrun(PATCH_HANDLES))
+        PATCH_HANDLES = plotInitial(kin, angles, true, ...
+                                      PATCH_HANDLES);
+    else
+        updatePlot(kin, angles, low_res, PATCH_HANDLES)
+    end
+    
+    drawnow
 end
 
 function firstrun = isFirstrun(handles)
+%Returns if this is the first run of the program
+% This is determined by checking if the handles already exist
     for i=1:length(handles)
         if(~ishandle(handles(i)))
             firstrun = true;
@@ -40,6 +35,8 @@ function firstrun = isFirstrun(handles)
 end
 
 function h = plotInitial(kin, angles, low_res, h)
+%Plots the links using patch
+%Returns a list of handles to all of the patch objects
 
     fk = kin.getForwardKinematics('CoM',angles);
     [upper, lower] = loadMeshes(low_res);
@@ -61,7 +58,10 @@ function h = plotInitial(kin, angles, low_res, h)
         p = p+1;
     end
 
+    % This is how I saved the meshes (orinally loaded from an stl file)
     % save('FieldableKinematicsPatch_low_res','lower','upper')
+    
+    %Initialize lights, camera, axes
     camlight('headlight');
     axis('image');
     view([45, 35]);
@@ -71,6 +71,7 @@ function h = plotInitial(kin, angles, low_res, h)
 end
 
 function updatePlot(kin, angles, low_res, h)
+%Updates the link patches that were previously plotted
     fk = kin.getForwardKinematics('CoM',angles);
     [upper, lower] = loadMeshes(low_res);
 
@@ -88,13 +89,17 @@ function updatePlot(kin, angles, low_res, h)
 end
 
 
-
 function [upper, lower] = loadMeshes(low_res)
+%Returns the relevent meshes
+%Based on low_res different resolution meshes will be loaded
+    
+    %This was how I originally transformed from the .stl files 
+    %  to matlabe files, which I saved
     % lower = stlread('stl/rotary_input_low_res.stl');
     % upper = stlread('stl/rotary_output_low_res.stl');
-    
     % lower = transformSTL(lower, rotx(pi/2));
     % upper = transformSTL(upper, rotx(pi/2));
+        
     if(low_res)
         meshes = load('FieldableKinematicsPatchLowRes');
     else
@@ -106,31 +111,32 @@ function [upper, lower] = loadMeshes(low_res)
 end
 
 function fv = transformSTL(fv, trans)
+%Transforms from the base frame of the mesh to the correctly
+%location in space
     fv.vertices = (trans * [fv.vertices, ones(size(fv.vertices,1), ...
                                               1)]')';
     fv.vertices = fv.vertices(:,1:3);
 
 end
     
-%Homogeneous transform matrix for a rotation about x
 function m = rotx(theta)
+%Homogeneous transform matrix for a rotation about x
     m = [1, 0,          0,          0;
          0, cos(theta), -sin(theta),0;
          0, sin(theta), cos(theta), 0;
          0, 0,          0,          1];
 end
 
-%Homogeneous transform matrix for a rotation about y
 function m = roty(theta)
+%Homogeneous transform matrix for a rotation about y
     m = [cos(theta),  0, sin(theta), 0;
          0,           1, 0,          0;
          -sin(theta), 0, cos(theta), 0;
          0,           0, 0,          1];
 end
 
-
-%Homogeneous transform matrix for a rotation about z
 function m = rotz(theta)
+%Homogeneous transform matrix for a rotation about z
     m = [cos(theta), -sin(theta), 0, 0;
          sin(theta),  cos(theta), 0, 0;
          0,          0,           1, 0;
