@@ -4,12 +4,16 @@ function plotHebi(kin, angles, low_res)
 % @kin: A HebiKinematics object describing the robot to be plotted
 % @angles: A vector of joint angles of the object
 % @low_res: Optional parameter to use low resolution meshes for
-% faster plotting    
+% faster plotting. Set low_res to true or 'low_res' to use low resolution
 
     persistent PATCH_HANDLES 
     if(nargin < 3)
         low_res = false;
     end
+    if(strcmpi(low_res, 'low_res') || strcmpi(low_res, 'lowres'))
+        low_res = true;
+    end
+        
 
     if(isFirstrun(PATCH_HANDLES))
         PATCH_HANDLES = plotInitial(kin, angles, low_res, ...
