@@ -16,6 +16,7 @@ function plotHebi(kin, angles, low_res)
         
 
     if(isFirstrun(PATCH_HANDLES))
+        PATCH_HANDLES = [];
         PATCH_HANDLES = plotInitial(kin, angles, low_res, ...
                                       PATCH_HANDLES);
     else
@@ -29,6 +30,7 @@ function firstrun = isFirstrun(handles)
 %Returns if this is the first run of the program
 %Exists if the window has been closed
 % This is determined by checking if the handles already exist
+%There is probably a better way to determine this!!!
     persistent TIME_SINCE_LAST_CALL
     
     for i=1:length(handles)
