@@ -1,4 +1,6 @@
 function followLine()
+%Plots a chain of hebi modules following a 
+% line trajectory
     close all
     kin = HebiKinematics();
     range = 1:8;
@@ -17,21 +19,40 @@ function followLine()
     hold on;
     angles = kin.getIK('xyz', p_0);
     
-    trajectory = [lineTrajectory(p_0, p_1, 100);
-                  lineTrajectory(p_1, p_2, 100);
-                  lineTrajectory(p_2, p_3, 100);
-                  lineTrajectory(p_3, p_0, 100);];
+    n = 40;
+    trajectory = [lineTrajectory(p_0, p_1, n);
+                  lineTrajectory(p_1, p_2, n);
+                  lineTrajectory(p_2, p_3, n);
+                  lineTrajectory(p_3, p_0, n);];
                   
-                  
+
+    view_start = [150, 35];
+    view_end = [150, 35];
     
-    for i=1:size(trajectory,1)
+    
+    n = size(trajectory,1);
+    
+    F(n) = struct('cdata', [], 'colormap', []);
+    plotHebi(kin, angles, 'low_res');
+    view(view_start);
+    for i=1:n
         p_goal = trajectory(i,:);
         angles = kin.getIK('xyz', p_goal, 'InitialPositions', ...
                                   angles);
+        % angles = minimizeCost(kin, angles, @costCartesianError, p_goal');
         plotHebi(kin, angles, 'low_res');
+        % plotHebi(kin, angles);
+        % view(view_start + (view_end - view_start)*i/n);
+        % F(i) = getframe(gcf);
         fk = kin.getFK('EndEffector', angles);
         scatter3(fk(1,4), fk(2,4), fk(3,4), 'k');
+        scatter3(p_goal(1), p_goal(2), p_goal(3), 'g');
     end
+    % fig = figure()
+    % input('Enter to play movie\n');
+    % movie(fig, F, 5)
+    % input('NextCommand\n');
+    % movie2avi(F, 'prettyRendering.avi')
 end
 
 

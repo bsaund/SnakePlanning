@@ -1,7 +1,7 @@
 function fkUnitTests
 %Tests various fk functions to ensure they are computing correct values
     kin = HebiKinematics();
-    n=3;
+    n=1;
     for i=1:n
         kin.addBody('FieldableElbowJoint');
     end
@@ -12,7 +12,13 @@ function fkUnitTests
                 'snakeFK and HebiKinematics give different results')
     
 
+    angles = zeros(n, 1);
     [J_sp, J_b, J_geo] = snakeEEJacobian(angles);
+    J_sp
+    J_b
+    J_geo
+    kin.getJacobian('EndEffector', angles)
+    
     assertEqual(J_geo, kin.getJacobian('EndEffector', angles), ...
                 'snakeEEJacobian and HebiKinematics disagree');
 end
