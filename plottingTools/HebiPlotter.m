@@ -1,6 +1,37 @@
 classdef HebiPlotter < handle
+    % HebiPlotter provides a simple way to visualize realistic looking HEBI
+    % modules
+    %
+    %   Currently only the HEBI elbow joints (snake links) can be plotted
+    %
+    %   HebiPlotter Methods (constructor):
+    %      HebiPlotter  - constructor
+    %
+    %   HebiPlotter Methods:
+    %      plot         - plots the robot in the specified configuation
+    %      setBaseFrame - sets the frame of the first link
+    %
+    %   Examples:
+    %      plt = HebiPlotter(2);
+    %      plt.plot([.1,.1]);
+    %
+    %      plt = HebiPlotter(16, 'resolution', 'high');
+    %      plt.plot(zeros(16,1));
+    
     methods(Access = public)
         function this = HebiPlotter(numLinks, varargin)
+        %HEBIPLOTTER
+        %Arguments:
+        %numLinks (required)      - number of HEBI modules used
+        %
+        %Parameters:
+        %  'resolution'(optional) - 'low' (default), 'high' 
+        %
+        %Examples:
+        %  plt = HebiPlotter(16)
+        %  plt = HebiPlotter(4, 'resolution', 'high')
+
+        
             p = inputParser;
             expectedResolutions = {'low', 'high'};
             
@@ -20,6 +51,8 @@ classdef HebiPlotter < handle
         end
         
         function plot(this, angles)
+            % PLOT plots the robot in the configuration specified by
+            % angles
             if(this.firstRun)
                 initialPlot(this, angles);
                 this.firstRun = false;
@@ -29,12 +62,21 @@ classdef HebiPlotter < handle
             drawnow
         end
         
+        function setBaseFrame(this, frame)
+            %SETBASEFRAME sets the frame of the first link in the kinematics
+            %chain
+            %
+            % Arguments:
+            % frame (required)    -  a 4x4 homogeneous matrix 
+            this.kin.setBaseFrame(frame);
+        end
+        
     end
     
     methods(Access = private, Hidden = true)
         
         function updatePlot(this, angles)
-        %Updates the link patches that were previously plotted
+        %UPDATEPLOT updates the link patches that were previously plotted
             fk = this.kin.getForwardKinematics('CoM',angles);
             [upper, lower] = this.loadMeshes();
 
@@ -51,6 +93,8 @@ classdef HebiPlotter < handle
         end
 
         function this = initialPlot(this, angles)
+        %INITIALPLOT creates patches representing the CAD of the
+        %manipulator
             n = this.kin.getNumBodies();
 
             fk = this.kin.getForwardKinematics('CoM', angles);
