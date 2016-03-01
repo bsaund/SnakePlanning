@@ -25,8 +25,9 @@ classdef HebiPlotter < handle
         %Arguments:
         %numLinks (required)      - number of HEBI modules used
         %
-        %Parameters:
-        %  'resolution'(optional) - 'low' (default), 'high' 
+        %Optional Parameters:
+        %  'resolution'           - 'low' (default), 'high' 
+        %  'lighting'             - 'on' (default), 'off'
         %
         %Examples:
         %  plt = HebiPlotter(16)
@@ -174,11 +175,12 @@ classdef HebiPlotter < handle
         function [upper, lower] = loadMeshes(this)
         %Returns the relevent meshes
         %Based on low_res different resolution meshes will be loaded
+            stldir = [fileparts(mfilename('fullpath')), '/stl'];
             
             if(this.lowResolution)
-                meshes = load('FieldableKinematicsPatchLowRes');
+                meshes = load([stldir, '/FieldableKinematicsPatchLowRes.mat']);
             else
-                meshes = load('FieldableKinematicsPatch');
+                meshes = load([stldir, './stl/FieldableKinematicsPatch.mat']);
             end
             lower = meshes.lower;
             upper = meshes.upper;
