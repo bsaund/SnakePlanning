@@ -37,11 +37,13 @@ classdef HebiPlotter < handle
             p = inputParser;
             expectedResolutions = {'low', 'high'};
             expectedLighting = {'on','off'};
+            expectedFrames = {'Base', 'VC'};
             
             % addRequired(p, 'numLinks', @isnumeric);
             addParameter(p, 'resolution', 'low', ...
                          @(x) any(validatestring(x, ...
                                                  expectedResolutions)));
+            addParameter(p, 'frame', 'Base');
             addParameter(p, 'lighting', 'on');
             % parse(p, numLinks, varargin{:})
             parse(p, varargin{:});
@@ -51,12 +53,14 @@ classdef HebiPlotter < handle
             % this = this.initialPlot();
             this.firstRun = true;
             this.lighting = p.Results.lighting;
+            this.kin = HebiKinematics();
+            this.frameType = p.Results.frame;
         end
         
         function plot(this, angles)
-            % PLOT plots the robot in the configuration specified by
-            % angles
-                
+        % PLOT plots the robot in the configuration specified by
+        % angles
+            
             if(~isnumeric(angles))
                 try
                     angles = angles.position;
@@ -65,6 +69,9 @@ classdef HebiPlotter < handle
                            'or feedback']);
                 end
             end
+                
+
+
                 
             if(this.firstRun)
                 initialPlot(this, angles);
@@ -92,6 +99,12 @@ classdef HebiPlotter < handle
         %UPDATEPLOT updates the link patches that were previously plotted
             fk = this.kin.getForwardKinematics('CoM',angles);
             [upper, lower] = this.loadMeshes();
+            
+            if(strcmpi(this.frameType, 'VC'))
+                this.frame = this.frame*unifiedVC(fk, eye(3), this.frame);
+                this.setBaseFrame(inv(this.frame));
+            end
+
 
             h = this.handles;
             if(~ishandle(h(1,1)))
@@ -111,11 +124,11 @@ classdef HebiPlotter < handle
         function initializeKinematics(this, numLinks)
         %INITIALIZEKINEMATICS creates a default kinematics object
         %if one has not already been assigned.
-            if(~isempty(this.kin))
+            if(this.kin.getNumBodies > 0)
                 return;
             end
             
-            this.kin = HebiKinematics();
+
             for i=1:numLinks
                 this.kin.addBody('FieldableElbowJoint');
             end
@@ -128,9 +141,17 @@ classdef HebiPlotter < handle
             n = length(angles);
             this.initializeKinematics(n);
             
+
+            
             fk = this.kin.getForwardKinematics('CoM', angles);
             this.handles = zeros(n, 2);
             [upper, lower] = this.loadMeshes();
+            
+            if(strcmpi(this.frameType, 'VC'))
+                this.frame = unifiedVC(fk, eye(3));
+                this.setBaseFrame(inv(this.frame));
+                fk = this.kin.getForwardKinematics('CoM', angles);
+            end
             
             
             if(strcmp(this.lighting, 'on'))
@@ -212,5 +233,7 @@ classdef HebiPlotter < handle
         lowResolution;
         firstRun;
         lighting;
+        frameType;
+        frame
     end
 end
