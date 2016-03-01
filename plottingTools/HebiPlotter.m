@@ -20,7 +20,7 @@ classdef HebiPlotter < handle
     
     methods(Access = public)
         %Constructor
-        function this = HebiPlotter(numLinks, varargin)
+        function this = HebiPlotter(varargin)
         %HEBIPLOTTER
         %Arguments:
         %numLinks (required)      - number of HEBI modules used
@@ -37,17 +37,14 @@ classdef HebiPlotter < handle
             expectedResolutions = {'low', 'high'};
             expectedLighting = {'on','off'};
             
-            addRequired(p, 'numLinks', @isnumeric);
+            % addRequired(p, 'numLinks', @isnumeric);
             addParameter(p, 'resolution', 'low', ...
                          @(x) any(validatestring(x, ...
                                                  expectedResolutions)));
             addParameter(p, 'lighting', 'on');
-            parse(p, numLinks, varargin{:})
+            % parse(p, numLinks, varargin{:})
+            parse(p, varargin{:});
             
-            this.kin = HebiKinematics();
-            for i=1:numLinks
-                this.kin.addBody('FieldableElbowJoint');
-            end
             
             this.lowResolution = strcmpi(p.Results.resolution, 'low');
             % this = this.initialPlot();
@@ -58,6 +55,16 @@ classdef HebiPlotter < handle
         function plot(this, angles)
             % PLOT plots the robot in the configuration specified by
             % angles
+                
+            if(~isnumeric(angles))
+                try
+                    angles = angles.position;
+                catch
+                    error(['Input needs to be either a list of angles ' ...
+                           'or feedback']);
+                end
+            end
+                
             if(this.firstRun)
                 initialPlot(this, angles);
                 this.firstRun = false;
@@ -86,6 +93,9 @@ classdef HebiPlotter < handle
             [upper, lower] = this.loadMeshes();
 
             h = this.handles;
+            if(~ishandle(h(1,1)))
+                error('Plotting window has been closed. Exiting program.');
+            end
             for i=1:this.kin.getNumBodies()
                 fv = this.transformSTL(lower, fk(:,:,i));
                 set(h(i,1), 'Vertices', fv.vertices(:,:));
@@ -96,15 +106,31 @@ classdef HebiPlotter < handle
                 set(h(i,2), 'Faces', fv.faces);
             end
         end
+        
+        function initializeKinematics(this, numLinks)
+        %INITIALIZEKINEMATICS creates a default kinematics object
+        %if one has not already been assigned.
+            if(~isempty(this.kin))
+                return;
+            end
+            
+            this.kin = HebiKinematics();
+            for i=1:numLinks
+                this.kin.addBody('FieldableElbowJoint');
+            end
+        end
 
         function this = initialPlot(this, angles)
         %INITIALPLOT creates patches representing the CAD of the
         %manipulator
-            n = this.kin.getNumBodies();
-
+            
+            n = length(angles);
+            this.initializeKinematics(n);
+            
             fk = this.kin.getForwardKinematics('CoM', angles);
             this.handles = zeros(n, 2);
             [upper, lower] = this.loadMeshes();
+            
             
             if(strcmp(this.lighting, 'on'))
                 light('Position',[0,0,10]);
