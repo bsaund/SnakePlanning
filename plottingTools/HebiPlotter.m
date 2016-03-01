@@ -19,6 +19,7 @@ classdef HebiPlotter < handle
     %      plt.plot(zeros(16,1));
     
     methods(Access = public)
+        %Constructor
         function this = HebiPlotter(numLinks, varargin)
         %HEBIPLOTTER
         %Arguments:
@@ -34,10 +35,13 @@ classdef HebiPlotter < handle
         
             p = inputParser;
             expectedResolutions = {'low', 'high'};
+            expectedLighting = {'on','off'};
             
             addRequired(p, 'numLinks', @isnumeric);
             addParameter(p, 'resolution', 'low', ...
-                         @(x) any(validatestring(x, expectedResolutions)));
+                         @(x) any(validatestring(x, ...
+                                                 expectedResolutions)));
+            addParameter(p, 'lighting', 'on');
             parse(p, numLinks, varargin{:})
             
             this.kin = HebiKinematics();
@@ -48,6 +52,7 @@ classdef HebiPlotter < handle
             this.lowResolution = strcmpi(p.Results.resolution, 'low');
             % this = this.initialPlot();
             this.firstRun = true;
+            this.lighting = p.Results.lighting;
         end
         
         function plot(this, angles)
@@ -100,24 +105,39 @@ classdef HebiPlotter < handle
             fk = this.kin.getForwardKinematics('CoM', angles);
             this.handles = zeros(n, 2);
             [upper, lower] = this.loadMeshes();
+            
+            if(strcmp(this.lighting, 'on'))
+                light('Position',[0,0,10]);
+                light('Position',[5,0,10]);
+                light('Position',[-5,0,10]);
+                lightStyle = 'gouraud';
+                strength = .3;
+            else
+                c = [.7,.7,.7];
+                light('Position',[0,0,100],'Color',c);
+                light('Position',[-100,0,0],'Color',c);
+                light('Position',[100,0,0],'Color',c);
+                light('Position',[0,-100,0], 'Color',c);
+                light('Position',[0,100,0],'Color',c);
+                lightStyle = 'flat';
+                strength = 1.0;
+            end
+
             for i=1:n
                 this.handles(i,1) =  ...
                     patch(this.transformSTL(lower, fk(:,:,i)), ...
                           'FaceColor', [.5,.1,.2],...
                           'EdgeColor', 'none',...
-                          'FaceLighting', 'gouraud', ...
-                          'AmbientStrength', 0.3);
+                          'FaceLighting', lightStyle, ...
+                          'AmbientStrength', strength);
                 this.handles(i,2) = ...
                     patch(this.transformSTL(upper, fk(:,:,i)*...
                                             this.roty(angles(i))), ...
                           'FaceColor', [.5,.1,.2],...
                           'EdgeColor', 'none',...
-                          'FaceLighting', 'gouraud', ...
-                          'AmbientStrength', 0.3);
+                          'FaceLighting', lightStyle, ...
+                          'AmbientStrength', strength);
             end
-            light('Position',[0,0,10]);
-            light('Position',[5,0,10]);
-            light('Position',[-5,0,10]);
             axis('image');
             view([45, 35]);
             xlabel('x');
@@ -162,6 +182,7 @@ classdef HebiPlotter < handle
         kin;
         handles;
         lowResolution;
-        firstRun
+        firstRun;
+        lighting;
     end
 end

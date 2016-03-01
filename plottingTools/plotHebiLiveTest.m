@@ -1,18 +1,16 @@
 function plotHebiLiveTest
+%Plots the Snake in real time
     close all
     g = HebiLookup.newConnectedGroupFromName('Spare','SA002');
 
-    kin = HebiKinematics();
+%     range=1:g.getNumModules;
+    range=12:16;
 
-    range=1:g.getNumModules;
-    % range=12:16;
-    for i=range
-        kin.addBody('FieldableElbowJoint');
-    end
-
+    plt = HebiPlotter(length(range));
 
     while(true)
-        plotHebi(kin, g.getNextFeedback.position(range), true)
+        angles = g.getNextFeedback.position(range);
+        plt.plot(angles);
     end
 
 end
