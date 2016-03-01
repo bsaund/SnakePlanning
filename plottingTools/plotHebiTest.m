@@ -1,20 +1,22 @@
 function plotHebiTest()
 
-    kin = HebiKinematics();
-    num_links = 4;
+    % kin = HebiKinematics();
+    num_links = 10;
     num_samples = 200;
     angles = [];
+    plt = HebiPlotter(num_links, 'resolution', 'high');
     for i=1:num_links
-        kin.addBody('FieldableElbowJoint');
+        % kin.addBody('FieldableElbowJoint');
         angles = [angles, linspace(-pi/2, pi/2, num_samples)'];
     end
     
     for i=1:num_samples
-        tic
-%         plotHebi(kin, angles(i, :), 'low_res');
-        plotHebi(kin, angles(i, :)); 
-        drawnow();
-        toc
+        % plotHebi(kin, angles(i, :));
+        plt.plot(angles(i,:));
+        % pause(.1);
+        % tic
+        % drawnow();
+        % toc
     end
     
 
