@@ -1,7 +1,7 @@
 function plotHebiManipulatorTest()
     close all;
     links = {{'FieldableElbowJoint'},
-             {'FieldableStraightLink', 'ext1', .1, 'twist', 0},
+             {'FieldableStraightLink', 'ext1', .1, 'twist', pi/2},
              {'FieldableElbowJoint'},
              {'FieldableStraightLink', 'ext1', .1, 'twist', 0}};
     plt = HebiPlotter('JointTypes', links);

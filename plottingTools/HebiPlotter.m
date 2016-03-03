@@ -1,7 +1,8 @@
 classdef HebiPlotter < handle
     % HebiPlotter visualize realistic looking HEBI modules
     %
-    %   Currently only the HEBI elbow joints (snake links) can be plotted
+    %   Currently only the HEBI elbow joints (snake links) and pipe
+    %   joints can be plotted
     %
     %   HebiPlotter Methods (constructor):
     %      HebiPlotter  - constructor
@@ -27,15 +28,21 @@ classdef HebiPlotter < handle
         %  'resolution'        - 'low' (default), 'high' 
         %  'lighting'          - 'on' (default), 'off'
         %  'frame'             - 'base' (default), 'VC'
+        %  'JointTypes'        - cell array of joint types
         %
         %Examples:
         %  plt = HebiPlotter(16)
         %  plt = HebiPlotter(4, 'resolution', 'high')
+        %
+        %  links = {{'FieldableElbowJoint'},
+        %           {'FieldableStraightLink', 'ext1', .1, 'twist', 0}};
+        %  plt = HebiPlotter('JointTypes', links)  
+
 
         
             p = inputParser;
             expectedResolutions = {'low', 'high'};
-            expectedLighting = {'on','off'};
+            expectedLighting = {'on','off', 'far'};
             expectedFrames = {'Base', 'VC'};
             
             % addRequired(p, 'numLinks', @isnumeric);
@@ -49,6 +56,7 @@ classdef HebiPlotter < handle
                          @(x) any(validatestring(x, ...
                                                  expectedLighting)));
             addParameter(p, 'JointTypes', {});
+            addParameter(p, 'drawWhen', 'now');
 
             parse(p, varargin{:});
             
@@ -59,6 +67,7 @@ classdef HebiPlotter < handle
             this.lighting = p.Results.lighting;
             this.setKinematicsFromJointTypes(p.Results.JointTypes);
             this.frameType = p.Results.frame;
+            this.drawNow = strcmp(p.Results.drawWhen, 'now');
         end
         
         function plot(this, angles)
@@ -83,7 +92,9 @@ classdef HebiPlotter < handle
             else
                 updatePlot(this, angles);
             end
-            drawnow
+            if(this.drawNow)
+                drawnow
+            end
         end
         
         function setBaseFrame(this, frame)
@@ -185,13 +196,16 @@ classdef HebiPlotter < handle
                 light('Position',[-5,0,10]);
                 lightStyle = 'gouraud';
                 strength = .3;
-            else
+            elseif(strcmp(this.lighting, 'far'))
                 c = [.7,.7,.7];
                 light('Position',[0,0,100],'Color',c);
                 light('Position',[-100,0,0],'Color',c);
                 light('Position',[100,0,0],'Color',c);
                 light('Position',[0,-100,0], 'Color',c);
                 light('Position',[0,100,0],'Color',c);
+                lightStyle = 'flat';
+                strength = 1.0;
+            else
                 lightStyle = 'flat';
                 strength = 1.0;
             end
@@ -295,5 +309,6 @@ classdef HebiPlotter < handle
         lighting;
         frameType;
         frame;
+        drawNow;
     end
 end
