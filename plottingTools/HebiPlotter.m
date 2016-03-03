@@ -1,6 +1,5 @@
 classdef HebiPlotter < handle
-    % HebiPlotter provides a simple way to visualize realistic looking HEBI
-    % modules
+    % HebiPlotter visualize realistic looking HEBI modules
     %
     %   Currently only the HEBI elbow joints (snake links) can be plotted
     %
@@ -12,7 +11,7 @@ classdef HebiPlotter < handle
     %      setBaseFrame - sets the frame of the first link
     %
     %   Examples:
-    %      plt = HebiPlotter(2);
+    %      plt = HebiPlotter();
     %      plt.plot([.1,.1]);
     %
     %      plt = HebiPlotter(16, 'resolution', 'high');
@@ -23,11 +22,11 @@ classdef HebiPlotter < handle
         function this = HebiPlotter(varargin)
         %HEBIPLOTTER
         %Arguments:
-        %numLinks (required)      - number of HEBI modules used
         %
         %Optional Parameters:
-        %  'resolution'           - 'low' (default), 'high' 
-        %  'lighting'             - 'on' (default), 'off'
+        %  'resolution'        - 'low' (default), 'high' 
+        %  'lighting'          - 'on' (default), 'off'
+        %  'frame'             - 'base' (default), 'VC'
         %
         %Examples:
         %  plt = HebiPlotter(16)
@@ -43,17 +42,22 @@ classdef HebiPlotter < handle
             addParameter(p, 'resolution', 'low', ...
                          @(x) any(validatestring(x, ...
                                                  expectedResolutions)));
-            addParameter(p, 'frame', 'Base');
-            addParameter(p, 'lighting', 'on');
-            % parse(p, numLinks, varargin{:})
+            addParameter(p, 'frame', 'Base',...
+                         @(x) any(validatestring(x, expectedFrames)));
+
+            addParameter(p, 'lighting', 'on',...
+                         @(x) any(validatestring(x, ...
+                                                 expectedLighting)));
+            addParameter(p, 'JointTypes', {});
+
             parse(p, varargin{:});
             
             
             this.lowResolution = strcmpi(p.Results.resolution, 'low');
-            % this = this.initialPlot();
+
             this.firstRun = true;
             this.lighting = p.Results.lighting;
-            this.kin = HebiKinematics();
+            this.setKinematicsFromJointTypes(p.Results.JointTypes);
             this.frameType = p.Results.frame;
         end
         
@@ -101,7 +105,7 @@ classdef HebiPlotter < handle
             [upper, lower] = this.loadMeshes();
             
             if(strcmpi(this.frameType, 'VC'))
-                this.frame = this.frame*unifiedVC(fk, eye(3), this.frame);
+                this.frame = this.frame*unifiedVC(fk, eye(3), eye(3));
                 this.setBaseFrame(inv(this.frame));
             end
 
@@ -110,14 +114,23 @@ classdef HebiPlotter < handle
             if(~ishandle(h(1,1)))
                 error('Plotting window has been closed. Exiting program.');
             end
+            angleInd = 1;
             for i=1:this.kin.getNumBodies()
-                fv = this.transformSTL(lower, fk(:,:,i));
-                set(h(i,1), 'Vertices', fv.vertices(:,:));
-                set(h(i,1), 'Faces', fv.faces);
+                if(strcmp(this.jointTypes{i}{1}, 'FieldableElbowJoint'))
+                    fv = this.transformSTL(lower, fk(:,:,i));
+                    set(h(i,1), 'Vertices', fv.vertices(:,:));
+                    set(h(i,1), 'Faces', fv.faces);
 
-                fv = this.transformSTL(upper, fk(:,:,i)*this.roty(angles(i)));
-                set(h(i,2), 'Vertices', fv.vertices(:,:));
-                set(h(i,2), 'Faces', fv.faces);
+                    fv = this.transformSTL(upper, fk(:,:,i)*this.roty(angles(angleInd)));
+                    set(h(i,2), 'Vertices', fv.vertices(:,:));
+                    set(h(i,2), 'Faces', fv.faces);
+                    angleInd = angleInd + 1;
+                else
+                    fv = this.transformSTL(this.getCylinder(this.jointTypes{i}),...
+                                           fk(:,:,i));
+                    set(h(i,1), 'Vertices', fv.vertices(:,:));
+                    set(h(i,1), 'Faces', fv.faces);
+                end
             end
         end
         
@@ -128,9 +141,20 @@ classdef HebiPlotter < handle
                 return;
             end
             
-
             for i=1:numLinks
                 this.kin.addBody('FieldableElbowJoint');
+                this.jointTypes{i} = {'FieldableElbowJoint'};
+            end
+        end
+        
+        function setKinematicsFromJointTypes(this, types)
+            this.kin = HebiKinematics();
+            this.jointTypes = types;
+            if(length(types) == 0)
+                return;
+            end
+            for i = 1:length(types)
+                this.kin.addBody(types{i}{:});
             end
         end
 
@@ -138,12 +162,13 @@ classdef HebiPlotter < handle
         %INITIALPLOT creates patches representing the CAD of the
         %manipulator
             
-            n = length(angles);
-            this.initializeKinematics(n);
-            
+
+            this.initializeKinematics(length(angles));
+            n = this.kin.getNumBodies();
 
             
             fk = this.kin.getForwardKinematics('CoM', angles);
+            
             this.handles = zeros(n, 2);
             [upper, lower] = this.loadMeshes();
             
@@ -170,27 +195,41 @@ classdef HebiPlotter < handle
                 lightStyle = 'flat';
                 strength = 1.0;
             end
-
-            for i=1:n
-                this.handles(i,1) =  ...
-                    patch(this.transformSTL(lower, fk(:,:,i)), ...
-                          'FaceColor', [.5,.1,.2],...
-                          'EdgeColor', 'none',...
-                          'FaceLighting', lightStyle, ...
-                          'AmbientStrength', strength);
-                this.handles(i,2) = ...
-                    patch(this.transformSTL(upper, fk(:,:,i)*...
-                                            this.roty(angles(i))), ...
-                          'FaceColor', [.5,.1,.2],...
-                          'EdgeColor', 'none',...
-                          'FaceLighting', lightStyle, ...
-                          'AmbientStrength', strength);
+            
+            angleInd = 1;
+            for i=1:this.kin.getNumBodies
+                if(strcmp(this.jointTypes{i}{1}, 'FieldableElbowJoint'))
+                    this.handles(i,:) = ...
+                        this.patchHebiElbow(lower, upper, fk(:,:,i), ...
+                                       angles(angleInd), lightStyle, ...
+                                            strength);
+                    angleInd = angleInd + 1;
+                else
+                    this.handles(i,1) = ...
+                        this.patchCylinder(fk(:,:,i), this.jointTypes{i});
+                end
             end
             axis('image');
             view([45, 35]);
             xlabel('x');
             ylabel('y');
             zlabel('z');
+        end
+        
+        function h = patchHebiElbow(this,lower, upper, fk, angle, ...
+                                    lightStyle, strength)
+            h(1,1) =  ...
+                patch(this.transformSTL(lower, fk), ...
+                      'FaceColor', [.5,.1,.2],...
+                      'EdgeColor', 'none',...
+                      'FaceLighting', lightStyle, ...
+                      'AmbientStrength', strength);
+            h(1,2) = ...
+                patch(this.transformSTL(upper, fk*this.roty(angle)), ...
+                'FaceColor', [.5,.1,.2],...
+                'EdgeColor', 'none',...
+                'FaceLighting', lightStyle, ...
+                'AmbientStrength', strength);
         end
         
         function [upper, lower] = loadMeshes(this)
@@ -206,6 +245,26 @@ classdef HebiPlotter < handle
             lower = meshes.lower;
             upper = meshes.upper;
 
+        end
+        
+        function h = patchCylinder(this, fk, types)
+            
+            h = patch(this.transformSTL(this.getCylinder(types), fk), ...
+                      'FaceColor', [.5, .5, .5],...
+                      'EdgeColor', 'none',...
+                      'FaceLighting', 'gouraud',...
+                      'AmbientStrength',.1);
+        end
+        
+        function cyl = getCylinder(this, types)
+            p = inputParser();
+            p.addParameter('ext1', .4);
+            p.addParameter('twist', 0);
+            parse(p, types{2:end});
+            r = .025;
+            h = p.Results.ext1 + .015; %Add a bit for connection section
+            [x,y,z] = cylinder;
+            cyl = surf2patch(r*x, r*y, h*(z -.5));
         end
         
         function fv = transformSTL(this, fv, trans)
@@ -229,11 +288,12 @@ classdef HebiPlotter < handle
     
     properties(Access = private, Hidden = true)
         kin;
+        jointTypes;
         handles;
         lowResolution;
         firstRun;
         lighting;
         frameType;
-        frame
+        frame;
     end
 end
