@@ -1,7 +1,25 @@
 classdef SnakeMonsterPlotter < handle
+%SNAKEMONSTERPLOTTER plots snake monster
+%
+%   This function is incomplete and does not 
+%   plot the true version of snake monster
+%
+%   Snake monster is robot composed of a base
+%    and 6 legs. Each leg has a total of three
+%    HEBI elbow joint modules as well as two 
+%    extension links
+%
+% SnakeMonsterPlotter methods (constructor):
+%  SnakeMonsterPlotter
 
     methods(Access = public)
         function this = SnakeMonsterPlotter()
+        %SNAKEMONSTERPLOTTER 
+        %
+        %Examples:
+        %  plt= SnakeMonsterPlotter()
+        %  plt.plot(zeros(16,1));
+        %
             this.lfLeg = this.getLeg();
             this.lmLeg = this.getLeg();
             this.lbLeg = this.getLeg();
@@ -37,6 +55,11 @@ classdef SnakeMonsterPlotter < handle
         end
         
         function plot(this,angles)
+        %PLOT - plots snake monster in the specified configuration
+        %
+        %Arguments:
+        %angles   - A 18 element vector of joint angles
+        %
             this.lfLeg.plot(angles(1:3));
             this.lmLeg.plot(angles(4:6));
             this.lbLeg.plot(angles(7:9));
