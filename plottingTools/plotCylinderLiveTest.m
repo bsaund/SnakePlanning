@@ -6,12 +6,12 @@ function plotCylinderLiveTest
     range=1:g.getNumModules;
     % range=12:16;
 
-    plt = HebiPlotter('frame','VC');
+    plt = CylinderPlotter('frame','VC');
 
     while(true)
         angles = g.getNextFeedback.position(range);
         plt.plot(angles);
-        plt.plot(angles);
+        % plt.plot(angles);
         % plt.plot(g.getNextFeedback())
     end
 
