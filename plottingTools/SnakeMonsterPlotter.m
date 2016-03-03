@@ -9,18 +9,20 @@ classdef SnakeMonsterPlotter < handle
             this.rmLeg = this.getLeg();
             this.rbLeg = this.getLeg();
             
+            width = .07;
+            
             this.lfLeg.setBaseFrame(...
-                this.trans([.07,.1,0,pi/2,0,pi/2]));
+                this.trans([width,.1,0,pi/2,0,pi/2]));
             this.lmLeg.setBaseFrame(...
-                this.trans([.07,0,0,pi/2,0,pi/2]));
+                this.trans([width,0,0,pi/2,0,pi/2]));
             this.lbLeg.setBaseFrame(...
-                this.trans([.07,-.1,0,pi/2,0,pi/2]));
+                this.trans([width,-.1,0,pi/2,0,pi/2]));
             this.rfLeg.setBaseFrame(...
-                this.trans([-.07,.1,0,-pi/2,0,pi/2]));
+                this.trans([-width,.1,0,-pi/2,0,pi/2]));
             this.rmLeg.setBaseFrame(...
-                this.trans([-.07,0,0,-pi/2,0,pi/2]));
+                this.trans([-width,0,0,-pi/2,0,pi/2]));
             this.rbLeg.setBaseFrame(...
-                this.trans([-.07,-.1,0,-pi/2,0,pi/2]));
+                this.trans([-width,-.1,0,-pi/2,0,pi/2]));
             
             c = [.7,.7,.7];
             light('Position',[0,0,100],'Color',c);
@@ -29,6 +31,9 @@ classdef SnakeMonsterPlotter < handle
             light('Position',[0,-100,0], 'Color',c);
             light('Position',[0,100,0],'Color',c);
             
+            
+            this.firstRun = true;
+            this.patchCube(width, .15, .03);
         end
         
         function plot(this,angles)
@@ -38,6 +43,12 @@ classdef SnakeMonsterPlotter < handle
             this.rfLeg.plot(angles(10:12));
             this.rmLeg.plot(angles(13:15));
             this.rbLeg.plot(angles(16:18));
+            
+            if(this.firstRun)
+                this.firstRun = false;
+                % patchCube(
+            end
+            
             drawnow
         end
     end
@@ -53,6 +64,30 @@ classdef SnakeMonsterPlotter < handle
                               'drawWhen','later');
         end
         
+        function h = patchCube(this,l,w,h)
+            patch(this.getCube(l,w,h),...
+                  'FaceColor',[.7,.7,.7],...
+                  'EdgeColor',[.6,.6,.6]);
+        end
+        
+        function cube = getCube(this,l,w,h)
+            vert = [ l, w,-h;
+                     -l, w,-h;
+                     -l, w, h;
+                     l, w, h;
+                     -l,-w, h;
+                     l,-w, h;
+                     l,-w,-h;
+                     -l,-w,-h;];
+            fac = [1 2 3 4; 
+                   4 3 5 6; 
+                   6 7 8 5; 
+                   1 2 8 7; 
+                   6 7 1 4; 
+                   2 3 5 8];
+            cube.faces = fac;
+            cube.vertices = vert;
+        end
         
         function m = trans(this, xyzrpy)
             m = eye(4);
@@ -97,5 +132,6 @@ classdef SnakeMonsterPlotter < handle
         rfLeg;
         rmLeg;
         rbLeg;
+        firstRun;
     end
 end
