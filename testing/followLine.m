@@ -3,6 +3,7 @@ function followLine()
 % line trajectory
     close all
     kin = HebiKinematics();
+    plt = HebiPlotter();
     range = 1:8;
     for i=range
         kin.addBody('FieldableElbowJoint');
@@ -33,16 +34,12 @@ function followLine()
     n = size(trajectory,1);
     
     F(n) = struct('cdata', [], 'colormap', []);
-    plotHebi(kin, angles, 'low_res');
     view(view_start);
     for i=1:n
         p_goal = trajectory(i,:);
         angles = kin.getIK('xyz', p_goal, 'InitialPositions', ...
                                   angles);
-        % angles = minimizeCost(kin, angles, @costCartesianError, p_goal');
-        plotHebi(kin, angles, 'low_res');
-        % plotHebi(kin, angles);
-        % view(view_start + (view_end - view_start)*i/n);
+        plt.plot(angles);
         % F(i) = getframe(gcf);
         fk = kin.getFK('EndEffector', angles);
         scatter3(fk(1,4), fk(2,4), fk(3,4), 'k');
