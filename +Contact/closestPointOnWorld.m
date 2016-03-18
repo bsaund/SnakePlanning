@@ -10,11 +10,12 @@ function p = closestPointOnWorld(p_test, world)
     d = inf;
 
     for i=1:numFaces
-        p_temp = Contact.closestPoint(p_test, ...
+        p_temp = Contact.closestPoint_mex(p_test, ...
                                       v(f(i,1),:)',...
                                       v(f(i,2),:)',...
                                       v(f(i,3),:)');
-        d_temp = sumsqr(p_test-p_temp);
+        d_temp = (p_test-p_temp)'*(p_test - p_temp);
+%         d_temp = 1;
         if (d_temp < d)
             d = d_temp;
             p = p_temp;
