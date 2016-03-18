@@ -25,20 +25,22 @@ function snakeInWorld()
         snake.plotTorques(angles, world, spring);
     end
     
-
-    % angles = optimizeAngles(angle_traj(1,:)', snake, world, spring);
-    % snake.plotTorques(angles, world, spring);
-    replayMotion(angle_traj, snake, plt, world, spring);
-
+    profile on
+    [angles,resnorm,residual,exitflag,output]  = ...
+          optimizeAngles(angle_traj(1,:)', snake, world, spring);
+    snake.plotTorques(angles, world, spring);
+%     replayMotion(angle_traj, snake, plt, world, spring);
+    profile viewer
 end
 
 
-function angles = optimizeAngles(initial_angles, snake, world, ...
-                                 spring)
+function [x,resnorm,residual,exitflag,output]  = ...
+            optimizeAngles(initial_angles, snake, world, spring)
     
     func = getCostFunction(initial_angles, snake, world, spring);
     [lb, ub] = getBounds(initial_angles);
-    angles = lsqnonlin(func, initial_angles, lb, ub);
+    [x,resnorm,residual,exitflag,output]  =... 
+            lsqnonlin(func, initial_angles, lb, ub);
     % angles = zeros(1);
 end
 
