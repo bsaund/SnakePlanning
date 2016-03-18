@@ -1,0 +1,11 @@
+libemlrt.lib
+libcovrt.lib
+libut.lib
+libmwblas.lib
+libmwmathutil.lib
+/export:mexFunction
+/export:emlrtMexFcnProperties
+/export:closestPoint
+/export:closestPoint_initialize
+/export:closestPoint_terminate
+/export:closestPoint_atexit

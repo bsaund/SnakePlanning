@@ -11,9 +11,10 @@ SRC_FILES =  \
 	closestPoint_mex_initialize.c \
 	closestPoint_mex_terminate.c \
 	closestPoint.c \
-	simpleProd.c \
+	closestPointOnWorld.c \
 	_coder_closestPoint_mex_api.c \
 	_coder_closestPoint_mex_mex.c \
+	closestPoint_mex_emxutil.c \
 	_coder_closestPoint_mex_info.c
 
 MEX_FILE_NAME_WO_EXT = closestPoint_mex

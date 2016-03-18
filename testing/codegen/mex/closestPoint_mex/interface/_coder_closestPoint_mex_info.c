@@ -18,7 +18,7 @@ const mxArray *emlrtMexFcnResolvedFunctionsInfo(void)
 {
   const mxArray *nameCaptureInfo;
   nameCaptureInfo = NULL;
-  emlrtAssign(&nameCaptureInfo, emlrtCreateStructMatrix(44, 1, 0, NULL));
+  emlrtAssign(&nameCaptureInfo, emlrtCreateStructMatrix(45, 1, 0, NULL));
   info_helper(&nameCaptureInfo);
   emlrtNameCapturePostProcessR2013b(&nameCaptureInfo);
   return nameCaptureInfo;
@@ -114,6 +114,8 @@ static void info_helper(const mxArray **info)
   const mxArray *lhs42 = NULL;
   const mxArray *rhs43 = NULL;
   const mxArray *lhs43 = NULL;
+  const mxArray *rhs44 = NULL;
+  const mxArray *lhs44 = NULL;
   emlrtAddField(*info, emlrt_marshallOut(
     "[E]C:/Users/Brad/Documents/Work/CMU/SnakePlanning/testing/closestPoint.m"),
                 "context", 0);
@@ -802,20 +804,37 @@ static void info_helper(const mxArray **info)
   emlrtAddField(*info, emlrtAliasP(rhs42), "rhs", 42);
   emlrtAddField(*info, emlrtAliasP(lhs42), "lhs", 42);
   emlrtAddField(*info, emlrt_marshallOut(
-    "[E]C:/Users/Brad/Documents/Work/CMU/SnakePlanning/testing/simpleProd.m"),
+    "[E]C:/Users/Brad/Documents/Work/CMU/SnakePlanning/testing/closestPointOnWorld.m"),
                 "context", 43);
-  emlrtAddField(*info, emlrt_marshallOut("disp"), "name", 43);
-  emlrtAddField(*info, emlrt_marshallOut("char"), "dominantType", 43);
+  emlrtAddField(*info, emlrt_marshallOut("closestPoint"), "name", 43);
+  emlrtAddField(*info, emlrt_marshallOut("double"), "dominantType", 43);
   emlrtAddField(*info, emlrt_marshallOut(
-    "[IXMB]$matlabroot$/toolbox/matlab/lang/disp.m"), "resolved", 43);
-  emlrtAddField(*info, b_emlrt_marshallOut(MAX_uint32_T), "fileTimeLo", 43);
-  emlrtAddField(*info, b_emlrt_marshallOut(MAX_uint32_T), "fileTimeHi", 43);
-  emlrtAddField(*info, b_emlrt_marshallOut(MAX_uint32_T), "mFileTimeLo", 43);
-  emlrtAddField(*info, b_emlrt_marshallOut(MAX_uint32_T), "mFileTimeHi", 43);
+    "[E]C:/Users/Brad/Documents/Work/CMU/SnakePlanning/testing/closestPoint.m"),
+                "resolved", 43);
+  emlrtAddField(*info, b_emlrt_marshallOut(1458313240U), "fileTimeLo", 43);
+  emlrtAddField(*info, b_emlrt_marshallOut(0U), "fileTimeHi", 43);
+  emlrtAddField(*info, b_emlrt_marshallOut(0U), "mFileTimeLo", 43);
+  emlrtAddField(*info, b_emlrt_marshallOut(0U), "mFileTimeHi", 43);
   emlrtAssign(&rhs43, emlrtCreateCellMatrix(0, 1));
   emlrtAssign(&lhs43, emlrtCreateCellMatrix(0, 1));
   emlrtAddField(*info, emlrtAliasP(rhs43), "rhs", 43);
   emlrtAddField(*info, emlrtAliasP(lhs43), "lhs", 43);
+  emlrtAddField(*info, emlrt_marshallOut(
+    "[E]C:/Users/Brad/Documents/Work/CMU/SnakePlanning/testing/closestPointOnWorld.m"),
+                "context", 44);
+  emlrtAddField(*info, emlrt_marshallOut("eml_mtimes_helper"), "name", 44);
+  emlrtAddField(*info, emlrt_marshallOut(""), "dominantType", 44);
+  emlrtAddField(*info, emlrt_marshallOut(
+    "[ILXE]$matlabroot$/toolbox/eml/lib/matlab/ops/eml_mtimes_helper.m"),
+                "resolved", 44);
+  emlrtAddField(*info, b_emlrt_marshallOut(1383898894U), "fileTimeLo", 44);
+  emlrtAddField(*info, b_emlrt_marshallOut(0U), "fileTimeHi", 44);
+  emlrtAddField(*info, b_emlrt_marshallOut(0U), "mFileTimeLo", 44);
+  emlrtAddField(*info, b_emlrt_marshallOut(0U), "mFileTimeHi", 44);
+  emlrtAssign(&rhs44, emlrtCreateCellMatrix(0, 1));
+  emlrtAssign(&lhs44, emlrtCreateCellMatrix(0, 1));
+  emlrtAddField(*info, emlrtAliasP(rhs44), "rhs", 44);
+  emlrtAddField(*info, emlrtAliasP(lhs44), "lhs", 44);
   emlrtDestroyArray(&rhs0);
   emlrtDestroyArray(&lhs0);
   emlrtDestroyArray(&rhs1);
@@ -904,6 +923,8 @@ static void info_helper(const mxArray **info)
   emlrtDestroyArray(&lhs42);
   emlrtDestroyArray(&rhs43);
   emlrtDestroyArray(&lhs43);
+  emlrtDestroyArray(&rhs44);
+  emlrtDestroyArray(&lhs44);
 }
 
 static const mxArray *emlrt_marshallOut(const char * u)
@@ -952,7 +973,7 @@ mxArray *emlrtMexFcnProperties()
   mxSetFieldByNumber(xEntryPoints, 0, 2, mxCreateDoubleScalar(1));
   mxSetFieldByNumber(xEntryPoints, 0, 3, xInputs);
   xInputs = mxCreateLogicalMatrix(1, 2);
-  mxSetFieldByNumber(xEntryPoints, 1, 0, mxCreateString("simpleProd"));
+  mxSetFieldByNumber(xEntryPoints, 1, 0, mxCreateString("closestPointOnWorld"));
   mxSetFieldByNumber(xEntryPoints, 1, 1, mxCreateDoubleScalar(2));
   mxSetFieldByNumber(xEntryPoints, 1, 2, mxCreateDoubleScalar(1));
   mxSetFieldByNumber(xEntryPoints, 1, 3, xInputs);

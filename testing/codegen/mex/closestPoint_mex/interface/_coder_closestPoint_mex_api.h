@@ -21,9 +21,10 @@
 #include "closestPoint_mex_types.h"
 
 /* Function Declarations */
+extern void closestPointOnWorld_api(const mxArray * const prhs[2], const mxArray
+  *plhs[1]);
 extern void closestPoint_api(const mxArray * const prhs[4], const mxArray *plhs
   [1]);
-extern void simpleProd_api(const mxArray * const prhs[2], const mxArray *plhs[1]);
 
 #endif
 

@@ -1,5 +1,5 @@
 <deployment-project plugin="plugin.coder" plugin-version="R2015a">
-  <configuration build-checksum="1254213084" file="C:\Users\Brad\Documents\Work\CMU\SnakePlanning\testing\FirstMex.prj" location="C:\Users\Brad\Documents\Work\CMU\SnakePlanning\testing" name="FirstMex" target="target.unifiedcoder" target-name="MATLAB Coder">
+  <configuration build-checksum="911239895" file="C:\Users\Brad\Documents\Work\CMU\SnakePlanning\testing\FirstMex.prj" location="C:\Users\Brad\Documents\Work\CMU\SnakePlanning\testing" name="FirstMex" target="target.unifiedcoder" target-name="MATLAB Coder">
     <profile key="profile.mex">
       <param.BuiltInstrumentedMex>false</param.BuiltInstrumentedMex>
       <param.RanInstrumentedMex>false</param.RanInstrumentedMex>
@@ -28,7 +28,7 @@
       <param.DefaultTestFile />
       <param.MergeInstrumentationResults>false</param.MergeInstrumentationResults>
       <param.VerificationMode>option.VerificationMode.None</param.VerificationMode>
-      <param.VerificationStatus>option.VerificationStatus.Inactive</param.VerificationStatus>
+      <param.VerificationStatus />
       <param.CustomSourceCode />
       <param.CustomHeaderCode />
       <param.CustomInitializer />
@@ -694,14 +694,15 @@
       </unset>
     </profile>
     <param.objective>option.objective.c</param.objective>
-    <param.WorkflowStep>workflowSummary</param.WorkflowStep>
+    <param.WorkflowStep>generateCode</param.WorkflowStep>
     <param.TestSnippets>
+      <item>testClosestPoint</item>
       <item>closestPoint([0;0;0], [1;-1;0], [1;1;-1], [1;1;1])</item>
       <item>simpleProd(1,2)</item>
     </param.TestSnippets>
     <param.DefaultImportExportVariable>config</param.DefaultImportExportVariable>
     <param.UseGlobals>option.UseGlobals.No</param.UseGlobals>
-    <param.outputfile>${PROJECT_ROOT}\codegen\lib\closestPoint\closestPoint.lib</param.outputfile>
+    <param.outputfile>${PROJECT_ROOT}\codegen\lib\closestPointOnWorld\closestPointOnWorld.lib</param.outputfile>
     <param.version>R2012a</param.version>
     <param.HasECoderFeatures>false</param.HasECoderFeatures>
     <param.mex.mainhtml />
@@ -713,17 +714,17 @@
     <param.AutoInferVariableSizeThreshold>1024</param.AutoInferVariableSizeThreshold>
     <param.AutoInferUnboundedSizeThreshold>2048</param.AutoInferUnboundedSizeThreshold>
     <param.EnableFixedPointStep>false</param.EnableFixedPointStep>
-    <param.AnnotationChecksum>3567711416</param.AnnotationChecksum>
+    <param.AnnotationChecksum>2391312212</param.AnnotationChecksum>
     <var.LegacyTarget />
     <var.MirrorOnOpen>false</var.MirrorOnOpen>
     <param.FixedPointEnabled>false</param.FixedPointEnabled>
     <var.redirectedInputTypeData />
     <var.DismissScreener>true</var.DismissScreener>
     <param.unifiedParamStorage />
-    <param.mex.outputfile>closestPoint_mex</param.mex.outputfile>
-    <param.grt.outputfile>closestPoint</param.grt.outputfile>
+    <param.mex.outputfile>closestPointOnWorld_mex</param.mex.outputfile>
+    <param.grt.outputfile>closestPointOnWorld</param.grt.outputfile>
     <param.artifact>option.target.artifact.lib</param.artifact>
-    <param.outputfile>${PROJECT_ROOT}\codegen\lib\closestPoint\closestPoint.lib</param.outputfile>
+    <param.outputfile>${PROJECT_ROOT}\codegen\lib\closestPointOnWorld\closestPointOnWorld.lib</param.outputfile>
     <param.EnableAutoExtrinsicCalls>true</param.EnableAutoExtrinsicCalls>
     <param.UsePreconditions>false</param.UsePreconditions>
     <param.FeatureFlags />
@@ -815,8 +816,8 @@
       <param.FixedPointTypeProposalMode />
     </unset>
     <fileset.entrypoints>
-      <file custom-data-expanded="false" value="${PROJECT_ROOT}\closestPoint.m">
-        <Inputs fileName="closestPoint.m" functionName="closestPoint">
+      <file custom-data-expanded="false" value="${PROJECT_ROOT}\closestPointOnWorld.m">
+        <Inputs fileName="closestPointOnWorld.m" functionName="closestPointOnWorld">
           <Input Name="p_test">
             <Class>double</Class>
             <Size>3 x 1</Size>
@@ -825,36 +826,39 @@
             <UserDefined>false</UserDefined>
             <Complex>false</Complex>
           </Input>
-          <Input Name="p1">
-            <Class>double</Class>
-            <Size>3 x 1</Size>
+          <Input Name="world">
+            <Class>struct</Class>
+            <Size>1 x 1</Size>
             <Value />
             <InitialValue />
             <UserDefined>false</UserDefined>
-            <Complex>false</Complex>
-          </Input>
-          <Input Name="p2">
-            <Class>double</Class>
-            <Size>3 x 1</Size>
-            <Value />
-            <InitialValue />
-            <UserDefined>false</UserDefined>
-            <Complex>false</Complex>
-          </Input>
-          <Input Name="p3">
-            <Class>double</Class>
-            <Size>3 x 1</Size>
-            <Value />
-            <InitialValue />
-            <UserDefined>false</UserDefined>
-            <Complex>false</Complex>
+            <TypeName />
+            <Extern>false</Extern>
+            <HeaderFile />
+            <Alignment>0</Alignment>
+            <Field Name="faces">
+              <Class>double</Class>
+              <Size>:inf x 3</Size>
+              <Value />
+              <InitialValue />
+              <UserDefined>true</UserDefined>
+              <Complex>false</Complex>
+            </Field>
+            <Field Name="vertices">
+              <Class>double</Class>
+              <Size>:inf x 3</Size>
+              <Value />
+              <InitialValue />
+              <UserDefined>true</UserDefined>
+              <Complex>false</Complex>
+            </Field>
           </Input>
         </Inputs>
       </file>
     </fileset.entrypoints>
     <fileset.testbench />
     <build-deliverables>
-      <file location="${PROJECT_ROOT}\codegen\lib\closestPoint" name="closestPoint.lib" optional="false">C:\Users\Brad\Documents\Work\CMU\SnakePlanning\testing\codegen\lib\closestPoint\closestPoint.lib</file>
+      <file location="${PROJECT_ROOT}\codegen\lib\closestPointOnWorld" name="closestPointOnWorld.lib" optional="false">C:\Users\Brad\Documents\Work\CMU\SnakePlanning\testing\codegen\lib\closestPointOnWorld\closestPointOnWorld.lib</file>
     </build-deliverables>
     <workflow />
     <matlab>

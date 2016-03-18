@@ -6,7 +6,10 @@ libmwmathutil.lib
 /export:mexFunction
 /export:emlrtMexFcnProperties
 /export:closestPoint
-/export:simpleProd
+/export:closestPointOnWorld
+/export:emxEnsureCapacity
+/export:emxFreeStruct_struct0_T
+/export:emxInitStruct_struct0_T
 /export:closestPoint_mex_initialize
 /export:closestPoint_mex_terminate
 /export:closestPoint_mex_atexit

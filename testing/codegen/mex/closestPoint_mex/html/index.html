@@ -44,7 +44,7 @@ var functionInfoTable = {
  lines1: [1, 1, 101],
  watch1: "closestPoint1_watch.html",
  title1: "Function: <span class='functionname'><a title='C:&nbsp;\\Users\\Brad\\Documents\\Work\\CMU\\SnakePlanning\\testing\\closestPoint.m' class='functionlink' href=\"matlab: open('C:\\Users\\Brad\\Documents\\Work\\CMU\\SnakePlanning\\testing\\closestPoint.m')\">closestPoint</a></span>",
- tcall1: [  ],
+ tcall1: [ [ "From closestPointOnWorld line 13", "67#F1N2:B52" ] ],
  scall1: [ [ "From line 36 to closestPoint > bound", "64#srcline101" ], [ "From line 40 to closestPoint > bound", "64#srcline101" ], [ "From line 46 to closestPoint > bound", "64#srcline101" ], [ "From line 50 to closestPoint > bound", "64#srcline101" ], [ "From line 66 to closestPoint > bound", "64#srcline101" ], [ "From line 70 to closestPoint > bound", "64#srcline101" ], [ "From line 82 to closestPoint > bound", "64#srcline101" ], [ "From line 86 to closestPoint > bound", "64#srcline101" ], [ "From line 93 to closestPoint > bound", "64#srcline101" ] ],
  MATLABcode64: "bound64_mcode.html",
  fpath64: "C:/Users/Brad/Documents/Work/CMU/SnakePlanning/testing/closestPoint.m",
@@ -53,13 +53,13 @@ var functionInfoTable = {
  title64: "Function: <span class='functionname'><a title='C:&nbsp;\\Users\\Brad\\Documents\\Work\\CMU\\SnakePlanning\\testing\\closestPoint.m' class='functionlink' href=\"matlab: open('C:\\Users\\Brad\\Documents\\Work\\CMU\\SnakePlanning\\testing\\closestPoint.m')\">closestPoint &gt; bound</a></span>",
  tcall64: [ [ "From closestPoint line 36", "1#F64N3:B131" ], [ "From closestPoint line 40", "1#F64N3:B151" ], [ "From closestPoint line 46", "1#F64N3:B167" ], [ "From closestPoint line 50", "1#F64N3:B183" ], [ "From closestPoint line 66", "1#F64N3:B258" ], [ "From closestPoint line 70", "1#F64N3:B279" ], [ "From closestPoint line 82", "1#F64N3:B329" ], [ "From closestPoint line 86", "1#F64N3:B350" ], [ "From closestPoint line 93", "1#F64N3:B382" ] ],
  scall64: [  ],
- MATLABcode67: "simpleProd67_mcode.html",
- fpath67: "C:/Users/Brad/Documents/Work/CMU/SnakePlanning/testing/simpleProd.m",
- lines67: [1, 1, 6],
- watch67: "simpleProd67_watch.html",
- title67: "Function: <span class='functionname'><a title='C:&nbsp;\\Users\\Brad\\Documents\\Work\\CMU\\SnakePlanning\\testing\\simpleProd.m' class='functionlink' href=\"matlab: open('C:\\Users\\Brad\\Documents\\Work\\CMU\\SnakePlanning\\testing\\simpleProd.m')\">simpleProd</a></span>",
+ MATLABcode67: "closestPointOnWorld67_mcode.html",
+ fpath67: "C:/Users/Brad/Documents/Work/CMU/SnakePlanning/testing/closestPointOnWorld.m",
+ lines67: [1, 1, 26],
+ watch67: "closestPointOnWorld67_watch.html",
+ title67: "Function: <span class='functionname'><a title='C:&nbsp;\\Users\\Brad\\Documents\\Work\\CMU\\SnakePlanning\\testing\\closestPointOnWorld.m' class='functionlink' href=\"matlab: open('C:\\Users\\Brad\\Documents\\Work\\CMU\\SnakePlanning\\testing\\closestPointOnWorld.m')\">closestPointOnWorld</a></span>",
  tcall67: [  ],
- scall67: [  ],
+ scall67: [ [ "From line 13 to closestPoint", "1#srcline1" ] ],
  rootFcnID: "1",
  firstPage: "1",
  htmlRoot: "C:/Users/Brad/Documents/Work/CMU/SnakePlanning/testing/codegen/mex/closestPoint_mex/html/"
@@ -99,7 +99,7 @@ var scriptInfoTable = {
  fpath32: "C:/Program Files/MATLAB/R2015a/toolbox/eml/lib/matlab/eml/eml_min_or_max.m",
  fpath33: "C:/Program Files/MATLAB/R2015a/toolbox/eml/lib/matlab/datafun/max.m",
  fpath34: "C:/Program Files/MATLAB/R2015a/toolbox/eml/lib/matlab/datafun/min.m",
- fpath35: "C:/Users/Brad/Documents/Work/CMU/SnakePlanning/testing/simpleProd.m"
+ fpath35: "C:/Users/Brad/Documents/Work/CMU/SnakePlanning/testing/closestPointOnWorld.m"
 };
 </script>
 </head>
@@ -141,7 +141,8 @@ var scriptInfoTable = {
 <div class="size">
 <select class="myfunc-filter size">
 <option value="1 64 67">1 x 1</option>
-<option value="1">3 x 1</option>
+<option value="1 67">3 x 1</option>
+<option value="67"><b>:</b>? x 3</option>
 </select>
 </div>
 
@@ -155,6 +156,7 @@ var scriptInfoTable = {
 <div class="class">
 <select class="myfunc-filter class">
 <option value="1 64 67">double</option>
+<option value="67">struct</option>
 </select>
 </div>
 <!-- End Class Filter -->
@@ -175,7 +177,7 @@ var scriptInfoTable = {
 <!-- Begin Function Tree Roots -->
 <li class="leaf  passed"><a href="#" class="fcn " id="F1N2:F1">closestPoint</a></li>
 <li class="leaf  passed"><a href="#" class="fcn " id="F64N3:F2">closestPoint &gt; bound</a></li>
-<li class="leaf  passed"><a href="#" class="fcn " id="F67N5:F3">simpleProd</a></li>
+<li class="leaf  passed"><a href="#" class="fcn " id="F67N4:F3">closestPointOnWorld</a></li>
 <!-- End Function Tree Roots -->
 </ol>
 <!-- Function Tree Nodes -->
@@ -197,7 +199,10 @@ var scriptInfoTable = {
 </ul>
 </li>
 <!-- Call Tree Root -->
-<li class="leaf passed"><a href="#" class="fcn " id="F67N5:L4">simpleProd</a>
+<li class="node collapsed passed"><a href="#" class="fcn " id="F67N4:L4">closestPointOnWorld</a>
+<ul>
+<li class="node collapsed passed"><a href="#" class="fcn " id="F1N2:L5">closestPoint</a></li>
+</ul>
 </li>
 </ol>
 <!-- Call Tree Nodes -->
@@ -217,7 +222,10 @@ var scriptInfoTable = {
 </ol>
 <ol class="callstacknode" id="callstacknode67">
 
-<li class="leaf passed"><a href="#" class="fcn " id="F67N5:l4">simpleProd</a>
+<li class="node collapsed passed"><a href="#" class="fcn " id="F67N4:l4">closestPointOnWorld</a>
+<ul>
+<li class="node collapsed passed"><a href="#" class="fcn " id="F1N2:l5">closestPoint</a></li>
+</ul>
 </li>
 </ol>
 
@@ -236,8 +244,12 @@ var scriptInfoTable = {
 <tbody>
 <tr class="ccode" id="closestPoint_c.html"><td class="ccode"><a href="#">closestPoint.c</a></td></tr>
 <tr class="ccode" id="closestPoint_h.html"><td class="ccode"><a href="#">closestPoint.h</a></td></tr>
+<tr class="ccode" id="closestPointOnWorld_c.html"><td class="ccode"><a href="#">closestPointOnWorld.c</a></td></tr>
+<tr class="ccode" id="closestPointOnWorld_h.html"><td class="ccode"><a href="#">closestPointOnWorld.h</a></td></tr>
 <tr class="ccode" id="closestPoint_mex_data_c.html"><td class="ccode"><a href="#">closestPoint_mex_data.c</a></td></tr>
 <tr class="ccode" id="closestPoint_mex_data_h.html"><td class="ccode"><a href="#">closestPoint_mex_data.h</a></td></tr>
+<tr class="ccode" id="closestPoint_mex_emxutil_c.html"><td class="ccode"><a href="#">closestPoint_mex_emxutil.c</a></td></tr>
+<tr class="ccode" id="closestPoint_mex_emxutil_h.html"><td class="ccode"><a href="#">closestPoint_mex_emxutil.h</a></td></tr>
 <tr class="ccode" id="closestPoint_mex_initialize_c.html"><td class="ccode"><a href="#">closestPoint_mex_initialize.c</a></td></tr>
 <tr class="ccode" id="closestPoint_mex_initialize_h.html"><td class="ccode"><a href="#">closestPoint_mex_initialize.h</a></td></tr>
 <tr class="ccode" id="closestPoint_mex_terminate_c.html"><td class="ccode"><a href="#">closestPoint_mex_terminate.c</a></td></tr>
@@ -245,8 +257,6 @@ var scriptInfoTable = {
 <tr class="ccode" id="closestPoint_mex_types_h.html"><td class="ccode"><a href="#">closestPoint_mex_types.h</a></td></tr>
 <tr class="ccode" id="rt_nonfinite_h.html"><td class="ccode"><a href="#">rt_nonfinite.h</a></td></tr>
 <tr class="ccode" id="rtwtypes_h.html"><td class="ccode"><a href="#">rtwtypes.h</a></td></tr>
-<tr class="ccode" id="simpleProd_c.html"><td class="ccode"><a href="#">simpleProd.c</a></td></tr>
-<tr class="ccode" id="simpleProd_h.html"><td class="ccode"><a href="#">simpleProd.h</a></td></tr>
 </tbody>
 </table>
 </div>
@@ -291,8 +301,11 @@ var scriptInfoTable = {
 <div class="tooltip" id="TT15"><table class="tooltip"><tr><th>Size</th><td>1 x 3</td></tr><tr><th>Class</th><td>char</td></tr></table></div>
 <div class="tooltip" id="TT16"><table class="tooltip"><tr><th>Size</th><td>1 x 1</td></tr><tr><th>Class</th><td>function_handle</td></tr></table></div>
 <div class="tooltip" id="TT17"><table class="tooltip"><tr><th>Size</th><td>1 x 1</td></tr><tr><th>Class</th><td>function_handle</td></tr></table></div>
-<div class="tooltip" id="TT18"><table class="tooltip"><tr><th>Size</th><td>1 x 5</td></tr><tr><th>Class</th><td>char</td></tr></table></div>
-<div class="tooltip" id="TT19"><table class="tooltip"><tr><th>Size</th><td>1 x 6</td></tr><tr><th>Class</th><td>char</td></tr></table></div>
+<div class="tooltip" id="TT18"><table class="tooltip"><tr><th>Size</th><td>1 x 1</td></tr><tr><th>Class</th><td>struct</td></tr></table></div>
+<div class="tooltip" id="TT19"><table class="tooltip"><tr><th>Size</th><td><b>:</b>? x 3</td></tr><tr><th>Class</th><td>double</td></tr><tr><th>Complex</th><td>No</td></tr></table></div>
+<div class="tooltip" id="TT20"><table class="tooltip"><tr><th>Size</th><td>1 x 5</td></tr><tr><th>Class</th><td>char</td></tr></table></div>
+<div class="tooltip" id="TT21"><table class="tooltip"><tr><th>Size</th><td>1 x 6</td></tr><tr><th>Class</th><td>char</td></tr></table></div>
+<div class="tooltip" id="TT22"><table class="tooltip"><tr><th>Size</th><td>3 x 1</td></tr><tr><th>Class</th><td>double</td></tr><tr><th>Complex</th><td>No</td></tr></table></div>
 </div>
 </div>
 <!-- End Tooltips -->
@@ -309,7 +322,7 @@ var scriptInfoTable = {
 <!-- Compilation Summary -->
 <div id="summarybody" class="ui-tabs-panel">
 <table cellpadding="1" cellspacing="4">
-<tr><td>C source code generated on:</td><td>18-Mar-2016 11:18:20</td></tr>
+<tr><td>C source code generated on:</td><td>18-Mar-2016 11:37:58</td></tr>
 <tr><td>Coding target:</td><td>C MEX Function</td></tr>
 <tr><td>Number of errors:</td><td><a href="javascript:selectMessagesTab();">0</a></td></tr>
 <tr><td>Number of warnings:</td><td><a href="javascript:selectMessagesTab();">0</a></td></tr>
@@ -359,21 +372,23 @@ Loading Variables table ...
 <span class="td-line-number">    6   </span><span class="td-line-normal">closestPoint_mex_terminate.c</span>
 <span class="td-line-number">    7   </span><span class="td-line-normal">cl  /c /Zp8 /GR /W3 /EHs /nologo /MD /D_CRT_SECURE_NO_DEPRECATE /D_SCL_SECURE_NO_DEPRECATE /D_SECURE_SCL=0   /DMATLAB_MEX_FILE  /DMATLAB_MEX_FILE   -DMX_COMPAT_32 /O2 /Oy- /DNDEBUG  /fp:strict  /I "C:\PROGRA~1\MATLAB\R2015a\simulink\include" /I "C:\PROGRA~1\MATLAB\R2015a\toolbox\shared\simtargets" /I "C:\Users\Brad\DOCUME~1\Work\CMU\SNAKEP~1\testing" /I "C:\Users\Brad\DOCUME~1\Work\CMU\SNAKEP~1\testing\codegen\mex\closestPoint_mex" /I "C:\Users\Brad\DOCUME~1\Work\CMU\SNAKEP~1\testing\codegen\mex\closestPoint_mex\interface" /I "C:\PROGRA~1\MATLAB\R2015a\extern\include" /I "." "closestPoint.c"</span>
 <span class="td-line-number">    8   </span><span class="td-line-normal">closestPoint.c</span>
-<span class="td-line-number">    9   </span><span class="td-line-normal">cl  /c /Zp8 /GR /W3 /EHs /nologo /MD /D_CRT_SECURE_NO_DEPRECATE /D_SCL_SECURE_NO_DEPRECATE /D_SECURE_SCL=0   /DMATLAB_MEX_FILE  /DMATLAB_MEX_FILE   -DMX_COMPAT_32 /O2 /Oy- /DNDEBUG  /fp:strict  /I "C:\PROGRA~1\MATLAB\R2015a\simulink\include" /I "C:\PROGRA~1\MATLAB\R2015a\toolbox\shared\simtargets" /I "C:\Users\Brad\DOCUME~1\Work\CMU\SNAKEP~1\testing" /I "C:\Users\Brad\DOCUME~1\Work\CMU\SNAKEP~1\testing\codegen\mex\closestPoint_mex" /I "C:\Users\Brad\DOCUME~1\Work\CMU\SNAKEP~1\testing\codegen\mex\closestPoint_mex\interface" /I "C:\PROGRA~1\MATLAB\R2015a\extern\include" /I "." "simpleProd.c"</span>
-<span class="td-line-number">   10   </span><span class="td-line-normal">simpleProd.c</span>
+<span class="td-line-number">    9   </span><span class="td-line-normal">cl  /c /Zp8 /GR /W3 /EHs /nologo /MD /D_CRT_SECURE_NO_DEPRECATE /D_SCL_SECURE_NO_DEPRECATE /D_SECURE_SCL=0   /DMATLAB_MEX_FILE  /DMATLAB_MEX_FILE   -DMX_COMPAT_32 /O2 /Oy- /DNDEBUG  /fp:strict  /I "C:\PROGRA~1\MATLAB\R2015a\simulink\include" /I "C:\PROGRA~1\MATLAB\R2015a\toolbox\shared\simtargets" /I "C:\Users\Brad\DOCUME~1\Work\CMU\SNAKEP~1\testing" /I "C:\Users\Brad\DOCUME~1\Work\CMU\SNAKEP~1\testing\codegen\mex\closestPoint_mex" /I "C:\Users\Brad\DOCUME~1\Work\CMU\SNAKEP~1\testing\codegen\mex\closestPoint_mex\interface" /I "C:\PROGRA~1\MATLAB\R2015a\extern\include" /I "." "closestPointOnWorld.c"</span>
+<span class="td-line-number">   10   </span><span class="td-line-normal">closestPointOnWorld.c</span>
 <span class="td-line-number">   11   </span><span class="td-line-normal">cl  /c /Zp8 /GR /W3 /EHs /nologo /MD /D_CRT_SECURE_NO_DEPRECATE /D_SCL_SECURE_NO_DEPRECATE /D_SECURE_SCL=0   /DMATLAB_MEX_FILE  /DMATLAB_MEX_FILE   -DMX_COMPAT_32 /O2 /Oy- /DNDEBUG  /fp:strict  /I "C:\PROGRA~1\MATLAB\R2015a\simulink\include" /I "C:\PROGRA~1\MATLAB\R2015a\toolbox\shared\simtargets" /I "C:\Users\Brad\DOCUME~1\Work\CMU\SNAKEP~1\testing" /I "C:\Users\Brad\DOCUME~1\Work\CMU\SNAKEP~1\testing\codegen\mex\closestPoint_mex" /I "C:\Users\Brad\DOCUME~1\Work\CMU\SNAKEP~1\testing\codegen\mex\closestPoint_mex\interface" /I "C:\PROGRA~1\MATLAB\R2015a\extern\include" /I "." "interface/_coder_closestPoint_mex_api.c"</span>
 <span class="td-line-number">   12   </span><span class="td-line-normal">_coder_closestPoint_mex_api.c</span>
 <span class="td-line-number">   13   </span><span class="td-line-normal">cl  /c /Zp8 /GR /W3 /EHs /nologo /MD /D_CRT_SECURE_NO_DEPRECATE /D_SCL_SECURE_NO_DEPRECATE /D_SECURE_SCL=0   /DMATLAB_MEX_FILE  /DMATLAB_MEX_FILE   -DMX_COMPAT_32 /O2 /Oy- /DNDEBUG  /fp:strict  /I "C:\PROGRA~1\MATLAB\R2015a\simulink\include" /I "C:\PROGRA~1\MATLAB\R2015a\toolbox\shared\simtargets" /I "C:\Users\Brad\DOCUME~1\Work\CMU\SNAKEP~1\testing" /I "C:\Users\Brad\DOCUME~1\Work\CMU\SNAKEP~1\testing\codegen\mex\closestPoint_mex" /I "C:\Users\Brad\DOCUME~1\Work\CMU\SNAKEP~1\testing\codegen\mex\closestPoint_mex\interface" /I "C:\PROGRA~1\MATLAB\R2015a\extern\include" /I "." "interface/_coder_closestPoint_mex_mex.c"</span>
 <span class="td-line-number">   14   </span><span class="td-line-normal">_coder_closestPoint_mex_mex.c</span>
-<span class="td-line-number">   15   </span><span class="td-line-normal">cl  /c /Zp8 /GR /W3 /EHs /nologo /MD /D_CRT_SECURE_NO_DEPRECATE /D_SCL_SECURE_NO_DEPRECATE /D_SECURE_SCL=0   /DMATLAB_MEX_FILE  /DMATLAB_MEX_FILE   -DMX_COMPAT_32 /O2 /Oy- /DNDEBUG  /fp:strict  /I "C:\PROGRA~1\MATLAB\R2015a\simulink\include" /I "C:\PROGRA~1\MATLAB\R2015a\toolbox\shared\simtargets" /I "C:\Users\Brad\DOCUME~1\Work\CMU\SNAKEP~1\testing" /I "C:\Users\Brad\DOCUME~1\Work\CMU\SNAKEP~1\testing\codegen\mex\closestPoint_mex" /I "C:\Users\Brad\DOCUME~1\Work\CMU\SNAKEP~1\testing\codegen\mex\closestPoint_mex\interface" /I "C:\PROGRA~1\MATLAB\R2015a\extern\include" /I "." "interface/_coder_closestPoint_mex_info.c"</span>
-<span class="td-line-number">   16   </span><span class="td-line-normal">_coder_closestPoint_mex_info.c</span>
-<span class="td-line-number">   17   </span><span class="td-line-normal">link  /nologo /manifest /DLL /LIBPATH:"C:\Program Files\MATLAB\R2015a\extern\lib\win64\microsoft" libmx.lib libmex.lib libmat.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /EXPORT:mexFunction /NODEFAULTLIB:LIBCMT   /OUT:closestPoint_mex.mexw64  closestPoint_mex_data.obj closestPoint_mex_initialize.obj closestPoint_mex_terminate.obj closestPoint.obj simpleProd.obj _coder_closestPoint_mex_api.obj _coder_closestPoint_mex_mex.obj _coder_closestPoint_mex_info.obj   @closestPoint_mex_mex.arf</span>
-<span class="td-line-number">   18   </span><span class="td-line-normal">   Creating library closestPoint_mex.lib and object closestPoint_mex.exp</span>
-<span class="td-line-number">   19   </span><span class="td-line-normal">Build completed using compiler msvc120</span>
-<span class="td-line-number">   20   </span><span class="td-line-normal">mt -outputresource:"closestPoint_mex.mexw64;2" -manifest "closestPoint_mex.mexw64.manifest"</span>
-<span class="td-line-number">   21   </span><span class="td-line-normal">Microsoft (R) Manifest Tool version 6.3.9600.17298</span>
-<span class="td-line-number">   22   </span><span class="td-line-normal">Copyright (c) Microsoft Corporation 2012. </span>
-<span class="td-line-number">   23   </span><span class="td-line-normal">All rights reserved.</span>
+<span class="td-line-number">   15   </span><span class="td-line-normal">cl  /c /Zp8 /GR /W3 /EHs /nologo /MD /D_CRT_SECURE_NO_DEPRECATE /D_SCL_SECURE_NO_DEPRECATE /D_SECURE_SCL=0   /DMATLAB_MEX_FILE  /DMATLAB_MEX_FILE   -DMX_COMPAT_32 /O2 /Oy- /DNDEBUG  /fp:strict  /I "C:\PROGRA~1\MATLAB\R2015a\simulink\include" /I "C:\PROGRA~1\MATLAB\R2015a\toolbox\shared\simtargets" /I "C:\Users\Brad\DOCUME~1\Work\CMU\SNAKEP~1\testing" /I "C:\Users\Brad\DOCUME~1\Work\CMU\SNAKEP~1\testing\codegen\mex\closestPoint_mex" /I "C:\Users\Brad\DOCUME~1\Work\CMU\SNAKEP~1\testing\codegen\mex\closestPoint_mex\interface" /I "C:\PROGRA~1\MATLAB\R2015a\extern\include" /I "." "closestPoint_mex_emxutil.c"</span>
+<span class="td-line-number">   16   </span><span class="td-line-normal">closestPoint_mex_emxutil.c</span>
+<span class="td-line-number">   17   </span><span class="td-line-normal">cl  /c /Zp8 /GR /W3 /EHs /nologo /MD /D_CRT_SECURE_NO_DEPRECATE /D_SCL_SECURE_NO_DEPRECATE /D_SECURE_SCL=0   /DMATLAB_MEX_FILE  /DMATLAB_MEX_FILE   -DMX_COMPAT_32 /O2 /Oy- /DNDEBUG  /fp:strict  /I "C:\PROGRA~1\MATLAB\R2015a\simulink\include" /I "C:\PROGRA~1\MATLAB\R2015a\toolbox\shared\simtargets" /I "C:\Users\Brad\DOCUME~1\Work\CMU\SNAKEP~1\testing" /I "C:\Users\Brad\DOCUME~1\Work\CMU\SNAKEP~1\testing\codegen\mex\closestPoint_mex" /I "C:\Users\Brad\DOCUME~1\Work\CMU\SNAKEP~1\testing\codegen\mex\closestPoint_mex\interface" /I "C:\PROGRA~1\MATLAB\R2015a\extern\include" /I "." "interface/_coder_closestPoint_mex_info.c"</span>
+<span class="td-line-number">   18   </span><span class="td-line-normal">_coder_closestPoint_mex_info.c</span>
+<span class="td-line-number">   19   </span><span class="td-line-normal">link  /nologo /manifest /DLL /LIBPATH:"C:\Program Files\MATLAB\R2015a\extern\lib\win64\microsoft" libmx.lib libmex.lib libmat.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /EXPORT:mexFunction /NODEFAULTLIB:LIBCMT   /OUT:closestPoint_mex.mexw64  closestPoint_mex_data.obj closestPoint_mex_initialize.obj closestPoint_mex_terminate.obj closestPoint.obj closestPointOnWorld.obj _coder_closestPoint_mex_api.obj _coder_closestPoint_mex_mex.obj closestPoint_mex_emxutil.obj _coder_closestPoint_mex_info.obj   @closestPoint_mex_mex.arf</span>
+<span class="td-line-number">   20   </span><span class="td-line-normal">   Creating library closestPoint_mex.lib and object closestPoint_mex.exp</span>
+<span class="td-line-number">   21   </span><span class="td-line-normal">Build completed using compiler msvc120</span>
+<span class="td-line-number">   22   </span><span class="td-line-normal">mt -outputresource:"closestPoint_mex.mexw64;2" -manifest "closestPoint_mex.mexw64.manifest"</span>
+<span class="td-line-number">   23   </span><span class="td-line-normal">Microsoft (R) Manifest Tool version 6.3.9600.17298</span>
+<span class="td-line-number">   24   </span><span class="td-line-normal">Copyright (c) Microsoft Corporation 2012. </span>
+<span class="td-line-number">   25   </span><span class="td-line-normal">All rights reserved.</span>
 </pre>
 </td></tr></table>
 

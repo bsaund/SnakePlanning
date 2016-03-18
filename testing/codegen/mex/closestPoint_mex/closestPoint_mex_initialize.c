@@ -8,7 +8,7 @@
 /* Include files */
 #include "rt_nonfinite.h"
 #include "closestPoint.h"
-#include "simpleProd.h"
+#include "closestPointOnWorld.h"
 #include "closestPoint_mex_initialize.h"
 #include "closestPoint_mex_data.h"
 

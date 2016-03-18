@@ -8,7 +8,7 @@
 /* Include files */
 #include "rt_nonfinite.h"
 #include "closestPoint.h"
-#include "simpleProd.h"
+#include "closestPointOnWorld.h"
 
 /* Function Definitions */
 void closestPoint(const real_T p_test[3], const real_T p1[3], const real_T p2[3],
