@@ -1,4 +1,5 @@
 function snakeInWorld()
+%A demo of the snake moving through the world
     close all
     worldName = 'block.stl';
     spring = 10000;
