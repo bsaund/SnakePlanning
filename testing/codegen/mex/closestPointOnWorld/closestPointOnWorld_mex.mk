@@ -1,6 +1,6 @@
-START_DIR = C:\Users\Brad\DOCUME~1\Work\CMU\SNAKEP~1\testing
+START_DIR = /home/bsaund/Documents/Work/snakeArmPlanning/testing
 
-MATLAB_ROOT = C:\PROGRA~1\MATLAB\R2015a
+MATLAB_ROOT = /usr/local/MATLAB/R2015a
 MAKEFILE = closestPointOnWorld_mex.mk
 
 include closestPointOnWorld_mex.mki
@@ -18,7 +18,7 @@ SRC_FILES =  \
 	_coder_closestPointOnWorld_info.c
 
 MEX_FILE_NAME_WO_EXT = closestPointOnWorld_mex
-MEX_FILE_NAME = $(MEX_FILE_NAME_WO_EXT).mexw64
+MEX_FILE_NAME = $(MEX_FILE_NAME_WO_EXT).mexa64
 TARGET = $(MEX_FILE_NAME)
 
 SYS_LIBS = 
@@ -26,96 +26,119 @@ SYS_LIBS =
 
 #
 #====================================================================
-# gmake makefile fragment for building MEX functions using MSVC
-# Copyright 2007-2013 The MathWorks, Inc.
+# gmake makefile fragment for building MEX functions using Unix
+# Copyright 2007-2014 The MathWorks, Inc.
 #====================================================================
 #
-SHELL = cmd
-OBJEXT = obj
-CC = $(COMPILER)
-LD = $(LINKER)
+OBJEXT = o
 .SUFFIXES: .$(OBJEXT)
 
 OBJLISTC = $(SRC_FILES:.c=.$(OBJEXT))
-OBJLIST  = $(OBJLISTC:.cpp=.$(OBJEXT))
+OBJLISTCPP  = $(OBJLISTC:.cpp=.$(OBJEXT))
+OBJLIST  = $(OBJLISTCPP:.cu=.$(OBJEXT))
 
-ifneq (,$(findstring $(EMC_COMPILER),msvc80 msvc90 msvc100 msvc100free msvc110 msvc120 msvcsdk))
-  TARGETMT = $(TARGET).manifest
-  MEX = $(TARGETMT)
-  STRICTFP = /fp:strict
-else
-  MEX = $(TARGET)
-  STRICTFP = /Op
-endif
+target: $(TARGET)
 
-target: $(MEX)
-
-MATLAB_INCLUDES = /I "$(MATLAB_ROOT)\simulink\include"
-MATLAB_INCLUDES+= /I "$(MATLAB_ROOT)\toolbox\shared\simtargets"
-SYS_INCLUDE = $(MATLAB_INCLUDES)
+ML_INCLUDES = -I "$(MATLAB_ROOT)/simulink/include"
+ML_INCLUDES+= -I "$(MATLAB_ROOT)/toolbox/shared/simtargets"
+SYS_INCLUDE = $(ML_INCLUDES)
 
 # Additional includes
 
-SYS_INCLUDE += /I "$(START_DIR)"
-SYS_INCLUDE += /I "$(START_DIR)\codegen\mex\closestPointOnWorld"
-SYS_INCLUDE += /I "$(START_DIR)\codegen\mex\closestPointOnWorld\interface"
-SYS_INCLUDE += /I "$(MATLAB_ROOT)\extern\include"
-SYS_INCLUDE += /I "."
+SYS_INCLUDE += -I "$(START_DIR)"
+SYS_INCLUDE += -I "$(START_DIR)/codegen/mex/closestPointOnWorld"
+SYS_INCLUDE += -I "$(START_DIR)/codegen/mex/closestPointOnWorld/interface"
+SYS_INCLUDE += -I "$(MATLAB_ROOT)/extern/include"
+SYS_INCLUDE += -I "."
 
-DIRECTIVES = $(MEX_FILE_NAME_WO_EXT)_mex.arf
-COMP_FLAGS = $(COMPFLAGS) $(OMPFLAGS) -DMX_COMPAT_32
-LINK_FLAGS = $(filter-out /export:mexFunction, $(LINKFLAGS))
-LINK_FLAGS += /NODEFAULTLIB:LIBCMT
-ifeq ($(EMC_CONFIG),optim)
-  COMP_FLAGS += $(OPTIMFLAGS) $(STRICTFP)
-  LINK_FLAGS += $(LINKOPTIMFLAGS)
+EML_LIBS = -lemlrt -lcovrt -lut -lmwmathutil -lmwblas 
+SYS_LIBS += $(CLIBS) $(EML_LIBS)
+
+
+EXPORTFILE = $(MEX_FILE_NAME_WO_EXT)_mex.map
+ifeq ($(Arch),maci)
+  EXPORTOPT = -Wl,-exported_symbols_list,$(EXPORTFILE)
+  COMP_FLAGS = -c $(CFLAGS) -DMX_COMPAT_32
+  CXX_FLAGS = -c $(CXXFLAGS) -DMX_COMPAT_32
+  LINK_FLAGS = $(filter-out %mexFunction.map, $(LDFLAGS))
+else ifeq ($(Arch),maci64)
+  EXPORTOPT = -Wl,-exported_symbols_list,$(EXPORTFILE)
+  COMP_FLAGS = -c $(CFLAGS) -DMX_COMPAT_32
+  CXX_FLAGS = -c $(CXXFLAGS) -DMX_COMPAT_32
+  LINK_FLAGS = $(filter-out %mexFunction.map, $(LDFLAGS))
 else
-  COMP_FLAGS += $(DEBUGFLAGS)
-  LINK_FLAGS += $(LINKDEBUGFLAGS)
+  EXPORTOPT = -Wl,--version-script,$(EXPORTFILE)
+  COMP_FLAGS = -c $(CFLAGS) -DMX_COMPAT_32 $(OMPFLAGS)
+  CXX_FLAGS = -c $(CXXFLAGS) -DMX_COMPAT_32 $(OMPFLAGS)
+  LINK_FLAGS = $(filter-out %mexFunction.map, $(LDFLAGS)) 
 endif
 LINK_FLAGS += $(OMPLINKFLAGS)
-LINK_FLAGS += /OUT:$(TARGET)
+ifeq ($(Arch),maci)
+  LINK_FLAGS += -L$(MATLAB_ROOT)/sys/os/maci
+endif
+ifeq ($(EMC_CONFIG),optim)
+  ifeq ($(Arch),mac)
+    COMP_FLAGS += $(CDEBUGFLAGS)
+    CXX_FLAGS += $(CXXDEBUGFLAGS)
+  else
+    COMP_FLAGS += $(COPTIMFLAGS)
+    CXX_FLAGS += $(CXXOPTIMFLAGS)
+  endif
+  LINK_FLAGS += $(LDOPTIMFLAGS)
+else
+  COMP_FLAGS += $(CDEBUGFLAGS)
+  CXX_FLAGS += $(CXXDEBUGFLAGS)
+  LINK_FLAGS += $(LDDEBUGFLAGS)
+endif
+LINK_FLAGS += -o $(TARGET)
 LINK_FLAGS += 
 
-CFLAGS =  $(COMP_FLAGS) $(USER_INCLUDE) $(SYS_INCLUDE)
-CPPFLAGS =  $(CFLAGS)
+CCFLAGS =  $(COMP_FLAGS) $(USER_INCLUDE) $(SYS_INCLUDE)
+CPPFLAGS =   $(CXX_FLAGS) $(USER_INCLUDE) $(SYS_INCLUDE)
 
 %.$(OBJEXT) : %.c
-	$(CC) $(CFLAGS) "$<"
+	$(CC) $(CCFLAGS) "$<"
 
 %.$(OBJEXT) : %.cpp
-	$(CC) $(CPPFLAGS) "$<"
+	$(CXX) $(CPPFLAGS) "$<"
 
 # Additional sources
 
 %.$(OBJEXT) : $(START_DIR)/%.c
-	$(CC) $(CFLAGS) "$<"
+	$(CC) $(CCFLAGS) "$<"
 
-%.$(OBJEXT) : $(START_DIR)\codegen\mex\closestPointOnWorld/%.c
-	$(CC) $(CFLAGS) "$<"
+%.$(OBJEXT) : $(START_DIR)/codegen/mex/closestPointOnWorld/%.c
+	$(CC) $(CCFLAGS) "$<"
 
 %.$(OBJEXT) : interface/%.c
-	$(CC) $(CFLAGS) "$<"
+	$(CC) $(CCFLAGS) "$<"
+
+
+
+%.$(OBJEXT) : $(START_DIR)/%.cu
+	$(CC) $(CCFLAGS) "$<"
+
+%.$(OBJEXT) : $(START_DIR)/codegen/mex/closestPointOnWorld/%.cu
+	$(CC) $(CCFLAGS) "$<"
+
+%.$(OBJEXT) : interface/%.cu
+	$(CC) $(CCFLAGS) "$<"
 
 
 
 %.$(OBJEXT) : $(START_DIR)/%.cpp
-	$(CC) $(CPPFLAGS) "$<"
+	$(CXX) $(CPPFLAGS) "$<"
 
-%.$(OBJEXT) : $(START_DIR)\codegen\mex\closestPointOnWorld/%.cpp
-	$(CC) $(CPPFLAGS) "$<"
+%.$(OBJEXT) : $(START_DIR)/codegen/mex/closestPointOnWorld/%.cpp
+	$(CXX) $(CPPFLAGS) "$<"
 
 %.$(OBJEXT) : interface/%.cpp
-	$(CC) $(CPPFLAGS) "$<"
+	$(CXX) $(CPPFLAGS) "$<"
 
 
 
-$(TARGET): $(OBJLIST) $(MAKEFILE) $(DIRECTIVES)
-	$(LD) $(LINK_FLAGS) $(OBJLIST) $(USER_LIBS) $(SYS_LIBS) @$(DIRECTIVES)
-	@cmd /C "echo Build completed using compiler $(EMC_COMPILER)"
-
-$(TARGETMT): $(TARGET)
-	mt -outputresource:"$(TARGET);2" -manifest "$(TARGET).manifest"
+$(TARGET): $(OBJLIST) $(MAKEFILE)
+	$(LD) $(EXPORTOPT) $(OBJLIST) $(LINK_FLAGS) $(SYS_LIBS)
 
 #====================================================================
 

@@ -117,14 +117,14 @@ static void info_helper(const mxArray **info)
   const mxArray *rhs44 = NULL;
   const mxArray *lhs44 = NULL;
   emlrtAddField(*info, emlrt_marshallOut(
-    "[E]C:/Users/Brad/Documents/Work/CMU/SnakePlanning/testing/closestPointOnWorld.m"),
+    "[E]/home/bsaund/Documents/Work/snakeArmPlanning/testing/closestPointOnWorld.m"),
                 "context", 0);
   emlrtAddField(*info, emlrt_marshallOut("closestPoint"), "name", 0);
   emlrtAddField(*info, emlrt_marshallOut("double"), "dominantType", 0);
   emlrtAddField(*info, emlrt_marshallOut(
-    "[E]C:/Users/Brad/Documents/Work/CMU/SnakePlanning/testing/closestPoint.m"),
+    "[E]/home/bsaund/Documents/Work/snakeArmPlanning/testing/closestPoint.m"),
                 "resolved", 0);
-  emlrtAddField(*info, b_emlrt_marshallOut(1458313240U), "fileTimeLo", 0);
+  emlrtAddField(*info, b_emlrt_marshallOut(1458317627U), "fileTimeLo", 0);
   emlrtAddField(*info, b_emlrt_marshallOut(0U), "fileTimeHi", 0);
   emlrtAddField(*info, b_emlrt_marshallOut(0U), "mFileTimeLo", 0);
   emlrtAddField(*info, b_emlrt_marshallOut(0U), "mFileTimeHi", 0);
@@ -133,7 +133,7 @@ static void info_helper(const mxArray **info)
   emlrtAddField(*info, emlrtAliasP(rhs0), "rhs", 0);
   emlrtAddField(*info, emlrtAliasP(lhs0), "lhs", 0);
   emlrtAddField(*info, emlrt_marshallOut(
-    "[E]C:/Users/Brad/Documents/Work/CMU/SnakePlanning/testing/closestPoint.m"),
+    "[E]/home/bsaund/Documents/Work/snakeArmPlanning/testing/closestPoint.m"),
                 "context", 1);
   emlrtAddField(*info, emlrt_marshallOut("eml_mtimes_helper"), "name", 1);
   emlrtAddField(*info, emlrt_marshallOut(""), "dominantType", 1);
@@ -556,7 +556,7 @@ static void info_helper(const mxArray **info)
   emlrtAddField(*info, emlrtAliasP(rhs26), "rhs", 26);
   emlrtAddField(*info, emlrtAliasP(lhs26), "lhs", 26);
   emlrtAddField(*info, emlrt_marshallOut(
-    "[E]C:/Users/Brad/Documents/Work/CMU/SnakePlanning/testing/closestPoint.m"),
+    "[E]/home/bsaund/Documents/Work/snakeArmPlanning/testing/closestPoint.m"),
                 "context", 27);
   emlrtAddField(*info, emlrt_marshallOut("mrdivide"), "name", 27);
   emlrtAddField(*info, emlrt_marshallOut("double"), "dominantType", 27);
@@ -645,7 +645,7 @@ static void info_helper(const mxArray **info)
   emlrtAddField(*info, emlrtAliasP(rhs32), "rhs", 32);
   emlrtAddField(*info, emlrtAliasP(lhs32), "lhs", 32);
   emlrtAddField(*info, emlrt_marshallOut(
-    "[E]C:/Users/Brad/Documents/Work/CMU/SnakePlanning/testing/closestPoint.m!bound"),
+    "[E]/home/bsaund/Documents/Work/snakeArmPlanning/testing/closestPoint.m!bound"),
                 "context", 33);
   emlrtAddField(*info, emlrt_marshallOut("max"), "name", 33);
   emlrtAddField(*info, emlrt_marshallOut("double"), "dominantType", 33);
@@ -790,7 +790,7 @@ static void info_helper(const mxArray **info)
   emlrtAddField(*info, emlrtAliasP(rhs41), "rhs", 41);
   emlrtAddField(*info, emlrtAliasP(lhs41), "lhs", 41);
   emlrtAddField(*info, emlrt_marshallOut(
-    "[E]C:/Users/Brad/Documents/Work/CMU/SnakePlanning/testing/closestPoint.m!bound"),
+    "[E]/home/bsaund/Documents/Work/snakeArmPlanning/testing/closestPoint.m!bound"),
                 "context", 42);
   emlrtAddField(*info, emlrt_marshallOut("min"), "name", 42);
   emlrtAddField(*info, emlrt_marshallOut("double"), "dominantType", 42);
@@ -820,7 +820,7 @@ static void info_helper(const mxArray **info)
   emlrtAddField(*info, emlrtAliasP(rhs43), "rhs", 43);
   emlrtAddField(*info, emlrtAliasP(lhs43), "lhs", 43);
   emlrtAddField(*info, emlrt_marshallOut(
-    "[E]C:/Users/Brad/Documents/Work/CMU/SnakePlanning/testing/closestPointOnWorld.m"),
+    "[E]/home/bsaund/Documents/Work/snakeArmPlanning/testing/closestPointOnWorld.m"),
                 "context", 44);
   emlrtAddField(*info, emlrt_marshallOut("eml_mtimes_helper"), "name", 44);
   emlrtAddField(*info, emlrt_marshallOut(""), "dominantType", 44);

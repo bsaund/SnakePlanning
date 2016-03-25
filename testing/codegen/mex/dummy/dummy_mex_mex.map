@@ -1,0 +1,11 @@
+MEX {
+	global:
+		mexFunction;
+		emlrtMexFcnProperties;
+		dummy;
+		dummy_initialize;
+		dummy_terminate;
+		dummy_atexit;
+	local:
+		*;
+};
