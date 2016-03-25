@@ -1,0 +1,14 @@
+libemlrt.lib
+libcovrt.lib
+libut.lib
+libmwblas.lib
+libmwmathutil.lib
+/export:mexFunction
+/export:emlrtMexFcnProperties
+/export:closestPointOnWorld
+/export:emxEnsureCapacity
+/export:emxFreeStruct_struct0_T
+/export:emxInitStruct_struct0_T
+/export:closestPointOnWorld_initialize
+/export:closestPointOnWorld_terminate
+/export:closestPointOnWorld_atexit
