@@ -1,7 +1,7 @@
 function snakeInWorld()
     close all
     worldName = 'block.stl';
-    spring = 1000;
+    spring = 10000;
     
     showWorld(worldName);
     num_links = 10;
@@ -14,7 +14,7 @@ function snakeInWorld()
     kin = snake.getKin();
     
     num_points = 100;
-    traj = lineTrajectory([.5, 0, 0], [0, .3, .25], num_points);
+    traj = lineTrajectory([.5, 0, 0], [0, .3, .253], num_points);
     angle_traj = zeros(num_points, num_links);
 
 
@@ -22,25 +22,39 @@ function snakeInWorld()
         angles = kin.getIK('xyz', traj(i,:), ...
                                   'InitialPositions', angles);
         angle_traj(i,:) = angles;
-        snake.plotTorques(angles, world, spring);
+%         snake.plotTorques(angles, world, spring);
     end
     
-    profile on
-    [angles,resnorm,residual,exitflag,output]  = ...
-          optimizeAngles(angle_traj(1,:)', snake, world, spring);
-    snake.plotTorques(angles, world, spring);
+    
+    
+%     profile on
+
+    
+%     [angles,resnorm,residual,exitflag,output]  = ...
+%           optimizeAngles(angle_traj(1,:)', snake, world, spring);
+    for i=1:10:size(traj,1)
+        disp(['Optimizing config ', num2str(i)]);
+        [angles,resnorm,residual,exitflag,output]  = ...
+            optimizeAngles(angle_traj(i,:)', snake, world, spring);
+    end
+%     snake.plotTorques(angles, world, spring);
 %     replayMotion(angle_traj, snake, plt, world, spring);
-    profile viewer
+%     profile viewer
 end
 
 
 function [x,resnorm,residual,exitflag,output]  = ...
             optimizeAngles(initial_angles, snake, world, spring)
     
+    function stop = plotOptim(x, varargin)
+        snake.plotTorques(x, world, spring)
+        stop = false;
+    end
+    options = optimoptions('lsqnonlin','PlotFcn', @plotOptim);
     func = getCostFunction(initial_angles, snake, world, spring);
     [lb, ub] = getBounds(initial_angles);
     [x,resnorm,residual,exitflag,output]  =... 
-            lsqnonlin(func, initial_angles, lb, ub);
+            lsqnonlin(func, initial_angles, lb, ub, options);
     % angles = zeros(1);
 end
 
@@ -49,8 +63,8 @@ function [lb, ub] = getBounds(angles)
     lb = ones(size(angles))*-pi/2;
     ub = ones(size(angles))*pi/2;
     dist = .2;
-    lb = max([angles-dist, lb]')'
-    ub = min([angles+dist, ub]')'
+    lb = max([angles-dist, lb]')';
+    ub = min([angles+dist, ub]')';
     
 end
 
