@@ -115,7 +115,7 @@ classdef SpherePlotter < handle
             p = this.getPoints(angles);
             z_axis = this.frame(1:3, 1:3) * [0;0;1];
             grav = this.kin.getGravCompTorques(angles, -z_axis)';
-            tau = Contact.snakeContactTorques(p, world, this.radius, spring, ...
+            tau = snakeContactTorques(p, world, this.radius, spring, ...
                                               J);
             tau = tau+grav;
             

@@ -5,7 +5,7 @@ function closestPointTest()
     p3 = [1;1;1];
     
 
-    val = Contact.closestPoint(p_test, p1, p2, p3);
+    val = closestPoint(p_test, p1, p2, p3);
 
     expected = [1;0;0];
     

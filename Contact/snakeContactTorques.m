@@ -1,5 +1,5 @@
 function tau =  snakeContactTorques(p, world, r, spring, J1)
-    f = Contact.snakeContactForces(p, world, r, spring);
+    f = snakeContactForces(p, world, r, spring);
     
     n=size(f,2);
     J = zeros(n*6, n);
