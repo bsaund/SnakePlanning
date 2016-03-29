@@ -273,7 +273,7 @@ classdef SpherePlotter < handle
         
     end
     
-    properties(Access = private, Hidden = true)
+    properties(Access = public, Hidden = true)
         kin;
         jointTypes;
         handles;

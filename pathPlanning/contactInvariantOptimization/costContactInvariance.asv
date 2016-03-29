@@ -1,5 +1,0 @@
-function cost = costContactInvariance(snake, world, state)
-    [angles, c] = fullStateToVars(state);
-    cs = repelem(c, 3);
-    p = snake.getPoints(angles);
-end
