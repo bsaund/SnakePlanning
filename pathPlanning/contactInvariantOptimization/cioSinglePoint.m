@@ -13,11 +13,12 @@ end
 
 function [x,resnorm,residual,exitflag,output]  = ...
         optimizeAngles(initial_angles, snake, world, display)
-    c = 0*initial_angles
+    c = 0*initial_angles + 1;
     initial_state = [initial_angles; c];
     
     function stop = plotOptim(x, varargin)
-        snake.plotTorques(x, world, spring)
+        angles = fullStateToVars(x);
+        snake.plotTorques(angles, world, 10000)
         stop = false;
     end
     
@@ -49,15 +50,21 @@ function [lb, ub] = getBounds(angles, c)
 end
 
 function func = getCostFunction(initial_state, snake, world);
-    % fk_init = snake.getKin().getFK('EndEffector',initial_angles);
-    % ee_init = fk_init(1:3, 4);
+    [initial_angles, ~] = fullStateToVars(initial_state);
+    fk_init = snake.getKin().getFK('EndEffector',initial_angles);
+    ee_init = fk_init(1:3, 4);
     function c = cost(state)
         % tau = snake.getTorques(angles, world, spring);
         % angleErr = initial_angles-angles;
-        % fk = snake.getKin().getFK('EndEffector', angles);
-        % pointErr = fk(1:3, 4) - ee_init;
+        [angles, c] = fullStateToVars(state);
+        fk = snake.getKin().getFK('EndEffector', angles);
+        pointErr = fk(1:3, 4) - ee_init;
         % c = [tau; angleErr; 1000*pointErr];
-        c = costPhysics(snake, state)
+        cPh = costPhysics(snake, state);
+        cCI = costContactInvariance(snake, world, state);
+        cTask = pointErr;
+        c = [cPh; cCI; pointErr];
+        
     end
     func = @cost;
 end

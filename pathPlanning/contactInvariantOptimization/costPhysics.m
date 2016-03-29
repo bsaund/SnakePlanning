@@ -39,7 +39,8 @@ function [f, u] = inverseDynamics(J, B, tau, W, R)
     func = -1*([J; B']*tau)';
     % H = JB'*JB + [W, z; z', R];
     % func = -1*tau'*JB;
-    x = quadprog(H, func);
+    options = optimoptions('quadprog','Display','none');
+    x = quadprog(H, func, [],[],[],[],[],[],[],options);
     
     n=  size(J,1);
     f = x(1:n);
