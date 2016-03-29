@@ -22,14 +22,14 @@ function optimTraj = bestSingleConfiguration()
                                   'InitialPositions', angles);
         angle_traj(i,:) = angles;
     end
-    angle_traj(1,:) = optimizeSinglePoint(snake, world, angle_traj(1,:), ...
-                                          false);
-    angle_traj(end,:) = optimizeSinglePoint(snake, world, angle_traj(end,:), ...
-                                          true);
-    
+    % angle_traj(1,:) = optimizeSinglePoint(snake, world, angle_traj(1,:), ...
+    %                                       false);
+    % angle_traj(end,:) = optimizeSinglePoint(snake, world, angle_traj(end,:), ...
+    %                                       true);
+    cioSinglePoint(snake, world, angle_traj(1,:), true)
     
 
-    snake.plotTorques(angle_traj(end,:), world, spring);
+    % snake.plotTorques(angle_traj(end,:), world, spring);
     % plotTrajectory(snake, world, spring, angle_traj);
 
     % optimTraj = optimizeEachPointToNeighbors(snake, world, angle_traj, false);
