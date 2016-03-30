@@ -4,9 +4,9 @@ function optimizedAngles = optimizeSinglePoint(snake, world, ...
     spring = 10000;
     
     [angles,resnorm,residual,exitflag,output]  = ...
-        optimizeAngles(initial_angles', snake, world, spring, ...
+        optimizeAngles(initial_angles, snake, world, spring, ...
                        display);
-    optimizedAngles = angles';
+    optimizedAngles = angles;
 
 end
 
@@ -20,7 +20,7 @@ function [x,resnorm,residual,exitflag,output]  = ...
         stop = false;
     end
     
-    maxIter = 10000;
+    maxIter = 10;
     if(display)
         options = optimoptions('lsqnonlin','maxIter', maxIter, ...
                                'maxFunEvals', maxIter,'PlotFcn', @plotOptim);
@@ -39,9 +39,9 @@ end
 function [lb, ub] = getBounds(angles)
     lb = ones(size(angles))*-pi/2;
     ub = ones(size(angles))*pi/2;
-    % dist = .2;
-    % lb = max([angles-dist, lb]')';
-    % ub = min([angles+dist, ub]')';
+    dist = .1;
+    lb = max([angles-dist, lb]')';
+    ub = min([angles+dist, ub]')';
     
 end
 
@@ -54,7 +54,7 @@ function func = getCostFunction(initial_angles, snake, world, ...
         angleErr = initial_angles-angles;
         fk = snake.getKin().getFK('EndEffector', angles);
         pointErr = fk(1:3, 4) - ee_init;
-        c = [tau; angleErr; 1000*pointErr];
+        c = [tau; angleErr; pointErr];
     end
     func = @cost;
 end
