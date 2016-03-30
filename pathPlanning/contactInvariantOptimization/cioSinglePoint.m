@@ -1,9 +1,9 @@
-function [optimizedAngles, contacts] = cioSinglePoint(snake, world, ...
+function [optimizedAngles, contacts] = cioSinglePoint(goal_xyz, snake, world, ...
                                                    initial_angles, display)
 %Contact Invariant Optimization for a single point
 
     [state,resnorm,residual,exitflag,output]  = ...
-        optimizeAngles(initial_angles, snake, world, ...
+        optimizeAngles(initial_angles, goal_xyz, snake, world, ...
                        display);
     [optimizedAngles, contacts] = fullStateToVars(state);
 
@@ -12,23 +12,23 @@ end
 
 
 function [x,resnorm,residual,exitflag,output]  = ...
-        optimizeAngles(initial_angles, snake, world, display)
+        optimizeAngles(initial_angles, goal_xyz, snake, world, display)
     c = 0*initial_angles + 1;
     initial_state = [initial_angles; c];
     
     function stop = plotOptim(x, varargin)
-        angles = fullStateToVars(x);
+        [angles, c] = fullStateToVars(x);
         optAngles = optimizeSinglePoint(snake, world, angles, ...
                                         false);
         snake.plotTorques(optAngles, world, 10000)
         % snake.plotTorques(angles, world, 10000)
-        
+        c
         disp('New CIO position');
         % pause(1);
         stop = false;
     end
     
-    maxIter = 10000;
+    maxIter = 1000;
     if(display)
         options = optimoptions('lsqnonlin','maxIter', maxIter, ...
                                'maxFunEvals', maxIter,'OutputFcn', @plotOptim);
@@ -36,7 +36,7 @@ function [x,resnorm,residual,exitflag,output]  = ...
         options = optimoptions('lsqnonlin','maxIter', maxIter,'display','none');
     end
     
-    func = getCostFunction(initial_state, snake, world);
+    func = getCostFunction(initial_state, goal_xyz, snake, world);
     [lb, ub] = getBounds(initial_angles, c);
     [x,resnorm,residual,exitflag,output]  =... 
         lsqnonlin(func, initial_state, lb, ub, options);
@@ -55,21 +55,23 @@ function [lb, ub] = getBounds(angles, c)
     
 end
 
-function func = getCostFunction(initial_state, snake, world);
+function func = getCostFunction(initial_state, goal_xyz, snake, world);
     [initial_angles, ~] = fullStateToVars(initial_state);
     fk_init = snake.getKin().getFK('EndEffector',initial_angles);
     ee_init = fk_init(1:3, 4);
     function c = cost(state)
         % tau = snake.getTorques(angles, world, spring);
         % angleErr = initial_angles-angles;
+
         [angles, c] = fullStateToVars(state);
         fk = snake.getKin().getFK('EndEffector', angles);
-        pointErr = fk(1:3, 4) - ee_init;
+        % pointErr = fk(1:3, 4) - ee_init;
+        pointErr = fk(1:3, 4) - goal_xyz;
         % c = [tau; angleErr; 1000*pointErr];
         cPh = costPhysics(snake, world, state);
         cCI = costContactInvariance(snake, world, state);
-        cTask = pointErr;
-        c = [cPh; cCI; pointErr];
+        cTask = 10*pointErr;
+        c = [cPh; cCI; cTask];
         
     end
     func = @cost;

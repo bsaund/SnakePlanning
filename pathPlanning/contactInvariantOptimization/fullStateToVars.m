@@ -5,4 +5,7 @@ function [angles, c] = fullStateToVars(state)
     n = size(state,1);
     angles = state(1:n/2);
     c = state(n/2+1:n);
+    c(end-2) = 0;
+    c(end-1) = 0;
+    c(end) = 0;
 end

@@ -11,11 +11,14 @@ function [f, u] = optimalRegularizedFU(J, B, tau, W, R, A, b)
     % H = JB'*JB + [W, z; z', R];
     % func = -1*tau'*JB;
     options = optimoptions('quadprog','Display','none');
-    x = quadprog(H, func, A,b,[],[],[],[],[],options);
+    % x = quadprog(H, func, A,b,[],[],[],[],[],options);
+    x = quadprog(H, func, [],[],[],[],[],[],[],options);
     
     n =  size(J,1);
-    f = x(1:n)
+    f = x(1:n);
     u = x(n+1:end);
+    
+    % A(:,1:n)*f
     
     
 end
