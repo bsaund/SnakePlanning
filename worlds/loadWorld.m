@@ -13,6 +13,14 @@ function world = loadWorld(worldName)
         normal = cross(v2,v1);
         normal = normal/norm(normal);
         normals(i,:) = normal;
+        
+        tangent1 = v2/norm(v2);
+        tangents1(i,:) = tangent1;
+        tangents2(i,:) = cross(normal, tangent1);
     end
     world.normals = normals;
+    world.tangents_1 = tangents1;
+    world.tangents_2 = tangents2;
+    
+    
 end

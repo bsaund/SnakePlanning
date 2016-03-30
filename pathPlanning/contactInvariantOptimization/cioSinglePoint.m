@@ -31,7 +31,7 @@ function [x,resnorm,residual,exitflag,output]  = ...
     maxIter = 10000;
     if(display)
         options = optimoptions('lsqnonlin','maxIter', maxIter, ...
-                               'maxFunEvals', maxIter,'PlotFcn', @plotOptim);
+                               'maxFunEvals', maxIter,'OutputFcn', @plotOptim);
     else
         options = optimoptions('lsqnonlin','maxIter', maxIter,'display','none');
     end

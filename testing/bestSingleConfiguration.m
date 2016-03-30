@@ -4,7 +4,7 @@ function optimTraj = bestSingleConfiguration()
     spring = 10000;
     
     worldName = '../worlds/block.stl';
-    world = stlread(worldName);
+    world = loadWorld(worldName);
     showWorld(world);
     snake = SpherePlotter();
     plt = HebiPlotter('lighting', 'off');
@@ -14,7 +14,7 @@ function optimTraj = bestSingleConfiguration()
         
     num_points = 30;
     traj = lineTrajectory([.5, 0, .025], [0,-.4, .2], num_points);
-    % traj = lineTrajectory([.3, 0, .3], [0,-.4, .2], num_points);
+%     traj = lineTrajectory([.3, 0, .3], [0,-.4, .2], num_points);
 %     traj = lineTrajectory([0, -.30, .2], [0,-.4, .2], num_points);
 %     traj = lineTrajectory([0, .01, .2], [0,-.4, .2], num_points);
 %     traj = lineTrajectory([0, .3, .3], [0,-.4, .2], num_points);
