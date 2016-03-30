@@ -1,4 +1,4 @@
-START_DIR = /home/bsaund/Documents/Work/snakeArmPlanning/testing
+START_DIR = /home/bsaund/Documents/Work/snakeArmPlanning/mexBuilding
 
 MATLAB_ROOT = /usr/local/MATLAB/R2015a
 MAKEFILE = closestPointOnWorld_mex.mk

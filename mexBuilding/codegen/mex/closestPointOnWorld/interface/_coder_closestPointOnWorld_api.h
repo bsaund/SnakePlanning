@@ -22,7 +22,7 @@
 
 /* Function Declarations */
 extern void closestPointOnWorld_api(const mxArray * const prhs[2], const mxArray
-  *plhs[1]);
+  *plhs[2]);
 
 #endif
 

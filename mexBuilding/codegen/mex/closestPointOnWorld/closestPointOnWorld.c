@@ -12,45 +12,45 @@
 #include "closestPointOnWorld_data.h"
 
 /* Variable Definitions */
-static emlrtDCInfo emlrtDCI = { 15, 15, "closestPointOnWorld",
-  "/home/bsaund/Documents/Work/snakeArmPlanning/testing/closestPointOnWorld.m",
+static emlrtDCInfo emlrtDCI = { 16, 15, "closestPointOnWorld",
+  "/home/bsaund/Documents/Work/snakeArmPlanning/mexBuilding/closestPointOnWorld.m",
   1 };
 
-static emlrtBCInfo emlrtBCI = { -1, -1, 15, 15, "v", "closestPointOnWorld",
-  "/home/bsaund/Documents/Work/snakeArmPlanning/testing/closestPointOnWorld.m",
+static emlrtBCInfo emlrtBCI = { -1, -1, 16, 15, "v", "closestPointOnWorld",
+  "/home/bsaund/Documents/Work/snakeArmPlanning/mexBuilding/closestPointOnWorld.m",
   0 };
 
-static emlrtDCInfo b_emlrtDCI = { 16, 15, "closestPointOnWorld",
-  "/home/bsaund/Documents/Work/snakeArmPlanning/testing/closestPointOnWorld.m",
+static emlrtDCInfo b_emlrtDCI = { 17, 15, "closestPointOnWorld",
+  "/home/bsaund/Documents/Work/snakeArmPlanning/mexBuilding/closestPointOnWorld.m",
   1 };
 
-static emlrtBCInfo b_emlrtBCI = { -1, -1, 16, 15, "v", "closestPointOnWorld",
-  "/home/bsaund/Documents/Work/snakeArmPlanning/testing/closestPointOnWorld.m",
+static emlrtBCInfo b_emlrtBCI = { -1, -1, 17, 15, "v", "closestPointOnWorld",
+  "/home/bsaund/Documents/Work/snakeArmPlanning/mexBuilding/closestPointOnWorld.m",
   0 };
 
-static emlrtDCInfo c_emlrtDCI = { 17, 15, "closestPointOnWorld",
-  "/home/bsaund/Documents/Work/snakeArmPlanning/testing/closestPointOnWorld.m",
+static emlrtDCInfo c_emlrtDCI = { 18, 15, "closestPointOnWorld",
+  "/home/bsaund/Documents/Work/snakeArmPlanning/mexBuilding/closestPointOnWorld.m",
   1 };
 
-static emlrtBCInfo c_emlrtBCI = { -1, -1, 17, 15, "v", "closestPointOnWorld",
-  "/home/bsaund/Documents/Work/snakeArmPlanning/testing/closestPointOnWorld.m",
+static emlrtBCInfo c_emlrtBCI = { -1, -1, 18, 15, "v", "closestPointOnWorld",
+  "/home/bsaund/Documents/Work/snakeArmPlanning/mexBuilding/closestPointOnWorld.m",
   0 };
 
-static emlrtBCInfo d_emlrtBCI = { -1, -1, 15, 17, "f", "closestPointOnWorld",
-  "/home/bsaund/Documents/Work/snakeArmPlanning/testing/closestPointOnWorld.m",
+static emlrtBCInfo d_emlrtBCI = { -1, -1, 16, 17, "f", "closestPointOnWorld",
+  "/home/bsaund/Documents/Work/snakeArmPlanning/mexBuilding/closestPointOnWorld.m",
   0 };
 
-static emlrtBCInfo e_emlrtBCI = { -1, -1, 16, 17, "f", "closestPointOnWorld",
-  "/home/bsaund/Documents/Work/snakeArmPlanning/testing/closestPointOnWorld.m",
+static emlrtBCInfo e_emlrtBCI = { -1, -1, 17, 17, "f", "closestPointOnWorld",
+  "/home/bsaund/Documents/Work/snakeArmPlanning/mexBuilding/closestPointOnWorld.m",
   0 };
 
-static emlrtBCInfo f_emlrtBCI = { -1, -1, 17, 17, "f", "closestPointOnWorld",
-  "/home/bsaund/Documents/Work/snakeArmPlanning/testing/closestPointOnWorld.m",
+static emlrtBCInfo f_emlrtBCI = { -1, -1, 18, 17, "f", "closestPointOnWorld",
+  "/home/bsaund/Documents/Work/snakeArmPlanning/mexBuilding/closestPointOnWorld.m",
   0 };
 
 /* Function Definitions */
 void closestPointOnWorld(const emlrtStack *sp, const real_T p_test[3], const
-  struct0_T *world, real_T p[3])
+  struct0_T *world, real_T p[3], real_T *best_face)
 {
   real_T d;
   int32_T i;
@@ -69,6 +69,7 @@ void closestPointOnWorld(const emlrtStack *sp, const real_T p_test[3], const
   /* CLOSESTPOINTONWORLD finds the closest point to p_test that lies on */
   /* the mesh 'world'. world should be a struct of faces and vertices, */
   /* the same struct you might pass to matlab's 'patch' */
+  *best_face = 0.0;
   d = rtInf;
   for (i = 0; i < 3; i++) {
     p[i] = 0.0;
@@ -162,6 +163,8 @@ void closestPointOnWorld(const emlrtStack *sp, const real_T p_test[3], const
       for (c_i = 0; c_i < 3; c_i++) {
         p[c_i] = p_temp[c_i];
       }
+
+      *best_face = 1.0 + (real_T)(i - 1);
     }
 
     i++;

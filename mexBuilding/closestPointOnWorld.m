@@ -1,4 +1,4 @@
-function p = closestPointOnWorld(p_test, world)
+function [p, best_face] = closestPointOnWorld(p_test, world)
 %CLOSESTPOINTONWORLD finds the closest point to p_test that lies on
 %the mesh 'world'. world should be a struct of faces and vertices,
 %the same struct you might pass to matlab's 'patch'
@@ -6,6 +6,7 @@ function p = closestPointOnWorld(p_test, world)
     f = world.faces;
     v = world.vertices;
     numFaces = size(f,1);
+    best_face = 0;
 
     
     d = inf;
@@ -20,6 +21,7 @@ function p = closestPointOnWorld(p_test, world)
         if (d_temp < d)
             d = d_temp;
             p = p_temp;
+            best_face = i;
         end
     end
                                       

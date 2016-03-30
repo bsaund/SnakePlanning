@@ -1,6 +1,8 @@
 function testClosestPoint()
-    world = stlread('block.stl');
+    world = loadWorld('block.stl');
+    stl.faces = world.faces;
+    stl.vertices = world.vertices;
     p = [0;0;0];
-    closestPointOnWorld(p, world);
+    closestPointOnWorld(p, stl);
 %     closestPointOnWorld(p, 1);
 end

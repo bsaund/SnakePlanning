@@ -22,7 +22,7 @@
 
 /* Function Declarations */
 extern void closestPointOnWorld(const emlrtStack *sp, const real_T p_test[3],
-  const struct0_T *world, real_T p[3]);
+  const struct0_T *world, real_T p[3], real_T *best_face);
 
 #endif
 

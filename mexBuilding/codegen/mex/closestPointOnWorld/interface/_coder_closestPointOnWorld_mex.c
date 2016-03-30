@@ -14,16 +14,16 @@
 #include "closestPointOnWorld_data.h"
 
 /* Function Declarations */
-static void closestPointOnWorld_mexFunction(int32_T nlhs, mxArray *plhs[1],
+static void closestPointOnWorld_mexFunction(int32_T nlhs, mxArray *plhs[2],
   int32_T nrhs, const mxArray *prhs[2]);
 
 /* Function Definitions */
-static void closestPointOnWorld_mexFunction(int32_T nlhs, mxArray *plhs[1],
+static void closestPointOnWorld_mexFunction(int32_T nlhs, mxArray *plhs[2],
   int32_T nrhs, const mxArray *prhs[2])
 {
   int32_T n;
   const mxArray *inputs[2];
-  const mxArray *outputs[1];
+  const mxArray *outputs[2];
   int32_T b_nlhs;
   emlrtStack st = { NULL, NULL, NULL };
 
@@ -35,7 +35,7 @@ static void closestPointOnWorld_mexFunction(int32_T nlhs, mxArray *plhs[1],
                         19, "closestPointOnWorld");
   }
 
-  if (nlhs > 1) {
+  if (nlhs > 2) {
     emlrtErrMsgIdAndTxt(&st, "EMLRT:runTime:TooManyOutputArguments", 3, 4, 19,
                         "closestPointOnWorld");
   }

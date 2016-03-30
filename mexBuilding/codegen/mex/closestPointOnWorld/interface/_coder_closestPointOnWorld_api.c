@@ -18,6 +18,7 @@ static emlrtRTEInfo emlrtRTEI = { 1, 1, "_coder_closestPointOnWorld_api", "" };
 /* Function Declarations */
 static real_T (*b_emlrt_marshallIn(const emlrtStack *sp, const mxArray *u, const
   emlrtMsgIdentifier *parentId))[3];
+static const mxArray *b_emlrt_marshallOut(const real_T u);
 static void c_emlrt_marshallIn(const emlrtStack *sp, const mxArray *world, const
   char_T *identifier, struct0_T *y);
 static void d_emlrt_marshallIn(const emlrtStack *sp, const mxArray *u, const
@@ -41,8 +42,18 @@ static real_T (*b_emlrt_marshallIn(const emlrtStack *sp, const mxArray *u, const
   emlrtDestroyArray(&u);
   return y;
 }
-  static void c_emlrt_marshallIn(const emlrtStack *sp, const mxArray *world,
-  const char_T *identifier, struct0_T *y)
+  static const mxArray *b_emlrt_marshallOut(const real_T u)
+{
+  const mxArray *y;
+  const mxArray *m1;
+  y = NULL;
+  m1 = emlrtCreateDoubleScalar(u);
+  emlrtAssign(&y, m1);
+  return y;
+}
+
+static void c_emlrt_marshallIn(const emlrtStack *sp, const mxArray *world, const
+  char_T *identifier, struct0_T *y)
 {
   emlrtMsgIdentifier thisId;
   thisId.fIdentifier = identifier;
@@ -137,11 +148,12 @@ static real_T (*f_emlrt_marshallIn(const emlrtStack *sp, const mxArray *src,
 }
 
 void closestPointOnWorld_api(const mxArray * const prhs[2], const mxArray *plhs
-  [1])
+  [2])
 {
   real_T (*p)[3];
   struct0_T world;
   real_T (*p_test)[3];
+  real_T best_face;
   emlrtStack st = { NULL, NULL, NULL };
 
   st.tls = emlrtRootTLSGlobal;
@@ -154,10 +166,11 @@ void closestPointOnWorld_api(const mxArray * const prhs[2], const mxArray *plhs
   c_emlrt_marshallIn(&st, emlrtAliasP(prhs[1]), "world", &world);
 
   /* Invoke the target function */
-  closestPointOnWorld(&st, *p_test, &world, *p);
+  closestPointOnWorld(&st, *p_test, &world, *p, &best_face);
 
   /* Marshall function outputs */
   plhs[0] = emlrt_marshallOut(*p);
+  plhs[1] = b_emlrt_marshallOut(best_face);
   emxFreeStruct_struct0_T(&world);
   emlrtHeapReferenceStackLeaveFcnR2012b(&st);
 }
