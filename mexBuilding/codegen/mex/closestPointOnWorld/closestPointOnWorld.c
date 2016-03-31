@@ -13,39 +13,39 @@
 
 /* Variable Definitions */
 static emlrtDCInfo emlrtDCI = { 16, 15, "closestPointOnWorld",
-  "/home/bsaund/Documents/Work/snakeArmPlanning/mexBuilding/closestPointOnWorld.m",
+  "C:\\Users\\Brad\\Documents\\Work\\CMU\\SnakePlanning\\mexBuilding\\closestPointOnWorld.m",
   1 };
 
 static emlrtBCInfo emlrtBCI = { -1, -1, 16, 15, "v", "closestPointOnWorld",
-  "/home/bsaund/Documents/Work/snakeArmPlanning/mexBuilding/closestPointOnWorld.m",
+  "C:\\Users\\Brad\\Documents\\Work\\CMU\\SnakePlanning\\mexBuilding\\closestPointOnWorld.m",
   0 };
 
 static emlrtDCInfo b_emlrtDCI = { 17, 15, "closestPointOnWorld",
-  "/home/bsaund/Documents/Work/snakeArmPlanning/mexBuilding/closestPointOnWorld.m",
+  "C:\\Users\\Brad\\Documents\\Work\\CMU\\SnakePlanning\\mexBuilding\\closestPointOnWorld.m",
   1 };
 
 static emlrtBCInfo b_emlrtBCI = { -1, -1, 17, 15, "v", "closestPointOnWorld",
-  "/home/bsaund/Documents/Work/snakeArmPlanning/mexBuilding/closestPointOnWorld.m",
+  "C:\\Users\\Brad\\Documents\\Work\\CMU\\SnakePlanning\\mexBuilding\\closestPointOnWorld.m",
   0 };
 
 static emlrtDCInfo c_emlrtDCI = { 18, 15, "closestPointOnWorld",
-  "/home/bsaund/Documents/Work/snakeArmPlanning/mexBuilding/closestPointOnWorld.m",
+  "C:\\Users\\Brad\\Documents\\Work\\CMU\\SnakePlanning\\mexBuilding\\closestPointOnWorld.m",
   1 };
 
 static emlrtBCInfo c_emlrtBCI = { -1, -1, 18, 15, "v", "closestPointOnWorld",
-  "/home/bsaund/Documents/Work/snakeArmPlanning/mexBuilding/closestPointOnWorld.m",
+  "C:\\Users\\Brad\\Documents\\Work\\CMU\\SnakePlanning\\mexBuilding\\closestPointOnWorld.m",
   0 };
 
 static emlrtBCInfo d_emlrtBCI = { -1, -1, 16, 17, "f", "closestPointOnWorld",
-  "/home/bsaund/Documents/Work/snakeArmPlanning/mexBuilding/closestPointOnWorld.m",
+  "C:\\Users\\Brad\\Documents\\Work\\CMU\\SnakePlanning\\mexBuilding\\closestPointOnWorld.m",
   0 };
 
 static emlrtBCInfo e_emlrtBCI = { -1, -1, 17, 17, "f", "closestPointOnWorld",
-  "/home/bsaund/Documents/Work/snakeArmPlanning/mexBuilding/closestPointOnWorld.m",
+  "C:\\Users\\Brad\\Documents\\Work\\CMU\\SnakePlanning\\mexBuilding\\closestPointOnWorld.m",
   0 };
 
 static emlrtBCInfo f_emlrtBCI = { -1, -1, 18, 17, "f", "closestPointOnWorld",
-  "/home/bsaund/Documents/Work/snakeArmPlanning/mexBuilding/closestPointOnWorld.m",
+  "C:\\Users\\Brad\\Documents\\Work\\CMU\\SnakePlanning\\mexBuilding\\closestPointOnWorld.m",
   0 };
 
 /* Function Definitions */
