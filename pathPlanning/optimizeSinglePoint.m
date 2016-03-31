@@ -20,7 +20,7 @@ function [x,resnorm,residual,exitflag,output]  = ...
         stop = false;
     end
     
-    maxIter = 10;
+    maxIter = 100;
     if(display)
         options = optimoptions('lsqnonlin','maxIter', maxIter, ...
                                'maxFunEvals', maxIter,'PlotFcn', @plotOptim);

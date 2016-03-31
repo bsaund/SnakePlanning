@@ -28,7 +28,7 @@ function [x,resnorm,residual,exitflag,output]  = ...
         stop = false;
     end
     
-    maxIter = 1000;
+    maxIter = 100;
     if(display)
         options = optimoptions('lsqnonlin','maxIter', maxIter, ...
                                'maxFunEvals', maxIter,'OutputFcn', @plotOptim);
@@ -71,7 +71,8 @@ function func = getCostFunction(initial_state, goal_xyz, snake, world);
         cPh = costPhysics(snake, world, state);
         cCI = costContactInvariance(snake, world, state);
         cTask = 10*pointErr;
-        c = [cPh; cCI; cTask];
+        cObstacle = costObjectViolation(snake, world, state);
+        c = [cPh; cCI; cTask; cObstacle];
         
     end
     func = @cost;

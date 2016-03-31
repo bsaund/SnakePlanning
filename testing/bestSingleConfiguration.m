@@ -20,6 +20,7 @@ function optimTraj = bestSingleConfiguration()
 %     traj = lineTrajectory([0, .3, .35], [0,-.4, .2], num_points);
     angle_traj = zeros(num_points, num_links);
 
+%     profile on
 
     for i = 1:size(traj,1)
         angles = kin.getIK('xyz', traj(i,:), ...
@@ -31,15 +32,15 @@ function optimTraj = bestSingleConfiguration()
     % angle_traj(end,:) = optimizeSinglePoint(snake, world, angle_traj(end,:), ...
     %                                       true);
     starting_angles = angle_traj(1,:)'
-    [optimizedAngles, contacts]  = cioSinglePoint(...
+    [optimizedAngles, contacts]  = cioSinglePoint(traj(i,:)',...
         snake, world, angle_traj(1,:)', true)
-    for i=1:10
-    disp('OPTIMIZING ANOTHER TIME')
-    [optimizedAngles, contacts]  = cioSinglePoint(...
-        snake, world, optimizedAngles, true)
-    end
+%     for i=1:10
+%     disp('OPTIMIZING ANOTHER TIME')
+%     [optimizedAngles, contacts]  = cioSinglePoint(traj(i,:)',...
+%         snake, world, optimizedAngles, true)
+%     end
 
-    
+%     profile viewer
     
     
     fk = snake.getKin().getFK('EndEffector', optimizedAngles);

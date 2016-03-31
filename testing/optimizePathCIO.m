@@ -63,6 +63,7 @@ function optimTraj = optimizePathCIO()
     % optimTraj = optimizeEachPointToNeighbors(snake, world, angle_traj, false);
     
     % % plotTrajectory(snake, world, spring, optimTraj);
+    save('latestTrajectory', 'snake','world','spring','angle_traj','traj');
     loopTrajectory(snake, world, spring, angle_traj);
     
     
