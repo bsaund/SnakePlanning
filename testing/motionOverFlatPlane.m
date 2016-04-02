@@ -4,8 +4,8 @@ function optimTraj = motionOverFlatPlane()
     spring = 10000;
     
     worldName = '../worlds/block.stl';
-    showWorld(worldName);
     world = stlread(worldName);
+    showWorld(world);
     snake = SpherePlotter();
     plt = HebiPlotter('lighting', 'off');
     kin = snake.getKin();

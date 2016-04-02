@@ -4,11 +4,12 @@ function optimizedTrajectory = optimizeEachPointToNeighbors(snake, world, ...
     spring = 10000;
     optimizedTrajectory = trajectory;
 
-    for iter = 1:4
+    for iter = 1:1
         for i=2:1:(size(trajectory,1)-1)
             disp(['Optimizing config ', num2str(i)]);
             [angles,resnorm,residual,exitflag,output]  = ...
                 optimizeAngles(trajectory(i-1,:)', ...
+                               trajectory(i,:)',...
                                trajectory(i+1,:)', ...
                                snake, world, spring, ...
                                display);
@@ -21,7 +22,7 @@ end
 
 
 function [x,resnorm,residual,exitflag,output]  = ...
-        optimizeAngles(prev_angles, next_angles, ...
+        optimizeAngles(prev_angles, cur_angles, next_angles, ...
                        snake, world, spring, display)
     
     function stop = plotOptim(x, varargin)
@@ -41,7 +42,7 @@ function [x,resnorm,residual,exitflag,output]  = ...
     func = getCostFunction(prev_angles, next_angles, snake, world, spring);
     [lb, ub] = getBounds(initial_angles);
     [x,resnorm,residual,exitflag,output]  =... 
-        lsqnonlin(func, initial_angles, lb, ub, options);
+        lsqnonlin(func, cur_angles, lb, ub, options);
     % angles = zeros(1);
 end
 
@@ -60,7 +61,7 @@ function func = getCostFunction(prev_angles, next_angles, snake, world, spring)
         tau = snake.getTorques(angles, world, spring);
         prevErr = prev_angles-angles;
         nextErr = next_angles-angles;
-        c = [tau; prevErr; nextErr];
+        c = [tau; 100*prevErr; 100*nextErr];
         
         % angleErr = (prev_angles + next_angles)/2 - angles;
         % c = [tau; angleErr];

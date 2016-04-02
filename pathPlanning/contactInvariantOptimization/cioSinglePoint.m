@@ -1,5 +1,6 @@
 function [optimizedAngles, contacts] = cioSinglePoint(goal_xyz, snake, world, ...
-                                                   initial_angles, display)
+                                                   initial_angles, ...
+                                                      display)
 %Contact Invariant Optimization for a single point
 
     [state,resnorm,residual,exitflag,output]  = ...
@@ -17,18 +18,21 @@ function [x,resnorm,residual,exitflag,output]  = ...
     initial_state = [initial_angles; c];
     
     function stop = plotOptim(x, varargin)
+        global GLOBAL_TRAJ;
         [angles, c] = fullStateToVars(x);
         optAngles = optimizeSinglePoint(snake, world, angles, ...
                                         false);
         snake.plotTorques(optAngles, world, 10000)
         % snake.plotTorques(angles, world, 10000)
-        c
+        % c
+        
+        GLOBAL_TRAJ = [GLOBAL_TRAJ; optAngles'];
         disp('New CIO position');
         % pause(1);
         stop = false;
     end
     
-    maxIter = 100;
+    maxIter = 1000;
     if(display)
         options = optimoptions('lsqnonlin','maxIter', maxIter, ...
                                'maxFunEvals', maxIter,'OutputFcn', @plotOptim);
@@ -70,9 +74,10 @@ function func = getCostFunction(initial_state, goal_xyz, snake, world);
         % c = [tau; angleErr; 1000*pointErr];
         cPh = costPhysics(snake, world, state);
         cCI = costContactInvariance(snake, world, state);
-        cTask = 10*pointErr;
-        cObstacle = costObjectViolation(snake, world, state);
-        c = [cPh; cCI; cTask; cObstacle];
+        cTask = 1*pointErr;
+        % cObstacle = costObjectViolation(snake, world, state);
+        % c = [cPh; cCI; cTask; cObstacle];
+        c = [cPh; cCI; cTask];
         
     end
     func = @cost;
