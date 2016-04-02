@@ -9,8 +9,8 @@ function costFun = getCostFunction1DCio(snake, world, theta);
         cCi = .8*costContactInvariance(snake, world, state);
         cObstacle = costObjectViolation(snake, world, state);
         cTask = pointErr;
-        cost = [cPh; cCi; cObstacle(2)];
-        % cost = [cPh; cCi; cObstacle(2); cTask];
+        % cost = [cPh; cCi; cObstacle(2)];
+        cost = [cPh; cCi; cObstacle(2); cTask];
     end
     
     costFun=@costFunction;

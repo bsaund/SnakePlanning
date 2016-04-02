@@ -16,7 +16,7 @@ function plotCostTorques()
     num_points = 100;
     
     angles = zeros(num_points,num_links);
-    angles(:,1) = linspace(-pi/2-.5, pi/2+.5, num_points)';
+    angles(:,1) = linspace(-pi/2-.25, pi/2+.25, num_points)';
     
     torques = zeros(num_points, num_links);
 
