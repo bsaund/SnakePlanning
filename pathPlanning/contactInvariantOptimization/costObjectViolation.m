@@ -7,7 +7,7 @@ function c = costObjectViolation(snake, world, state)
     normals = world.normals(face,:);
     c=sum((p_closest'-p'+normals*.025) .* normals,2);
     c = max(c,0);
-    if(sum(c)>0)
-        costObjViolation = c
-    end
+    % if(sum(c)>0)
+    %     costObjViolation = c
+    % end
 end
