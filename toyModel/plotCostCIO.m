@@ -1,4 +1,4 @@
-function plotCostCIO
+function angleCost = plotCostCIO
     close all
     num_links = 2;
     spring = 1000;
@@ -48,6 +48,9 @@ function plotCostCIO
     end
 
     surf(angles(:,1), contactVariables, cost');
+    xlabel('\theta');
+    ylabel('c');
+    zlabel('Cost');
     
     
     %% Plot over angles using optimized c
@@ -61,8 +64,10 @@ function plotCostCIO
     end
     
     plot(angles(:,1), cost(:,1))
-    
+    xlabel('\theta');
+    ylabel('Cost');
 
     % end
+    angleCost = [angles(:,1), cost(:,1)];
 
 end

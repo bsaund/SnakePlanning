@@ -1,4 +1,4 @@
-function plotCostTorques()
+function [angleCost] = plotCostTorques()
     close all
     num_links = 2;
     spring = 1000;
@@ -33,7 +33,7 @@ function plotCostTorques()
 
     %% PLOT
     figure
-    for spring = logspace(4,2.3010,50)
+    for spring = logspace(4,2.3010,10)
 
         for i=1:num_points
             % torques(i,:) = snake.getTorques(angles(i,:), world, ...
@@ -45,7 +45,35 @@ function plotCostTorques()
         end
         plot(angles(:,1), cost)
         axis([-2 2 0 .05]); 
-        text(-.5, .04, ['Spring Constant = ' num2str(round(spring))]);
+        text(-.5, .04, ['Spring Constant = ' ...
+                        num2str(round(spring))]);
+        title('Cost using spring model\\Cost= (Joint Torque)^2')
+        ylabel('Cost');
+        xlabel('Joint Angle: \theta');
         drawnow
     end
+    
+    %% Detailed Plot
+    figure
+    num_points = 1000;
+    angles = zeros(num_points,num_links);
+    angles(:,1) = linspace(-pi/2-.25, pi/2+.25, num_points)';
+    spring = 10000;
+    cost = [];
+    for i=1:num_points
+        % torques(i,:) = snake.getTorques(angles(i,:), world, ...
+        %                                              spring);
+        fun = getCostFunction1DSpringModel(snake, world, spring, ...
+                                                  angles(i,1));
+        costTmp = fun();
+        cost(i) = costTmp' * costTmp;
+    end
+    plot(angles(:,1), cost)
+    axis([-2 2 0 .05]); 
+    ylabel('Cost');
+    xlabel('Joint Angle: \theta');
+    
+    angleCost = [angles(:,1), cost'];
+
+    
 end
