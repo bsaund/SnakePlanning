@@ -52,6 +52,14 @@ function angleCost = plotCostCIO
     ylabel('c');
     zlabel('Cost');
     
+    view(30,30)
+    input('Press any key to pan', 's');
+    %Pan Camera
+    for camAngle = 30:-.2:0
+        view(camAngle, camAngle)
+        drawnow
+    end
+    
     
     %% Plot over angles using optimized c
     figure
