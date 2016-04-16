@@ -127,7 +127,7 @@ classdef SpherePlotter < handle
             tau = this.getTorques(angles, world, spring);
             this.drawNow = false;
             this.plot(angles);
-            this.updatePlotColors(abs(tau)*10);
+            this.updatePlotColors(abs(tau)/2);
             this.drawNow = true;
             drawnow;
         end
