@@ -3,8 +3,8 @@ function fig = showWorld(world)
     cad.faces = world.faces;
     cad.vertices = world.vertices;
     patch(cad,...
-          'FaceColor', [1,1,1],...
-          'EdgeColor', [0,0,0]);
+          'FaceColor', [0,1,0],...
+          'EdgeColor', 'none');
     axis('equal');
     
     pos = get(fig, 'position');
