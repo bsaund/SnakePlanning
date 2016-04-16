@@ -1,5 +1,5 @@
 function [optimizedAngles, contacts] = cioSinglePoint(goal_xyz, snake, world, ...
-                                                   initial_angles, ...
+                                                      initial_angles, ...
                                                       display)
 %Contact Invariant Optimization for a single point
 
@@ -14,19 +14,19 @@ end
 
 function [x,resnorm,residual,exitflag,output]  = ...
         optimizeAngles(initial_angles, goal_xyz, snake, world, display)
-    c = 0*initial_angles + 1;
+    c = 0*initial_angles + 10;
     initial_state = [initial_angles; c];
     
     function stop = plotOptim(x, varargin)
         global GLOBAL_TRAJ;
         [angles, c] = fullStateToVars(x);
-        optAngles = optimizeSinglePoint(snake, world, angles, ...
-                                        false);
-        snake.plotTorques(optAngles, world, 10000)
-        % snake.plotTorques(angles, world, 10000)
+        % optAngles = optimizeSinglePoint(snake, world, angles, ...
+        %                                 false);
+        % snake.plotTorques(optAngles, world, 10000)
+        snake.plotTorques(angles, world, 10000)
         % c
         
-        GLOBAL_TRAJ = [GLOBAL_TRAJ; optAngles'];
+        % GLOBAL_TRAJ = [GLOBAL_TRAJ; optAngles'];
         disp('New CIO position');
         % pause(1);
         stop = false;
@@ -73,11 +73,11 @@ function func = getCostFunction(initial_state, goal_xyz, snake, world);
         pointErr = fk(1:3, 4) - goal_xyz;
         % c = [tau; angleErr; 1000*pointErr];
         cPh = costPhysics(snake, world, state);
-        cCI = costContactInvariance(snake, world, state);
-        cTask = 1*pointErr;
-        % cObstacle = costObjectViolation(snake, world, state);
-        % c = [cPh; cCI; cTask; cObstacle];
-        c = [cPh; cCI; cTask];
+        cCI = 1*costContactInvariance(snake, world, state);
+        cTask = 10*pointErr;
+        cObstacle = costObjectViolation(snake, world, state);
+        c = [cPh; cCI; cTask; cObstacle];
+        % c = [cPh; cCI; cTask];
         
     end
     func = @cost;

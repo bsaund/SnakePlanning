@@ -87,7 +87,7 @@ classdef CioTrajectory < handle
 
                 pointErr = fk(1:3, 4) - goal_xyz;
 
-                cPh = costPhysics(this.arm, this.world, state);
+                cPh = costPhysicsStatic(this.arm, this.world, state);
                 cCI = 1*costContactInvariance(this.arm, this.world, state);
                 cTask = 10*pointErr;
                 cObstacle = costObjectViolation(this.arm, this.world, state);
