@@ -123,11 +123,15 @@ classdef SpherePlotter < handle
             
         end
         
-        function plotTorques(this, angles, world, spring)
+        function plotTorques(this, angles, world, spring, ...
+                             torque_limit)
+            if(nargin < 5)
+                torque_limit = 2;
+            end
             tau = this.getTorques(angles, world, spring);
             this.drawNow = false;
             this.plot(angles);
-            this.updatePlotColors(abs(tau)/2);
+            this.updatePlotColors(abs(tau)/torque_limit);
             this.drawNow = true;
             drawnow;
         end
