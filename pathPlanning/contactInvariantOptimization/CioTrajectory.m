@@ -30,6 +30,9 @@ classdef CioTrajectory < handle
             contacts = reshape(state(n+1:end),...
                               this.numJoints,...
                               this.numContacts);
+            contacts = repelem(contacts, 1, ceil(this.numTimeSteps/...
+                                              this.numContacts));
+            contacts = contacts(:, 1:this.numTimeSteps);
         end
         
         function optimizeTrajectory()
@@ -63,7 +66,7 @@ classdef CioTrajectory < handle
                                        'display','none');
             end
     
-            func = this.getCostFunction(goal_xyz);
+            func = this.getStaticCostFunction(goal_xyz);
             [lb, ub] = this.getBounds(p.Results.InitialAngles, c);
             [x,resnorm,residual,exitflag,output]  =... 
                 lsqnonlin(func, initial_state, lb, ub, options);
@@ -79,7 +82,7 @@ classdef CioTrajectory < handle
                   ones(size(c))*100];
         end
 
-        function func = getCostFunction(this, goal_xyz);
+        function func = getStaticCostFunction(this, goal_xyz);
             function c = cost(state)
 
                 [angles, c] = this.separateState(state);
@@ -88,7 +91,8 @@ classdef CioTrajectory < handle
                 pointErr = fk(1:3, 4) - goal_xyz;
 
                 cPh = costPhysicsStatic(this.arm, this.world, state);
-                cCI = 1*costContactInvariance(this.arm, this.world, state);
+                cCI = 1*costContactViolation(this.arm, this.world, ...
+                                             angles, c);
                 cTask = 10*pointErr;
                 cObstacle = costObjectViolation(this.arm, this.world, state);
                 c = [cPh; cCI; cTask; cObstacle];

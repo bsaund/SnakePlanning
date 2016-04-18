@@ -25,15 +25,15 @@ function [angleCost] = plotCostTorques()
     camtarget([0 0 0]);
 
     %% MOVIE
-    % for i=1:num_points
-    %     snake.plotTorques(angles(i,:)', world, spring)
-    % end
+    for i=1:num_points
+        snake.plotTorques(angles(i,:)', world, spring, .1)
+    end
 
 
 
     %% PLOT
     figure
-    for spring = logspace(4,2.3010,10)
+    for spring = logspace(4,2.3010,100)
 
         for i=1:num_points
             % torques(i,:) = snake.getTorques(angles(i,:), world, ...

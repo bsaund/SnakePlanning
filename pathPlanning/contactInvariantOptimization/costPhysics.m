@@ -1,4 +1,4 @@
-function cost = costPhysicsStatic(snake, world, state)
+function cost = costPhysics(snake, world, angles, c)
     [J, B, tau, W, R, A, b] = getPhysicsParams(snake, world, state);
     [f, u] = optimalRegularizedFU(J, B, tau, W, R, A, b);
         

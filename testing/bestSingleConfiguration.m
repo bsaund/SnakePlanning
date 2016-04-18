@@ -14,10 +14,10 @@ function optimTraj = bestSingleConfiguration()
         
     num_points = 30;
 %     traj = lineTrajectory([.5, 0, .025], [0,-.4, .2], num_points);
-    traj = lineTrajectory([.3, .0, .3], [0,-.4, .2], num_points);
+%     traj = lineTrajectory([.3, .0, .3], [0,-.4, .2], num_points);
 %     traj = lineTrajectory([0, -.30, .2], [0,-.4, .2], num_points);
 %     traj = lineTrajectory([0, .01, .2], [0,-.4, .2], num_points);
-%     traj = lineTrajectory([0, .3, .35], [0,-.4, .2], num_points);
+    traj = lineTrajectory([0, .3, .35], [0,-.4, .2], num_points);
     angle_traj = zeros(num_points, num_links);
 
 %     profile on
@@ -32,6 +32,7 @@ function optimTraj = bestSingleConfiguration()
     % angle_traj(end,:) = optimizeSinglePoint(snake, world, angle_traj(end,:), ...
     %                                       true);
     starting_angles = angle_traj(1,:)'
+    angle_traj(1,:)
     [optimizedAngles, contacts]  = cioSinglePoint(traj(1,:)',...
         snake, world, angle_traj(1,:)', true)
 %     for i=1:10
@@ -41,8 +42,11 @@ function optimTraj = bestSingleConfiguration()
 %     end
 
 %     profile viewer
-    
-    
+
+    optAngles = optimizeSinglePoint(snake, world, optimizedAngles, ...
+        false);
+    snake.plotTorques(optAngles, world, 10000)
+
     fk = snake.getKin().getFK('EndEffector', optimizedAngles);
     final_position = fk(1:3, 4)
     

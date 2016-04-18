@@ -1,4 +1,5 @@
 function cost = costContactInvariance(snake, world, state)
+%Cost of claiming to be in contact when in reality not in contact
     [angles, c] = fullStateToVars(state);
     cs = repelem(c, 3).^(.5);
     p = snake.getPoints(angles);
