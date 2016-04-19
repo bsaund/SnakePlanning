@@ -6,7 +6,8 @@ global GLOBAL_TRAJ
     
     load reasonableTraj.mat
     
-    worldName = '../worlds/block.stl';
+%     worldName = '../worlds/block.stl';
+    worldName = '../worlds/Simplified_wing_section.stl';
     world = stlread(worldName);
     showWorld(world);
     snake = SpherePlotter();

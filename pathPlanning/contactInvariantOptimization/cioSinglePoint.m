@@ -26,7 +26,8 @@ function [x,resnorm,residual,exitflag,output]  = ...
         snake.plotTorques(angles, world, 10000)
         % c
         
-        % GLOBAL_TRAJ = [GLOBAL_TRAJ; optAngles'];
+        GLOBAL_TRAJ = [GLOBAL_TRAJ; angles'];
+%         GLOBAL_TRAJ = [GLOBAL_TRAJ; optAngles'];
         disp('New CIO position');
         % pause(1);
         stop = false;
@@ -72,8 +73,8 @@ function func = getCostFunction(initial_state, goal_xyz, snake, world);
         % pointErr = fk(1:3, 4) - ee_init;
         pointErr = fk(1:3, 4) - goal_xyz;
         % c = [tau; angleErr; 1000*pointErr];
-        cPh = costPhysics(snake, world, state);
-        cCI = 1*costContactInvariance(snake, world, state);
+        cPh = costPhysicsStatic(snake, world, state);
+        cCI = .5*costContactInvariance(snake, world, state);
         cTask = 10*pointErr;
         cObstacle = costObjectViolation(snake, world, state);
         c = [cPh; cCI; cTask; cObstacle];
