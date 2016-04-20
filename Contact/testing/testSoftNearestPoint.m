@@ -6,12 +6,16 @@ function testSoftNearestPoint()
     light('Position',[5,0,10]);
     light('Position',[-5,0,10]);
 
+    stl.faces = world.faces;
+    stl.vertices = world.vertices;
 
 
     
     sphereCenter = [0;0;.1];
     radius = .03;
     h = patchSphere(sphereCenter, radius);
+    hs = scatter3(0,0,0);
+    ha = scatter3(0,0,0);
     view(3);
     
     while true
@@ -32,10 +36,19 @@ function testSoftNearestPoint()
         end
         sphereCenter = sphereCenter + .1*val;
         delete(h)
-        h = patchSphere(sphereCenter, radius)
-        p = softNearestPointToSphere(sphereCenter, world, radius, ...
-                                 10000)
-        dist = sqrt(sumsqr(p - sphereCenter)) - radius
+        delete(hs)
+        delete(ha)
+        h = patchSphere(sphereCenter, radius);
+
+        p_soft = softNearestPointToSphere(sphereCenter, world, radius, ...
+                                 1e10);
+        p_act = closestPointOnWorld_mex(sphereCenter, stl);
+        
+        p_soft - p_act
+        hs = scatter3(p_soft(1), p_soft(2), p_soft(3), 'b');
+        ha = scatter3(p_act(1), p_act(2), p_act(3), 'k');
+        dist = sqrt(sumsqr(p_soft - sphereCenter)) - radius
+        
     end
 end
 

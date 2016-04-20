@@ -53,7 +53,7 @@ function func = getCostFunction(initial_angles, snake, world, ...
         tau = snake.getTorques(angles, world, spring);
         angleErr = initial_angles-angles;
         fk = snake.getKin().getFK('EndEffector', angles);
-        pointErr = fk(1:3, 4) - ee_init;
+        pointErr = 100*(fk(1:3, 4) - ee_init);
         c = [tau; angleErr; pointErr];
     end
     func = @cost;

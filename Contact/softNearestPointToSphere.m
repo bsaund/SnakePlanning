@@ -22,9 +22,16 @@ function p_nearest = ...
                               v(f(i,1),:)',...
                               v(f(i,2),:)',...
                               v(f(i,3),:)');
-        d_sq_temp = (p_sphere_center-p_temp)'*(p_sphere_center - p_temp) - r_sq;
+        % d_sq_temp = (p_sphere_center-p_temp)'*(p_sphere_center - ...
+        %                                        p_temp) - r_sq;
+        d_sq_temp = (p_sphere_center-p_temp)'*(p_sphere_center - ...
+                                               p_temp);
         
-        weight = 1/(1 + smoothness_parameter * d_sq_temp);
+        d1 = d_sq_temp - r_sq;
+        d2 = (sqrt(d_sq_temp) - sphere_radius)^2;
+        
+        
+        weight = 1/(.00001 + smoothness_parameter * d2);
         p_nearest = p_nearest + weight*p_temp;
         
         weight_sum = weight_sum + weight;

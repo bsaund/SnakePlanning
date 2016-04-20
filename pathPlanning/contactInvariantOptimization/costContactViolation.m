@@ -10,6 +10,10 @@ function cost = costContactViolation(arm, world, all_angles, c)
         angles = all_angles(:,i);
         p_arm_center = arm.getPoints(angles);
         p_closest = closestPoints(arm, world, angles);
+        % p_closest = closestSoftPoints(arm, world, angles);
+        
+        % p_closest_act = closestPoints(arm, world, angles);
+        % p_closest - p_closest_act
         
         %Subtract the joint radius to get the distance from the
         %point on the world to the edge of the sphere, not the
