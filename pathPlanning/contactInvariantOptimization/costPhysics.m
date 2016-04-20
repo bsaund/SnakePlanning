@@ -1,9 +1,20 @@
-function cost = costPhysics(snake, world, angles, c)
-    [J, B, tau, W, R, A, b] = getPhysicsParams(snake, world, state);
-    [f, u] = optimalRegularizedFU(J, B, tau, W, R, A, b);
+function cost = costPhysics(arm, world, angles, c)
+%Returns the cost for the applied torque not matching the torque needed
+    cost = 0;
+    
+    for i=1:size(angles,2)
+        [J, B, W, R, A, b] = getPhysicsParams(arm, world, angles(:,i), ...
+                                                   c(:,i));
         
-    v = J'*f + B*u - tau;
-    cost = v;
+        tau = arm.getKin().getGravCompTorques(angles(:,i), [0 0 -1])';
+        
+        [f, u] = optimalRegularizedFU(J, B, tau, W, R, A, b);
+        
+        v = J'*f + B*u - tau;
+        cost = cost + v;
+    end
 end
+
+
 
 

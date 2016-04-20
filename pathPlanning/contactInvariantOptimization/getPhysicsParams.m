@@ -1,17 +1,14 @@
-function [J, B, tau, W, R, A, b] = ...
-    getPhysicsParams(snake, world, angles, c)
+function [J, B, W, R, A, b] = ...
+    getPhysicsParams(arm, world, angles, c)
     %See Mordatch Contact Invariant Optimization paper for details
-    % [angles, c] = fullStateToVars(state);
-    J_tmp = snake.getKin().getJacobian('CoM', angles);
+
+    J_tmp = arm.getKin().getJacobian('CoM', angles);
     n= size(J_tmp,3);
     J = zeros(3*n,n);
     for i=1:n
         ind = (1:3) + 3*(i-1);
         J(ind, :) = J_tmp(1:3,:,i);
     end
-
-    
-    tau = snake.getKin().getGravCompTorques(angles, [0 0 -1])';
     
     c_j = repelem(c, 3);
     
@@ -28,7 +25,7 @@ function [J, B, tau, W, R, A, b] = ...
     R = eye(size(angles,1));
     
     %Matrices defining the friction cone
-    [~, face] = closestPoints(snake, world, angles);
+    [~, face] = closestPoints(arm, world, angles);
     face;
     A = zeros(1,4*n);
     % b = zeros(4*n,1);

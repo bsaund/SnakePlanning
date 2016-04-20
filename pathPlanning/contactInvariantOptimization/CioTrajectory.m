@@ -22,6 +22,14 @@ classdef CioTrajectory < handle
             this.arm.getPoints(zeros(1,this.numJoints));
         end
         
+        function [angles, contacts] = ...
+                separateTrajectoryState(this, state)
+            [angles, c] = this.separateState(state);
+            angles = [this.startAngles, angles];
+            contacts = [zeros(size(c,1),1), c];
+
+        end
+        
         function [angles, contacts] = separateState(this, state)
             n = this.numJoints * this.numTimeSteps;
             angles = reshape(state(1:n),...
@@ -36,10 +44,39 @@ classdef CioTrajectory < handle
             % contacts(8:10) = 0;
         end
         
-        function optimizeTrajectory()
+        function [optimizedAngles, contacts] = optimizeTrajectory(this, varargin)
+            [options, initial_angles, initial_c, goal_xyz] = ...
+                this.parseOptimizeInput(varargin{:});
+                
+            func = this.getTrajectoryCostFunction(goal_xyz);
+            [lb, ub] = this.getBounds(initial_angles, initial_c);
+            initial_state = [initial_angles; initial_c];
+
+            [x,resnorm,residual,exitflag,output] = ... 
+                lsqnonlin(func, initial_state, lb, ub, options);
+            [optimizedAngles, contacts] = this.separateState(x);
+
         end
         
         function [optimizedAngles, contacts, eePoint] = optimizePoint(this, varargin)
+            [options, initial_angles, initial_c, goal_xyz] = ...
+                this.parseOptimizeInput(varargin{:});
+                
+            func = this.getStaticCostFunction(goal_xyz);
+            [lb, ub] = this.getBounds(initial_angles, initial_c);
+            initial_state = [initial_angles; initial_c];
+            [x,resnorm,residual,exitflag,output] = ... 
+                lsqnonlin(func, initial_state, lb, ub, options);
+            [optimizedAngles, contacts] = this.separateState(x);
+
+            fk = this.arm.getKin.getFK('EndEffector', optimizedAngles);
+            eePoint = fk(1:3,4);
+        end
+    end
+    
+    methods(Access = private, Hidden = true)
+        function [options, initial_angles, initial_c, goal_xyz] = ...
+                parseOptimizeInput(this, varargin)
             p = inputParser;
             
             expectedDisplayTypes = {'raw', 'optimized'};
@@ -48,13 +85,12 @@ classdef CioTrajectory < handle
             p.addParameter('display', false, ...
                            @(x) any(validatestring(x, ...
                                                    expectedDisplayTypes)));
-            
-            
             p.parse(varargin{:});
             
             goal_xyz = p.Results.EndEffectorGoal;
-            c = 0*p.Results.InitialAngles + 10;
-            initial_state = [p.Results.InitialAngles; c];
+            this.startAngles = p.Results.InitialAngles;
+            initial_angles = repmat(p.Results.InitialAngles, this.numTimeSteps,1);
+            initial_c = repmat(0*p.Results.InitialAngles, this.numContacts,1) + 10;
             
             maxIter = 1000;
             display = p.Results.display;
@@ -66,46 +102,50 @@ classdef CioTrajectory < handle
                 options = optimoptions('lsqnonlin','maxIter', maxIter,...
                                        'display','none');
             end
-    
-            func = this.getStaticCostFunction(goal_xyz);
-            [lb, ub] = this.getBounds(p.Results.InitialAngles, c);
-            [x,resnorm,residual,exitflag,output]  =... 
-                lsqnonlin(func, initial_state, lb, ub, options);
-            [optimizedAngles, contacts] = this.separateState(x);
-            fk = this.arm.getKin.getFK('EndEffector', optimizedAngles);
-            eePoint = fk(1:3,4);
         end
-    end
-    
-    methods(Access = private, Hidden = true)
+        
         function [lb, ub] = getBounds(this, angles, c)
-            lb = [ones(size(angles))*-pi/2;
-                  zeros(size(c));];
-            ub = [ones(size(angles))*pi/2;
-                  ones(size(c))*100];
+            lb = [ones(numel(angles),1)*-pi/2;
+                  zeros(numel(c),1);];
+            ub = [ones(numel(angles),1)*pi/2;
+                  ones(numel(c),1)*100];
+        end
+
+        function func = getTrajectoryCostFunction(this, goal_xyz);
+            function c = cost(state)
+                [angles, c] = this.separateTrajectoryState(state);
+
+                fk = this.arm.getKin.getFK('EndEffector', angles(:,end));
+                pointErr = fk(1:3, 4) - goal_xyz;
+
+                cPh = costPhysics(this.arm, this.world, angles, c);
+                cCI = 100*costContactViolation(this.arm, this.world, ...
+                                               angles, c);
+                cTask = 100*pointErr;
+                cObstacle = 100*costObjectViolation(this.arm, this.world, angles);
+                c = [cPh; cCI; cTask; cObstacle];
+                % c = [cPh; cCI; cTask];
+            end
+            func = @cost;
         end
 
         function func = getStaticCostFunction(this, goal_xyz);
             function c = cost(state)
-
                 [angles, c] = this.separateState(state);
                 fk = this.arm.getKin.getFK('EndEffector', angles);
 
                 pointErr = fk(1:3, 4) - goal_xyz;
 
-                cPh = costPhysicsStatic(this.arm, this.world, angles, ...
-                                        c);
+                cPh = costPhysicsStatic(this.arm, this.world, angles, c);
                 cCI = 100*costContactViolation(this.arm, this.world, ...
-                                             angles, c);
+                                               angles, c);
                 cTask = 100*pointErr;
-                cObstacle = 100*costObjectViolation(this.arm, this.world, state);
+                cObstacle = 100*costObjectViolation(this.arm, this.world, angles);
                 c = [cPh; cCI; cTask; cObstacle];
                 % c = [cPh; cCI; cTask];
-                
             end
             func = @cost;
         end
-
 
         function plotFunc = getPlotFunc(this, displayType)
             function stop = plotter(x, varargin)
@@ -116,8 +156,17 @@ classdef CioTrajectory < handle
                                                     this.world, ...
                                                     angles, false);
                 end
-                this.arm.plotTorques(angles, this.world, ...
-                                     10000);
+                if(size(angles,2) > 1)
+                    [angles, c] = this.separateTrajectoryState(x);
+                    for i=1:size(angles,2)
+                        this.arm.plotTorques(angles(:,i), this.world, ...
+                                             10000);
+                        pause(.4)
+                    end
+                else
+                    this.arm.plotTorques(angles, this.world, ...
+                                         10000);
+                end
 
                 stop = false;
             end
@@ -125,14 +174,13 @@ classdef CioTrajectory < handle
         end
     end
     
-    
-    
     properties(Access = public, Hidden = true)
         arm
         numJoints
         numTimeSteps
         numContacts
         world
+        startAngles;
     end
     
 end
