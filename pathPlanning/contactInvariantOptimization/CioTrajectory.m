@@ -33,12 +33,13 @@ classdef CioTrajectory < handle
             contacts = repelem(contacts, 1, ceil(this.numTimeSteps/...
                                               this.numContacts));
             contacts = contacts(:, 1:this.numTimeSteps);
+            % contacts(8:10) = 0;
         end
         
         function optimizeTrajectory()
         end
         
-        function [optimizedAngles, contacts] = optimizePoint(this, varargin)
+        function [optimizedAngles, contacts, eePoint] = optimizePoint(this, varargin)
             p = inputParser;
             
             expectedDisplayTypes = {'raw', 'optimized'};
@@ -71,6 +72,8 @@ classdef CioTrajectory < handle
             [x,resnorm,residual,exitflag,output]  =... 
                 lsqnonlin(func, initial_state, lb, ub, options);
             [optimizedAngles, contacts] = this.separateState(x);
+            fk = this.arm.getKin.getFK('EndEffector', optimizedAngles);
+            eePoint = fk(1:3,4);
         end
     end
     
@@ -90,11 +93,12 @@ classdef CioTrajectory < handle
 
                 pointErr = fk(1:3, 4) - goal_xyz;
 
-                cPh = costPhysicsStatic(this.arm, this.world, state);
-                cCI = 1*costContactViolation(this.arm, this.world, ...
+                cPh = costPhysicsStatic(this.arm, this.world, angles, ...
+                                        c);
+                cCI = 100*costContactViolation(this.arm, this.world, ...
                                              angles, c);
-                cTask = 10*pointErr;
-                cObstacle = costObjectViolation(this.arm, this.world, state);
+                cTask = 100*pointErr;
+                cObstacle = 10*costObjectViolation(this.arm, this.world, state);
                 c = [cPh; cCI; cTask; cObstacle];
                 % c = [cPh; cCI; cTask];
                 

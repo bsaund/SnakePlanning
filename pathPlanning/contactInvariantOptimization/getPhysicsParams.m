@@ -1,7 +1,7 @@
-function [J, B, tau, W, R, A, b] = getPhysicsParams(snake, world, ...
-                                                           state)
+function [J, B, tau, W, R, A, b] = ...
+    getPhysicsParams(snake, world, angles, c)
     %See Mordatch Contact Invariant Optimization paper for details
-    [angles, c] = fullStateToVars(state);
+    % [angles, c] = fullStateToVars(state);
     J_tmp = snake.getKin().getJacobian('CoM', angles);
     n= size(J_tmp,3);
     J = zeros(3*n,n);
