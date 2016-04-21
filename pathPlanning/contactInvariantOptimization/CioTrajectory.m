@@ -23,7 +23,7 @@ classdef CioTrajectory < handle
         end
         
         function [angles, contacts] = ...
-                separateTrajectoryState(this, state)
+                separateStateWithInitial(this, state)
             [angles, c] = this.separateState(state);
             angles = [this.startAngles, angles];
             contacts = [zeros(size(c,1),1), c];
@@ -54,8 +54,8 @@ classdef CioTrajectory < handle
 
             [x,resnorm,residual,exitflag,output] = ... 
                 lsqnonlin(func, initial_state, lb, ub, options);
-            [optimizedAngles, contacts] = this.separateTrajectoryState(x);
-
+            [optimizedAngles, contacts] = this.separateStateWithInitial(x);
+            final_cost = func(x)
         end
         
         function [optimizedAngles, contacts, eePoint] = optimizePoint(this, varargin)
@@ -71,6 +71,7 @@ classdef CioTrajectory < handle
 
             fk = this.arm.getKin.getFK('EndEffector', optimizedAngles);
             eePoint = fk(1:3,4);
+            final_cost = func(x)
         end
     end
     
@@ -79,9 +80,10 @@ classdef CioTrajectory < handle
                 parseOptimizeInput(this, varargin)
             p = inputParser;
             
-            expectedDisplayTypes = {'raw', 'optimized'};
+            expectedDisplayTypes = {'raw', 'optimized', 'none'};
             p.addParameter('EndEffectorGoal', []);
             p.addParameter('InitialAngles', zeros(this.numJoints,1));
+            p.addParameter('maxIter', 1000);
             p.addParameter('display', false, ...
                            @(x) any(validatestring(x, ...
                                                    expectedDisplayTypes)));
@@ -92,9 +94,9 @@ classdef CioTrajectory < handle
             initial_angles = repmat(p.Results.InitialAngles, this.numTimeSteps,1);
             initial_c = repmat(0*p.Results.InitialAngles, this.numContacts,1) + 10;
             
-            maxIter = 1000;
+            maxIter = p.Results.maxIter;
             display = p.Results.display;
-            if(display)
+            if(strcmpi('raw',display) || strcmpi('optimized',display))
                 options = optimoptions('lsqnonlin','maxIter', maxIter, ...
                                        'maxFunEvals', maxIter,...
                                        'OutputFcn', this.getPlotFunc(display));
@@ -113,7 +115,7 @@ classdef CioTrajectory < handle
 
         function func = getTrajectoryCostFunction(this, goal_xyz);
             function c = cost(state)
-                [angles, con] = this.separateTrajectoryState(state);
+                [angles, con] = this.separateState(state);
 
                 fk = this.arm.getKin.getFK('EndEffector', angles(:,end));
                 pointErr = fk(1:3, 4) - goal_xyz;
@@ -121,9 +123,10 @@ classdef CioTrajectory < handle
                 cPh = costPhysics(this.arm, this.world, angles, con);
                 cCI = 100*costContactViolation(this.arm, this.world, ...
                                                angles, con);
-                cTask = 100*pointErr;
+                cTask = 10000*pointErr;
+                cDistance = 10*costDistErr([this.startAngles, angles]).^2;
                 cObstacle = 1000*costObjectViolation(this.arm, this.world, angles);
-                c = [cPh; cCI; cTask; cObstacle];
+                c = [cPh; cCI; cTask; cObstacle; cDistance];
                 % c = [cPh; cCI; cTask];
             end
             func = @cost;
@@ -141,8 +144,8 @@ classdef CioTrajectory < handle
                 cCI = 100*costContactViolation(this.arm, this.world, ...
                                                angles, c);
                 cTask = 100*pointErr;
-                cObstacle = 1000*costObjectViolation(this.arm, this.world, angles);
-                c = [cPh; cCI; cTask; cObstacle];
+                cObstacle = 100*costObjectViolation(this.arm, this.world, angles);
+                c = [cPh; cCI; cTask; cObstacle;];
                 % c = [cPh; cCI; cTask];
             end
             func = @cost;
@@ -158,7 +161,7 @@ classdef CioTrajectory < handle
                                                     angles, false);
                 end
                 if(size(angles,2) > 1)
-                    [angles, c] = this.separateTrajectoryState(x);
+                    [angles, c] = this.separateStateWithInitial(x);
                     for i=1:size(angles,2)
                         this.arm.plotTorques(angles(:,i), this.world, ...
                                              10000);

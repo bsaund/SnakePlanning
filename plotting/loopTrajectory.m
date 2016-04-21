@@ -1,6 +1,9 @@
-function loopTrajectory(snake, world, spring, angle_traj)
+function loopTrajectory(snake, world, spring, angle_traj, useRealistic)
 %% Repeat trajectory
-    useRealistic = true;
+    angle_traj = angle_traj';
+    if(nargin < 5)
+        useRealistic = false;
+    end
     plt = HebiPlotter('resolution','high', 'drawWhen', 'later');
     while true
         for i= 1:size(angle_traj, 1)
@@ -10,6 +13,7 @@ function loopTrajectory(snake, world, spring, angle_traj)
                 snake.plotTorques(angle_traj(i,:), world, spring);
             end
             axis([-1,1,-1,1,-1,1])
+            % axis(.5*[-1,1,-1,1,-1,1])
             drawnow
         end
 %         useRealistic = ~useRealistic;

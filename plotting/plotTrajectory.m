@@ -1,6 +1,5 @@
-function plotTrajectory(snake, world, spring, trajectory)
+function plotTrajectory(arm, world, spring, trajectory)
     for i = 1:size(trajectory,1)
-        snake.plotTorques(trajectory(i,:), world, spring);
+        arm.plotTorques(trajectory(i,:), world, spring);
     end
-
 end
