@@ -1,7 +1,7 @@
-function c = costObjectViolation(arm, world, angles)
+function cost = costObjectViolation(arm, world, angles)
 %I am adding this as a cost term for when the arm arm is inside
 %an obstacle. 
-    cost = 0;
+    cost = [];
     for i=1:size(angles,2)
         p = arm.getPoints(angles(:,i));
         [p_closest, face] = closestPoints(arm, world, angles(:,i));

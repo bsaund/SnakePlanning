@@ -54,7 +54,7 @@ classdef CioTrajectory < handle
 
             [x,resnorm,residual,exitflag,output] = ... 
                 lsqnonlin(func, initial_state, lb, ub, options);
-            [optimizedAngles, contacts] = this.separateState(x);
+            [optimizedAngles, contacts] = this.separateTrajectoryState(x);
 
         end
         
@@ -113,16 +113,16 @@ classdef CioTrajectory < handle
 
         function func = getTrajectoryCostFunction(this, goal_xyz);
             function c = cost(state)
-                [angles, c] = this.separateTrajectoryState(state);
+                [angles, con] = this.separateTrajectoryState(state);
 
                 fk = this.arm.getKin.getFK('EndEffector', angles(:,end));
                 pointErr = fk(1:3, 4) - goal_xyz;
 
-                cPh = costPhysics(this.arm, this.world, angles, c);
+                cPh = costPhysics(this.arm, this.world, angles, con);
                 cCI = 100*costContactViolation(this.arm, this.world, ...
-                                               angles, c);
+                                               angles, con);
                 cTask = 100*pointErr;
-                cObstacle = 100*costObjectViolation(this.arm, this.world, angles);
+                cObstacle = 1000*costObjectViolation(this.arm, this.world, angles);
                 c = [cPh; cCI; cTask; cObstacle];
                 % c = [cPh; cCI; cTask];
             end
@@ -137,10 +137,11 @@ classdef CioTrajectory < handle
                 pointErr = fk(1:3, 4) - goal_xyz;
 
                 cPh = costPhysicsStatic(this.arm, this.world, angles, c);
+                % cPh = costPhysics(this.arm, this.world, angles, c);
                 cCI = 100*costContactViolation(this.arm, this.world, ...
                                                angles, c);
                 cTask = 100*pointErr;
-                cObstacle = 100*costObjectViolation(this.arm, this.world, angles);
+                cObstacle = 1000*costObjectViolation(this.arm, this.world, angles);
                 c = [cPh; cCI; cTask; cObstacle];
                 % c = [cPh; cCI; cTask];
             end

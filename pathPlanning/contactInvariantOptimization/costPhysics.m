@@ -1,17 +1,27 @@
-function cost = costPhysics(arm, world, angles, c)
+function cost = costPhysics(arm, world, angles, con)
 %Returns the cost for the applied torque not matching the torque needed
-    cost = 0;
+    cost = [];
+    n = size(angles,2);
     
-    for i=1:size(angles,2)
-        [J, B, W, R, A, b] = getPhysicsParams(arm, world, angles(:,i), ...
-                                                   c(:,i));
+    kin = arm.getKin();
+    
+    for i=1:n
+        theta = angles(:,i);
+        [J, B, W, R, A, b] = getPhysicsParams(arm, world, theta, ...
+                                                   con(:,i));
         
-        tau = arm.getKin().getGravCompTorques(angles(:,i), [0 0 -1])';
+        tau = kin.getGravCompTorques(angles(:,i), [0 0 -1])';
+        
+        if (i > 1) && (i < n)
+            v = (angles(:,i+1) - angles(:,i-1))/2;
+            
+            % tau = tau + kin.getDynamicsCompTorques()
+        end
         
         [f, u] = optimalRegularizedFU(J, B, tau, W, R, A, b);
         
-        v = J'*f + B*u - tau;
-        cost = cost + v;
+        torqueErr = J'*f + B*u - tau;
+        cost = [cost; torqueErr];
     end
 end
 

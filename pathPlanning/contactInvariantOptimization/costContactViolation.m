@@ -1,4 +1,4 @@
-function cost = costContactViolation(arm, world, all_angles, c)
+function cost = costContactViolation(arm, world, all_angles, con)
 %Cost of claiming to be in contact when in reality not in contact
 
 % 
@@ -6,7 +6,7 @@ function cost = costContactViolation(arm, world, all_angles, c)
     %For each time step sum the cost
     for i = 1:size(all_angles,2)
         
-        cs = repelem(c(:,i), 3).^(.5);
+        cs = repelem(con(:,i), 3).^(.5);
         angles = all_angles(:,i);
         p_arm_center = arm.getPoints(angles);
         p_closest = closestPoints(arm, world, angles);
