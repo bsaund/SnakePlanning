@@ -11,6 +11,7 @@ function costFun = getCostFunction1DSpringModel(snake, world, spring, ...
         
         cTask = .5*pointErr;
         cost = [torques(1); cTask];
+        % cost = [torques(1)];
     end
     
     costFun=@costFunction;

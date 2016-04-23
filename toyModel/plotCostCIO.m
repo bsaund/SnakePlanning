@@ -53,6 +53,7 @@ function angleCost = plotCostCIO
     zlabel('Cost');
     
     view(30,30)
+    drawnow
     input('Press any key to pan', 's');
     %Pan Camera
     for camAngle = 30:-.2:0
