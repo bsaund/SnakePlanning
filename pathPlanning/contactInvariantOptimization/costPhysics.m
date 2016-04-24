@@ -3,19 +3,29 @@ function cost = costPhysics(arm, world, angles, con)
     cost = [];
     n = size(angles,2);
     
+    dt = .1;
+    
     kin = arm.getKin();
     
-    for i=1:n
+    for i=2:n
         theta = angles(:,i);
         [J, B, W, R, A, b] = getPhysicsParams(arm, world, theta, ...
-                                                   con(:,i));
+                                                   con(:,i-1));
         
-        tau = kin.getGravCompTorques(angles(:,i), [0 0 -1])';
+        tau = kin.getGravCompTorques(theta, [0 0 -1])';
         
         if (i > 1) && (i < n)
-            v = (angles(:,i+1) - angles(:,i-1))/2;
+            v = (angles(:,i+1) - angles(:,i-1))/(2*dt);
+            a = (angles(:,i+1) - 2*theta + angles(:,i-1))/(dt^2);
             
-            % tau = tau + kin.getDynamicsCompTorques()
+            tau = tau - kin.getDynamicCompTorques(theta, theta,...
+                                                          v, a)';
+        elseif (i==n)
+            v = (angles(:,i) - angles(:,i-1))/(dt);
+            a = (angles(:,i) - 2*theta + angles(:,i-1))/(dt^2);
+            
+            tau = tau - kin.getDynamicCompTorques(theta, theta,...
+                                                          v, a)';
         end
         
         [f, u] = optimalRegularizedFU(J, B, tau, W, R, A, b);

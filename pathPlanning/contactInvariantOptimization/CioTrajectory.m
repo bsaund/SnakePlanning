@@ -55,7 +55,7 @@ classdef CioTrajectory < handle
             [x,resnorm,residual,exitflag,output] = ... 
                 lsqnonlin(func, initial_state, lb, ub, options);
             [optimizedAngles, contacts] = this.separateStateWithInitial(x);
-            final_cost = func(x)
+            final_cost = func(x, true)
         end
         
         function [optimizedAngles, contacts, eePoint] = optimizePoint(this, varargin)
@@ -114,20 +114,32 @@ classdef CioTrajectory < handle
         end
 
         function func = getTrajectoryCostFunction(this, goal_xyz);
-            function c = cost(state)
+            function c = cost(state, debug)
+                if(nargin < 2)
+                    debug = false;
+                end
                 [angles, con] = this.separateState(state);
 
                 fk = this.arm.getKin.getFK('EndEffector', angles(:,end));
                 pointErr = fk(1:3, 4) - goal_xyz;
 
-                cPh = costPhysics(this.arm, this.world, angles, con);
+                cPh = costPhysics(this.arm, this.world, ...
+                                  [this.startAngles, angles],...
+                                  con);
                 cCI = 100*costContactViolation(this.arm, this.world, ...
                                                angles, con);
-                cTask = 10000*pointErr;
+                cTask = 100*pointErr;
                 cDistance = 10*costDistErr([this.startAngles, angles]).^2;
                 cObstacle = 1000*costObjectViolation(this.arm, this.world, angles);
-                c = [cPh; cCI; cTask; cObstacle; cDistance];
+                % c = [cPh; cCI; cTask; cObstacle; cDistance];
+                c = [cPh; cCI; cTask; cObstacle];
                 % c = [cPh; cCI; cTask];
+                if(debug)
+                    cPh = reshape(cPh, this.numJoints, this.numTimeSteps)
+                    cCI = reshape(cCI, this.numJoints*3, this.numTimeSteps)
+                    cTask
+                    cObstacle = reshape(cObstacle, this.numJoints, this.numTimeSteps)
+                end
             end
             func = @cost;
         end

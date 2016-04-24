@@ -1,11 +1,12 @@
 close all
 
 
-worldName = '../../worlds/block.stl';
-% worldName = '../../worlds/flat.stl';
+% worldName = '../../worlds/bumpy.stl';
+% worldName = '../../worlds/block.stl';
+worldName = '../../worlds/flat.stl';
 world = loadWorld(worldName);
 
-if true
+if false
     %% Optimize Single Point
     traj = CioTrajectory('numJoints', 10, 'numTimeSteps', 1,...
                          'numContacts', 1, 'world', world);
@@ -45,10 +46,10 @@ if true
     goal = [.4, -.1, .1]';
 
     
-    % initial_angles = [1.5706, 1.2141, -0.0746, -0.0241, -0.0820, ...
-    %                   0.1485, 0.9089, -0.6175, -0.4330, -0.2632]';
-    initial_angles = [1.2619, -0.3965, 0.9298, 0.6572, 0.5007, ...
-                      0.0345, 1.5574, 0.1510, -0.4365, -1.1502]';
+    initial_angles = [1.5706, 1.2141, -0.0746, -0.0241, -0.0820, ...
+                      0.1485, 0.9089, -0.6175, -0.4330, -0.2632]';
+    % initial_angles = [1.2619, -0.3965, 0.9298, 0.6572, 0.5007, ...
+    %                   0.0345, 1.5574, 0.1510, -0.4365, -1.1502]';
     [angles, c] = traj.optimizeTrajectory(...
         'EndEffectorGoal', goal, ...
         'display', 'none',...
