@@ -83,6 +83,8 @@ classdef CioTrajectory < handle
             expectedDisplayTypes = {'raw', 'optimized', 'none'};
             p.addParameter('EndEffectorGoal', []);
             p.addParameter('InitialAngles', zeros(this.numJoints,1));
+            p.addParameter('SeedAngles', ...
+                           zeros(this.numJoints * this.numTimeSteps,1));
             p.addParameter('maxIter', 1000);
             p.addParameter('display', false, ...
                            @(x) any(validatestring(x, ...
@@ -91,7 +93,13 @@ classdef CioTrajectory < handle
             
             goal_xyz = p.Results.EndEffectorGoal;
             this.startAngles = p.Results.InitialAngles;
-            initial_angles = repmat(p.Results.InitialAngles, this.numTimeSteps,1);
+
+            if(strmatch('SeedAngles', p.UsingDefaults))
+                initial_angles = repmat(p.Results.InitialAngles, ...
+                                        this.numTimeSteps,1);
+            else
+                initial_angles = p.Results.SeedAngles;
+            end
             initial_c = repmat(0*p.Results.InitialAngles, this.numContacts,1) + 10;
             
             maxIter = p.Results.maxIter;
@@ -128,7 +136,7 @@ classdef CioTrajectory < handle
                                   con);
                 cCI = 100*costContactViolation(this.arm, this.world, ...
                                                angles, con);
-                cTask = 100*pointErr;
+                cTask = 1000*pointErr;
                 cDistance = 10*costDistErr([this.startAngles, angles]).^2;
                 cObstacle = 1000*costObjectViolation(this.arm, this.world, angles);
                 % c = [cPh; cCI; cTask; cObstacle; cDistance];

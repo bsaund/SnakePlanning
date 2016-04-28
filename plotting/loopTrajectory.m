@@ -15,8 +15,11 @@ function loopTrajectory(snake, world, spring, angle_traj, useRealistic)
             axis([-1,1,-1,1,-1,1])
             % axis(.5*[-1,1,-1,1,-1,1])
             drawnow
+            if(i==1)
+                pause(3)
+            end
         end
-        pause(1)
+        pause(3)
 %         useRealistic = ~useRealistic;
     end
 
