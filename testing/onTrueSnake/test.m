@@ -13,6 +13,7 @@ if true
     %% Optimize Single Point
     traj = CioTrajectory('numJoints', numJoints, 'numTimeSteps', 1,...
                          'numContacts', 1, 'world', world);
+    
     fr=[1, 0, 0,  0;
         0, 0, -1, 0;
         0, 1, 0,  0.05;
@@ -20,10 +21,10 @@ if true
     traj.arm.setBaseFrame(fr);
 
 
-    goal = [.1, .2, .5]';
+    goal = [-.4, 0, .4]';
 
     initial_angles = zeros(numJoints,1);
-    initial_angles(2) = -pi/2;
+    % initial_angles(2) = -pi/2;
 
     [angles, c, ee] = traj.optimizePoint(...
         'EndEffectorGoal', goal, ...
@@ -34,7 +35,7 @@ end
 
 if true
     %% Optiize Trajectory
-    numTimeSteps = 5;
+    numTimeSteps = 10;
     traj = CioTrajectory('numJoints', numJoints, 'numTimeSteps', numTimeSteps,...
                          'numContacts', 6, 'world', world);
     traj.arm.setBaseFrame(fr);
@@ -54,7 +55,7 @@ if true
         'display', 'progress',...
         'initialAngles', initial_angles,...
         'seedAngles', seedAngles,...
-        'maxIter', 10)
+        'maxIter', 30)
     
     angles = interpolateTrajectory(angles, 10);
     
