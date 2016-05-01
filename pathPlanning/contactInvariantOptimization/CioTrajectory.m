@@ -80,7 +80,8 @@ classdef CioTrajectory < handle
                 parseOptimizeInput(this, varargin)
             p = inputParser;
             
-            expectedDisplayTypes = {'raw', 'optimized', 'none'};
+            expectedDisplayTypes = {'raw', 'optimized', 'progress', ...
+                                'none'};
             p.addParameter('EndEffectorGoal', []);
             p.addParameter('InitialAngles', zeros(this.numJoints,1));
             p.addParameter('SeedAngles', ...
@@ -107,7 +108,11 @@ classdef CioTrajectory < handle
             if(strcmpi('raw',display) || strcmpi('optimized',display))
                 options = optimoptions('lsqnonlin','maxIter', maxIter, ...
                                        'maxFunEvals', maxIter,...
-                                       'OutputFcn', this.getPlotFunc(display));
+                                       'OutputFcn', ...
+                                       this.getPlotFunc(display));
+            elseif(strcmpi('progress', display))
+                options = optimoptions('lsqnonlin','maxIter', maxIter,...
+                                       'display','iter');
             else
                 options = optimoptions('lsqnonlin','maxIter', maxIter,...
                                        'display','none');
@@ -196,6 +201,17 @@ classdef CioTrajectory < handle
             end
             plotFunc = @plotter;
         end
+        
+    end
+    methods(Static)
+        function m = roty(theta)
+        %Homogeneous transform matrix for a rotation about y
+            m = [cos(theta),  0, sin(theta), 0;
+                 0,           1, 0,          0;
+                 -sin(theta), 0, cos(theta), 0;
+                 0,           0, 0,          1];
+        end
+
     end
     
     properties(Access = public, Hidden = true)
