@@ -4,7 +4,8 @@ close all
 % worldName = '../../worlds/bumpy.stl';
 % worldName = '../../worlds/block.stl';
 % worldName = '../../worlds/flat.stl';
-worldName = '../../worlds/ledge.stl';
+% worldName = '../../worlds/ledge.stl';
+worldName = '../../worlds/higherLedge.stl';
 world = loadWorld(worldName);
 
 numJoints = 17;
@@ -18,9 +19,9 @@ fr=[1, 0, 0,  0;
 traj.setBaseFrame(fr);
 
 traj.setStartConfig(zeros(numJoints,1));
-traj.addSegment([-.2; -.1; .1]);
-traj.addSegment([-.2;.1;.4]);
-traj.addSegment([-.2;.3;.5]);
+traj.addSegment([-.2; -.1; .2], 4);
+traj.addSegment([-.2;.1;.4],4);
+traj.addSegment([-.2;.35;.4],4);
 
 
 

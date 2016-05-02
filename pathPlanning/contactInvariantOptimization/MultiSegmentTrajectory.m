@@ -26,8 +26,17 @@ classdef MultiSegmentTrajectory < handle
             this.trajectory = config;
         end
         
-        function addSegment(this, goal)
+        function addSegment(this, goal, numTimeSteps)
             initialAngles = this.trajectory(:,end);
+            prevNumTS = this.trajOptimizer.numTimeSteps;
+            prevNumC = this.trajOptimizer.numContacts;
+            
+            if(nargin == 3)
+                this.trajOptimizer.numTimeSteps = numTimeSteps;
+                this.trajOptimizer.numContacts = numTimeSteps;
+            end
+            
+            
             ts = this.trajOptimizer.numTimeSteps;
             nj = this.trajOptimizer.numJoints;
             goalAngles = ...
@@ -46,6 +55,10 @@ classdef MultiSegmentTrajectory < handle
                 'maxIter', 10)
 
             this.trajectory = [this.trajectory, angles(:,2:end)];
+            
+            this.trajOptimizer.numTimeSteps = prevNumTS;
+            this.trajOptimizer.numContacts = prevNumC;
+
         end
         
         function showTrajectory(this, interpFactor)
