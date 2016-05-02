@@ -87,7 +87,7 @@ traj.trajOptimizer.arm.plot(angles);
 % disp('FINISHED SEGMENT 4')
 
 
-return
+
 
 traj.addSegment([-.2; -.45; .2], 4);
 traj.addSegment([-.2; -.45; .5], 4);
