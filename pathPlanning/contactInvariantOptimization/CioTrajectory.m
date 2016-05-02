@@ -2,6 +2,7 @@ classdef CioTrajectory < handle
     
     
     methods(Access = public)
+        
         function this = CioTrajectory(varargin)
             p = inputParser;
             p.addParameter('numJoints', 0);
@@ -168,7 +169,7 @@ classdef CioTrajectory < handle
                 % cPh = costPhysics(this.arm, this.world, angles, c);
                 cCI = 100*costContactViolation(this.arm, this.world, ...
                                                angles, c);
-                cTask = 100*pointErr;
+                cTask = 1000*pointErr;
                 cObstacle = 100*costObjectViolation(this.arm, this.world, angles);
                 c = [cPh; cCI; cTask; cObstacle;];
                 % c = [cPh; cCI; cTask];

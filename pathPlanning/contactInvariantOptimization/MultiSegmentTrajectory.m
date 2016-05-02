@@ -42,6 +42,9 @@ classdef MultiSegmentTrajectory < handle
             goalAngles = ...
                 this.pointOptimizer.optimizePoint('EndEffectorGoal', goal,...
                                                   'initialAngles', initialAngles);
+            this.trajOptimizer.arm.plot(goalAngles);
+            disp('plotted goal angles');
+            
             seedAngles = interpolateTrajectory(...
                 [initialAngles, goalAngles], ts-1);
                 
@@ -65,12 +68,18 @@ classdef MultiSegmentTrajectory < handle
             extraAngles = interpolateTrajectory(this.trajectory, interpFactor);        
             loopTrajectory(this.trajOptimizer.arm, ...
                            this.trajOptimizer.world, ...
-                           10000, extraAngles);
+                           10000, extraAngles, true);
         end
         
         function setBaseFrame(this,fr)
             this.trajOptimizer.arm.setBaseFrame(fr);
             this.pointOptimizer.arm.setBaseFrame(fr);
+        end
+        
+        function reset(this)
+            
+            this.trajOptimizer.arm.remakeKin();
+            showWorld(this.trajOptimizer.world);
         end
     end
     

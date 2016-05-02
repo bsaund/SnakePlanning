@@ -151,6 +151,12 @@ classdef SpherePlotter < handle
             kin = this.kin;
         end
         
+        function remakeKin(this)
+            this.setKinematicsFromJointTypes(this.jointTypes);
+            this.setBaseFrame(this.frame);
+            this.firstRun = true;
+        end
+        
     end
     
     methods(Access = private, Hidden = true)
