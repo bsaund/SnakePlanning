@@ -72,7 +72,8 @@ classdef CioTrajectory < handle
 
             fk = this.arm.getKin.getFK('EndEffector', optimizedAngles);
             eePoint = fk(1:3,4);
-            final_cost = func(x)
+            final_cost = func(x, true);
+            final_cost_val = final_cost'*final_cost
         end
     end
     
@@ -110,7 +111,8 @@ classdef CioTrajectory < handle
                 options = optimoptions('lsqnonlin','maxIter', maxIter, ...
                                        'maxFunEvals', maxIter,...
                                        'OutputFcn', ...
-                                       this.getPlotFunc(display));
+                                       this.getPlotFunc(display),...
+                                       'display', 'iter');
             elseif(strcmpi('progress', display))
                 options = optimoptions('lsqnonlin','maxIter', maxIter,...
                                        'display','iter');
@@ -159,19 +161,31 @@ classdef CioTrajectory < handle
         end
 
         function func = getStaticCostFunction(this, goal_xyz);
-            function c = cost(state)
-                [angles, c] = this.separateState(state);
+            function c = cost(state, debug)
+                if(nargin < 2)
+                    debug = false;
+                end
+
+                [angles, con] = this.separateState(state);
                 fk = this.arm.getKin.getFK('EndEffector', angles);
 
                 pointErr = fk(1:3, 4) - goal_xyz;
 
-                cPh = costPhysicsStatic(this.arm, this.world, angles, c);
+                cPh = costPhysicsStatic(this.arm, this.world, angles, con);
                 % cPh = costPhysics(this.arm, this.world, angles, c);
                 cCI = 100*costContactViolation(this.arm, this.world, ...
-                                               angles, c);
-                cTask = 1000*pointErr;
-                cObstacle = 100*costObjectViolation(this.arm, this.world, angles);
+                                               angles, con);
+                cTask = 100*pointErr;
+                cObstacle = 1000*costObjectViolation(this.arm, this.world, angles);
                 c = [cPh; cCI; cTask; cObstacle;];
+
+                if(debug)
+                    cPh = reshape(cPh, this.numJoints, this.numTimeSteps)
+                    cCI = reshape(cCI, this.numTimeSteps*3, this.numJoints)'
+                    cTask
+                    cObstacle = reshape(cObstacle, this.numJoints, this.numTimeSteps)
+                end
+
                 % c = [cPh; cCI; cTask];
             end
             func = @cost;

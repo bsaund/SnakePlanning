@@ -5,7 +5,9 @@ close all
 % worldName = '../../worlds/block.stl';
 % worldName = '../../worlds/flat.stl';
 % worldName = '../../worlds/ledge.stl';
-worldName = '../../../worlds/Simplified_wing_section.stl';
+% worldName = '../../../worlds/Simplified_wing_section.stl';
+worldName = '../../../worlds/front_wing_section_trimmed.stl';
+
 world = loadWorld(worldName);
 
 numJoints = 17;
@@ -29,12 +31,12 @@ goal=[-.2,-.2,.2]';
 
 load('BoeingPartProgress');
 
-% p2 = -pi/2 + .2
-% initialAngles = [0; p2; p2/2; -p2;
-%                  -p2/2; 0; p2/2; p2/2;
-%                  -p2/2; 0;  p2; p2;
-%                  0; 0; 0; 0;
-%                  0];
+p2 = -pi/4;
+initialAngles = [0; p2; p2; -p2;
+                 -p2; p2; p2/2; p2;
+                 0; -p2;  p2; p2;
+                 p2; -p2; 0; 0;
+                 0];
 
 
 
@@ -43,12 +45,15 @@ load('BoeingPartProgress');
 %                  -1.4533, -0.4433, 0.3162, -0.7830, 1.0322,...
 %                  1.5600, -0.9317]';
 
+% initialAngles = angles
+% traj.trajOptimizer.arm.plot(initialAngles)
 
+% return
 
-% [angles, c, ee] = traj.pointOptimizer.optimizePoint(...
-%     'EndEffectorGoal', goal, ...
-%     'display', 'raw',...
-%     'initialAngles', initialAngles)
+[angles, c, ee] = traj.pointOptimizer.optimizePoint(...
+    'EndEffectorGoal', goal, ...
+    'display', 'raw',...
+    'initialAngles', initialAngles)
 
 
 
@@ -61,28 +66,43 @@ load('BoeingPartProgress');
 %                  0];
 traj.setStartConfig(angles);
 traj.trajOptimizer.arm.plot(angles);
-traj.addSegment([-.2; -.5; .2], 4);
-traj1 = traj.trajectory
-save('BoeingPartProgress','angles','traj1','traj2','traj3', 'traj4')
-disp('FINISHED SEGMENT 1')
+% traj.addSegment([-.2; -.5; .2], 4);
+% traj1 = traj.trajectory
+% save('BoeingPartProgress','angles','traj1','traj2','traj3', 'traj4')
+% disp('FINISHED SEGMENT 1')
 
-traj.addSegment([-.2; -.5; .5],4);
-traj2 = traj.trajectory
-save('BoeingPartProgress','angles','traj1','traj2','traj3', 'traj4')
-disp('FINISHED SEGMENT 2')
+% traj.addSegment([-.2; -.5; .5],4);
+% traj2 = traj.trajectory
+% save('BoeingPartProgress','angles','traj1','traj2','traj3', 'traj4')
+% disp('FINISHED SEGMENT 2')
 
-traj.addSegment([.2; -.5; .2],4);
-traj3 = traj.trajectory
-save('BoeingPartProgress','angles','traj1','traj2','traj3', 'traj4')
-disp('FINISHED SEGMENT 3')
+% traj.addSegment([.2; -.5; .2],4);
+% traj3 = traj.trajectory
+% save('BoeingPartProgress','angles','traj1','traj2','traj3', 'traj4')
+% disp('FINISHED SEGMENT 3')
 
-traj.addSegment([-.2;.5;.2],4);
-traj4 = traj.trajectory
-save('BoeingPartProgress','angles','traj1','traj2','traj3', 'traj4')
-disp('FINISHED SEGMENT 4')
+% traj.addSegment([.2;.5;.2],4);
+% traj4 = traj.trajectory
+% save('BoeingPartProgress','angles','traj1','traj2','traj3', 'traj4')
+% disp('FINISHED SEGMENT 4')
 
+
+return
+
+traj.addSegment([-.2; -.45; .2], 4);
+traj.addSegment([-.2; -.45; .5], 4);
+traj.addSegment([-.1; -.45; .5], 1);
+traj.addSegment([0; -.45; .5], 1);
+traj.addSegment([.1; -.45; .5], 1);
+traj.addSegment([.2; -.45; .5], 1);
+traj.addSegment([.2; -.45; .2], 4);
+traj.addSegment([.2; .45; .2], 4);
+traj.addSegment([.2; .45; .3], 4);
+traj.addSegment([-.2; .45; .3], 4);
+traj.addSegment([-.2; .45; .2], 4);
+traj.addSegment([-.2; 0; .2], 4);
 
 save('lastTrajectory', 'traj');
 
-save('BoeingPartProgress','angles','traj1','traj2','traj3', 'traj4')
+% save('BoeingPartProgress','angles','traj1','traj2','traj3', 'traj4')
 traj.showTrajectory(10)
