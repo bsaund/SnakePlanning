@@ -79,11 +79,12 @@ classdef MultiSegmentTrajectory < handle
         function reset(this)
             
             this.trajOptimizer.arm.remakeKin();
+            this.pointOptimizer.arm.remakeKin();
             showWorld(this.trajOptimizer.world);
         end
     end
     
-     properties(Access = public, Hidden = true)
+     properties(Access = public, Hidden = false)
          trajOptimizer
          pointOptimizer
          trajectory

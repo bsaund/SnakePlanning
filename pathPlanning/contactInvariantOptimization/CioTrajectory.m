@@ -229,7 +229,7 @@ classdef CioTrajectory < handle
 
     end
     
-    properties(Access = public, Hidden = true)
+    properties(Access = public, Hidden = false)
         arm
         numJoints
         numTimeSteps
