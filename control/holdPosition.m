@@ -1,38 +1,41 @@
-function holdPosition(g, goal)
+function holdPosition(g, goal, baseFrame, duration, varargin)
+    
+    p = inputParser();
+    p.addParameter('numControllableModules', 6);
+    
+    p.parse(varargin{:});
+    re = p.Results;
+    
+    c = re.numControllableModules;
+    
 
 
     n = g.getNumModules;
     kin = kinMaker('numJoints', n);
-    firstKin = kinMaker('numJoints', n-6);
-    lastKin = kinMaker('numJoints', 6);
+    firstKin = kinMaker('numJoints', n-c);
+    lastKin = kinMaker('numJoints', c);
 
 
-    baseFrame = [0  0 1 0;
-                 0 -1 0 0;
-                 1  0 0 0;
-                 0 0 0 1;];
     firstKin.setBaseFrame(baseFrame);
     kin.setBaseFrame(baseFrame);
 
 
     fbk = g.getNextFeedback;
 
-
     lastKin.setBaseFrame(firstKin.getFK('EndEffector', ...
-                                        fbk.position(1:n-6)));
+                                        fbk.position(1:n-c)));
 
-    lastKin.getFK('EndEffector', fbk.position(n-5:n)) - goal;
+    % lastKin.getFK('EndEffector', fbk.position(n-5:n)) - goal;
 
     cmd = CommandStruct();
     cmd.velocity = nan * zeros(1,n);
     cmd.position = nan * zeros(1,n);
-    cmd.position(n-5:n) = fbk.position(n-5:n);
+    cmd.position(n-c+1:n) = fbk.position(n-c+1:n);
 
 
+    tic
 
-
-
-    while true
+    while toc < duration
         
         fbk = g.getNextFeedback(fbk);
         if(isempty(fbk))
@@ -40,10 +43,10 @@ function holdPosition(g, goal)
             continue
         end
         
-        endInd = n-5:n;
+        endInd = n-c+1:n;
         
         lastKin.setBaseFrame(firstKin.getFK('EndEffector', ...
-                                            fbk.position(1:n-6)));
+                                            fbk.position(1:n-c)));
         
         % cmd.position(endInd) = ...
         %     lastKin.getIK('xyz', goal(1:3,4), 'so3', goal(1:3,1:3), ...

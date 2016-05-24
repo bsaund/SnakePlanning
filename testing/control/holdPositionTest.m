@@ -19,4 +19,7 @@ fbk = g.getNextFeedback;
 
 goal = kin.getFK('EndEffector', fbk.position);
 
-holdPosition(g, goal)
+holdPosition(g, goal, baseFrame, inf, 'numControllableModules', 8)
+
+
+
