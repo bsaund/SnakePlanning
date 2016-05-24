@@ -2,6 +2,7 @@ function holdPosition(g, goal, baseFrame, duration, varargin)
     
     p = inputParser();
     p.addParameter('numControllableModules', 6);
+    p.addParameter('display', 'off');
     
     p.parse(varargin{:});
     re = p.Results;
@@ -25,7 +26,7 @@ function holdPosition(g, goal, baseFrame, duration, varargin)
     lastKin.setBaseFrame(firstKin.getFK('EndEffector', ...
                                         fbk.position(1:n-c)));
 
-    % lastKin.getFK('EndEffector', fbk.position(n-5:n)) - goal;
+    % lastKin.getFK('EndEffector', fbk.position(n-c+1:n)) - goal;
 
     cmd = CommandStruct();
     cmd.velocity = nan * zeros(1,n);
@@ -58,11 +59,15 @@ function holdPosition(g, goal, baseFrame, duration, varargin)
         cmd.torque = kin.getGravCompTorques(fbk.position, [0 0 1]);
         
         % goal;
-        % fk = lastKin.getFK('EndEffector',fbk.position(endInd));
+
         % fk - goal;
         
         % dTheta = cmd.position(endInd) - fbk.position(endInd)
-
+        
+        if(strcmpi(re.display, 'on'))
+            fk = lastKin.getFK('EndEffector',fbk.position(endInd));
+            positionErr = fk(1:3,4) - goal(1:3,4)
+        end
 
         g.set(cmd);
         pause(0.01);
