@@ -6,7 +6,7 @@ extraAngles = interpolateTrajectory(traj.trajectory, 60);
 extraAngles = [fliplr(extraAngles), extraAngles];
 
 
-g = HebiLookup.newConnectedGroupFromName('SEA-Snake', 'SA017');
+g = HebiLookup.newConnectedGroupFromName('SEA-Snake', 'SA013');
 cmd=CommandStruct();
 pause(10)
 

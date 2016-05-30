@@ -38,10 +38,6 @@ goal = kin.getFK('EndEffector', fbk.position);
 m = eye(4);
 m(3,4) = -.01;
 
-% while true
-%     fk = kin.getFK('EndEffector', g.getNextFeedback.position);
-%     err = fk(1:3,4) - goal(1:3,4)
-% end
 
 
 while true
