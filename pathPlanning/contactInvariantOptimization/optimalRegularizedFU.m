@@ -10,10 +10,16 @@ function [f, u] = optimalRegularizedFU(J, B, tau, W, R, A, b)
     func = -1*([J; B']*tau)';
     % H = JB'*JB + [W, z; z', R];
     % func = -1*tau'*JB;
-    options = optimoptions('quadprog','Display','none');
+    % options = optimoptions('quadprog','Display','none');
     % x = quadprog(H, func, A,b,[],[],[],[],[],options);
-    x = quadprog(H, func, [],[],[],[],[],[],[],options);
     
+    % x = quadprog(H, func, [],[],[],[],[],[],[],options);
+    
+    %With no constraints this is faster
+    x = -H\func';
+
+
+
     n =  size(J,1);
     f = x(1:n);
     u = x(n+1:end);

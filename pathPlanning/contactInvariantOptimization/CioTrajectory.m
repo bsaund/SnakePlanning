@@ -168,16 +168,25 @@ classdef CioTrajectory < handle
                 end
 
                 [angles, con] = this.separateState(state);
-                fk = this.arm.getKin.getFK('EndEffector', angles);
 
+                fk = this.arm.getKin.getFK('EndEffector', angles);
+                fkCom = this.arm.getKin.getFK('CoM', angles);
+
+                pCenter = squeeze(fkCom(1:3,4,:));
+                [pClosest, closestFace] = closestPoints(pCenter, this.world);
+                
+                
                 pointErr = fk(1:3, 4) - goal_xyz;
 
                 cPh = costPhysicsStatic(this.arm, this.world, angles, con);
                 % cPh = costPhysics(this.arm, this.world, angles, c);
-                cCI = 100*costContactViolation(this.arm, this.world, ...
-                                               angles, con);
+                cCI = 100*costContactViolation(pCenter, pClosest, ...
+                                               this.arm.radius, con);
+                
+                
                 cTask = 100*pointErr;
-                cObstacle = 1000*costObjectViolation(this.arm, this.world, angles);
+                cObstacle = 1000*costObjectViolation(pCenter, pClosest, ...
+                                                     this.world.normals(closestFace,:));
                 c = [cPh; cCI; cTask; cObstacle;];
 
                 if(debug)

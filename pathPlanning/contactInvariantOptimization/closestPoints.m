@@ -1,5 +1,4 @@
-function [p_closest, face_closest] = closestPoints(snake, world, angles)
-    p = snake.getPoints(angles);
+function [p_closest, face_closest] = closestPoints(p, world);
     stl.faces = world.faces;
     stl.vertices = world.vertices;
     for i=1:size(p,2)

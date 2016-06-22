@@ -2,13 +2,16 @@ function [J, B, W, R, A, b] = ...
     getPhysicsParams(arm, world, angles, c)
     %See Mordatch Contact Invariant Optimization paper for details
 
-    J_tmp = arm.getKin().getJacobian('CoM', angles);
+
+    % J_tmp = arm.getKin().getJacobian('CoM', angles);
+    J_tmp = arm.getJacobian(angles);
     n= size(J_tmp,3);
     J = zeros(3*n,n);
     for i=1:n
         ind = (1:3) + 3*(i-1);
         J(ind, :) = J_tmp(1:3,:,i);
     end
+
     
     c_j = repelem(c, 3);
     
@@ -25,29 +28,29 @@ function [J, B, W, R, A, b] = ...
     R = eye(size(angles,1));
     
     %Matrices defining the friction cone
-    [~, face] = closestPoints(arm, world, angles);
-    face;
+    % [~, face] = closestPoints(arm, world, angles);
+    % face;
     A = zeros(1,4*n);
-    % b = zeros(4*n,1);
-    for i=1:n
-        row = (1:1) + 1*(i-1);
-        col = (1:3) + 3*(i-1);
-        t1 = world.tangents_1(face(i), :);
-        t2 = world.tangents_2(face(i), :);
-        % A(row, col) = [t1;
-        %                -t1;
-        %                t2;
-        %                -t2;
-        %              world.normals(face(i),:)];
-        % A(row, col) = [0,0,0;];
-        A(row, col) = [world.normals(face(i),:)];
+    b = zeros(4*n,1);
+    % for i=1:n
+    %     row = (1:1) + 1*(i-1);
+    %     col = (1:3) + 3*(i-1);
+    %     t1 = world.tangents_1(face(i), :);
+    %     t2 = world.tangents_2(face(i), :);
+    %     % A(row, col) = [t1;
+    %     %                -t1;
+    %     %                t2;
+    %     %                -t2;
+    %     %              world.normals(face(i),:)];
+    %     % A(row, col) = [0,0,0;];
+    %     A(row, col) = [world.normals(face(i),:)];
 
-        % b(row,1) = [1;1;1;1;0];
-        b(row,1) = 0;
-        normals(col,1) = world.normals(face(i),:)';
-    end
+    %     % b(row,1) = [1;1;1;1;0];
+    %     b(row,1) = 0;
+    %     normals(col,1) = world.normals(face(i),:)';
+    % end
     
-    normals;
+    % normals;
 
 
     % A = 0;
