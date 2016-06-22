@@ -118,6 +118,7 @@ classdef CioTrajectory < handle
                                        'display','iter');
             else
                 options = optimoptions('lsqnonlin','maxIter', maxIter,...
+                                       'maxFunEvals', maxIter, ...
                                        'display','none');
             end
         end
