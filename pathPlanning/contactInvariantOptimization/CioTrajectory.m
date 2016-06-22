@@ -20,6 +20,7 @@ classdef CioTrajectory < handle
             showWorld(this.world);
             
             this.arm = SpherePlotter();
+            this.closestPointCalculator = ClosestPointCalculator(this.world);
             this.arm.getPoints(zeros(1,this.numJoints));
         end
         
@@ -173,7 +174,9 @@ classdef CioTrajectory < handle
                 fkCom = this.arm.getKin.getFK('CoM', angles);
 
                 pCenter = squeeze(fkCom(1:3,4,:));
-                [pClosest, closestFace] = closestPoints(pCenter, this.world);
+                % [pClosest, closestFace] = closestPoints(pCenter, this.world);
+                [pClosest, closestFace] = ...
+                    this.closestPointCalculator.getClosestPointsFast(pCenter);
                 
                 
                 pointErr = fk(1:3, 4) - goal_xyz;
@@ -241,6 +244,7 @@ classdef CioTrajectory < handle
     
     properties(Access = public, Hidden = false)
         arm
+        closestPointCalculator;
         numJoints
         numTimeSteps
         numContacts
