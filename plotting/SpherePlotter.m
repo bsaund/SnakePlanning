@@ -157,6 +157,30 @@ classdef SpherePlotter < handle
             this.firstRun = true;
         end
         
+        function J = getJacobian(this, angles)
+            if (length(angles) == length(this.prevJacobianAngles) && ...
+                max(abs(angles - this.prevJacobianAngles)) < 0.01)
+                J = this.prevJacobian;
+                return;
+            end
+            this.prevJacobianAngles = angles;
+            J = this.kin.getJacobian('CoM', angles);
+            this.prevJacobian = J;
+        end
+        
+        function tau = getGravTorques(this, angles)
+            if (length(angles) == length(this.prevGravTorqueAngles) && ...
+                max(abs(angles - this.prevGravTorqueAngles)) < 0.01)
+                tau = this.prevGravTorques;
+                return;
+            end
+            
+            this.prevGravTorqueAngles = angles;
+            this.prevGravTorques = ...
+                this.kin.getGravCompTorques(angles, [0 0 -1])';
+            tau = this.prevGravTorques;
+        end
+        
     end
     
     methods(Access = private, Hidden = true)
@@ -297,4 +321,12 @@ classdef SpherePlotter < handle
         drawNow;
         radius;
     end
+    
+    properties(Access = private, Hidden = true)
+        prevGravTorqueAngles;
+        prevGravTorques;
+        prevJacobianAngles;
+        prevJacobian;
+    end
+
 end
