@@ -100,6 +100,19 @@ classdef SpherePlotter < handle
             end
         end
         
+        function clearPlot(this)
+        %Clears the plot
+            h = this.handles;
+            if(~ishandle(h(1,1)))
+                error('Plotting window has been closed. Exiting program.');
+            end
+            for i=1:size(h,1)
+                delete(h(i,1));
+            end
+            delete(findall(gcf,'Type','light'))
+            this.firstRun = true;
+        end
+        
         function setBaseFrame(this, frame)
         %SETBASEFRAME sets the frame of the first link in the kinematics
         %chain
