@@ -10,7 +10,7 @@ worldName = '../../worlds/flat.stl';
 
 world = loadWorld(worldName);
 
-numJoints = 40;
+numJoints = 20;
 
 traj = MultiSegmentTrajectory('numJoints', numJoints, 'numTimeSteps', 5,...
                          'numContacts', 5, 'world', world);
@@ -39,7 +39,8 @@ profile on
 [angles, c, ee] = traj.pointOptimizer.optimizePoint(...
     'EndEffectorGoal', goal, ...
     'display', 'none',...
-    'InitialAngles', initialAngles)
+    'InitialAngles', initialAngles,...
+    'maxIter', 10000)
 
 traj.pointOptimizer.arm.plot(angles);
 profile viewer
