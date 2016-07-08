@@ -41,7 +41,7 @@ profile on
     'display', 'none',...
     'InitialAngles', initialAngles,...
     'maxIter', 10000)
-
+showWorld(world)
 traj.pointOptimizer.arm.plot(angles);
 profile viewer
 return

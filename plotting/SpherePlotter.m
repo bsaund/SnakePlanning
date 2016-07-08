@@ -64,7 +64,8 @@ classdef SpherePlotter < handle
             
             this.lowResolution = strcmpi(p.Results.resolution, 'low');
 
-            this.firstRun = true;
+            this.plotInitialized = false;
+            this.kinInitialized = false;
             this.lighting = p.Results.lighting;
             this.setKinematicsFromJointTypes(p.Results.JointTypes);
             this.frameType = p.Results.frame;
@@ -88,10 +89,11 @@ classdef SpherePlotter < handle
                 
 
 
-                
-            if(this.firstRun)
+            if(~this.kinInitialized)
+                this.initializeKinematics(length(angles));
+            end
+            if(~this.plotInitialized)
                 initialPlot(this, angles);
-                this.firstRun = false;
             else
                 updatePlot(this, angles);
             end
@@ -110,7 +112,7 @@ classdef SpherePlotter < handle
                 delete(h(i,1));
             end
             delete(findall(gcf,'Type','light'))
-            this.firstRun = true;
+            this.plotInitialized = false;
         end
         
         function setBaseFrame(this, frame)
@@ -149,8 +151,8 @@ classdef SpherePlotter < handle
         end
         
         function [p, r] = getPoints(this, angles)
-            if(this.firstRun)
-                this.plot(angles);
+            if(~this.kinInitialized)
+                this.initializeKinematics(length(angles));
             end
             fk = this.kin.getForwardKinematics('CoM',angles);
             for i = 1:this.kin.getNumBodies()
@@ -166,7 +168,7 @@ classdef SpherePlotter < handle
         function remakeKin(this)
             this.setKinematicsFromJointTypes(this.jointTypes);
             this.setBaseFrame(this.frame);
-            this.firstRun = true;
+            this.plotInitialized = false;
         end
         
         function J = getJacobian(this, angles)
@@ -243,6 +245,7 @@ classdef SpherePlotter < handle
                 this.kin.addBody('FieldableElbowJoint');
                 this.jointTypes{i} = {'FieldableElbowJoint'};
             end
+            this.kinInitialized = true;
         end
         
         function setKinematicsFromJointTypes(this, types)
@@ -254,6 +257,7 @@ classdef SpherePlotter < handle
             for i = 1:length(types)
                 this.kin.addBody(types{i}{:});
             end
+            this.kinInitialized = true;
         end
 
         function this = initialPlot(this, angles)
@@ -261,7 +265,7 @@ classdef SpherePlotter < handle
         %manipulator
             
 
-            this.initializeKinematics(length(angles));
+
             n = this.kin.getNumBodies();
 
             
@@ -301,6 +305,7 @@ classdef SpherePlotter < handle
             xlabel('x');
             ylabel('y');
             zlabel('z');
+            this.plotInitialized = true;
         end
         
         
@@ -326,7 +331,8 @@ classdef SpherePlotter < handle
         jointTypes;
         handles;
         lowResolution;
-        firstRun;
+        plotInitialized;
+        kinInitialized;
         lighting;
         frameType;
         frame;

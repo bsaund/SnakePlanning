@@ -17,7 +17,7 @@ classdef CioTrajectory < handle
             this.numContacts = p.Results.numContacts;
             this.world = p.Results.world;
             
-            showWorld(this.world);
+            % showWorld(this.world);
             
             this.arm = SpherePlotter();
             this.closestPointCalculator = ClosestPointCalculator(this.world);
