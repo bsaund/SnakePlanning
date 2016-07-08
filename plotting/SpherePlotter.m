@@ -123,20 +123,19 @@ classdef SpherePlotter < handle
             this.kin.setBaseFrame(frame);
         end
         
-        function [tau, grav] = getTorques(this, angles, world, spring)
-            J = this.kin.getJacobian('CoM', angles);
+        function [tau, grav] = getTorques(this, angles, world, ...
+                                                spring)
             p = this.getPoints(angles);
+            J = this.kin.getJacobian('CoM', angles);
             z_axis = this.frame(1:3, 1:3) * [0;0;1];
             grav = this.kin.getGravCompTorques(angles, -z_axis)';
-            stl.faces = world.faces;
-            stl.vertices = world.vertices;
-            tau = snakeContactTorques(p, stl, this.radius, spring, ...
+            tau = snakeContactTorques(p, world, this.radius, spring, ...
                                               J);
             tau = tau+grav;
             
         end
         
-        function plotTorques(this, angles, world, spring, ...
+        function tau = plotTorques(this, angles, world, spring, ...
                              torque_limit)
             if(nargin < 5)
                 torque_limit = 2;
