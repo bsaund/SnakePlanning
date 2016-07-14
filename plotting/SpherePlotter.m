@@ -113,7 +113,7 @@ classdef SpherePlotter < handle
             J_full = this.getJacobian(angles);
             grav = this.getGravTorques(angles);
             J_con = J_full(:,:,contacts>.5);
-            J = []
+            J = [];
             for(i=1:size(J_con,3));
                 J = [J; J_con(1:3,:,i)];
             end
@@ -126,6 +126,12 @@ classdef SpherePlotter < handle
             
             f = lsqlin(J', grav);
             tau = -J'*f+grav;
+        end
+        
+        function d = getContactDistance(this, angles, contacts)
+            p = this.getPoints(angles);
+            cp = this.cpCalc.getClosestPointsFast(p);
+            d = (sqrt(sum((p-cp).^2)) - this.radius).*contacts;
         end
         
         function tau = plotTorques(this, angles, world, spring, ...
@@ -185,6 +191,12 @@ classdef SpherePlotter < handle
                 this.kin.getGravCompTorques(angles, [0 0 -1])';
             tau = this.prevGravTorques;
         end
+        
+        function setWorld(this,world)
+            this.world = world;
+            this.cpCalc = ClosestPointCalculator(world);
+        end
+
         
     end
     
@@ -315,10 +327,6 @@ classdef SpherePlotter < handle
             cyl = surf2patch(r*x + p0(1), r*y + p0(2), r*z + p0(3));
         end
         
-        function setWorld(this,world)
-            this.world = world;
-            this.cpCalc = ClosestPointCalculator(world);
-        end
         
     end
     
