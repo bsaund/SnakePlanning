@@ -78,7 +78,7 @@ classdef CioTrajectory < handle
         end
     end
     
-    methods(Access = private, Hidden = true)
+    methods(Access = public, Hidden = true)
         function [options, initial_angles, initial_c, goal_xyz] = ...
                 parseOptimizeInput(this, varargin)
             p = inputParser;
