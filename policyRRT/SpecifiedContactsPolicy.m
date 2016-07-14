@@ -23,8 +23,9 @@ classdef SpecifiedContactsPolicy < handle
             fk = this.sphereModel.getKin().getFK('EndEffector',angles);
             cTorque = 100*this.sphereModel.getMinTorques(angles, contacts)
             cContact = 100*this.sphereModel.getContactDistance(angles, contacts)'
+            cObstalce = 100*this.sphereModel.getObstacleDistance(angles)'
             cGoal = 100*(fk(1:3,4) - this.goal)
-            c = [cTorque; cContact; cGoal];
+            c = [cTorque; cContact; cObstalce; cGoal];
             c = c'*c;
 
         end

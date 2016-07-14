@@ -134,6 +134,13 @@ classdef SpherePlotter < handle
             d = (sqrt(sum((p-cp).^2)) - this.radius).*contacts;
         end
         
+        function d = getObstacleDistance(this, angles)
+            p = this.getPoints(angles);
+            cp = this.cpCalc.getClosestPointsFast(p);
+            d = (sqrt(sum((p-cp).^2)) - this.radius);
+            d = -d.*(d<0);
+        end
+        
         function tau = plotTorques(this, angles, world, spring, ...
                              torque_limit)
             if(nargin < 5)
