@@ -22,37 +22,11 @@ classdef SpherePlotter < handle
     methods(Access = public)
         %Constructor
         function this = SpherePlotter(varargin)
-        %HEBIPLOTTER
-        %Arguments:
-        %
-        %Optional Parameters:
-        %  'resolution'        - 'low' (default), 'high' 
-        %  'lighting'          - 'on' (default), 'off'
-        %  'frame'             - 'base' (default), 'VC'
-        %  'JointTypes'        - cell array of joint types
-        %
-        %Examples:
-        %  plt = HebiPlotter(16)
-        %  plt = HebiPlotter(4, 'resolution', 'high')
-        %
-        %  links = {{'FieldableElbowJoint'},
-        %           {'FieldableStraightLink', 'ext1', .1, 'twist', 0}};
-        %  plt = HebiPlotter('JointTypes', links)  
 
-
-        
             p = inputParser;
             expectedResolutions = {'low', 'high'};
             expectedLighting = {'on','off', 'far'};
-            expectedFrames = {'Base', 'VC'};
             
-            % addRequired(p, 'numLinks', @isnumeric);
-            addParameter(p, 'resolution', 'low', ...
-                         @(x) any(validatestring(x, ...
-                                                 expectedResolutions)));
-            addParameter(p, 'frame', 'Base',...
-                         @(x) any(validatestring(x, expectedFrames)));
-
             addParameter(p, 'lighting', 'on',...
                          @(x) any(validatestring(x, ...
                                                  expectedLighting)));
@@ -62,13 +36,11 @@ classdef SpherePlotter < handle
             parse(p, varargin{:});
             
             
-            this.lowResolution = strcmpi(p.Results.resolution, 'low');
 
             this.plotInitialized = false;
             this.kinInitialized = false;
             this.lighting = p.Results.lighting;
             this.setKinematicsFromJointTypes(p.Results.JointTypes);
-            this.frameType = p.Results.frame;
             this.drawNow = strcmp(p.Results.drawWhen, 'now');
             this.radius = .028;
             this.frame = eye(4);
@@ -125,16 +97,35 @@ classdef SpherePlotter < handle
             this.kin.setBaseFrame(frame);
         end
         
-        function [tau, grav] = getTorques(this, angles, world, ...
+        function [tau, grav] = getSpringTorques(this, angles, world, ...
                                                 spring)
             p = this.getPoints(angles);
             J = this.kin.getJacobian('CoM', angles);
             z_axis = this.frame(1:3, 1:3) * [0;0;1];
             grav = this.kin.getGravCompTorques(angles, -z_axis)';
-            tau = snakeContactTorques(p, world, this.radius, spring, ...
-                                              J);
+            tau = snakeContactTorques(p, world, this.radius, spring, J);
             tau = tau+grav;
+        end
+        
+        function [tau, grav, f] = getMinTorques(this, angles, ...
+                                                   contacts)
+            % p = this.getPoints(angles);
+            J_full = this.getJacobian(angles);
+            grav = this.getGravTorques(angles);
+            J_con = J_full(:,:,contacts>.5);
+            J = []
+            for(i=1:size(J_con,3));
+                J = [J; J_con(1:3,:,i)];
+            end
             
+            if(isempty(J))
+                tau = grav;
+                f = [];
+                return
+            end
+            
+            f = lsqlin(J', grav);
+            tau = -J'*f+grav;
         end
         
         function tau = plotTorques(this, angles, world, spring, ...
@@ -324,27 +315,33 @@ classdef SpherePlotter < handle
             cyl = surf2patch(r*x + p0(1), r*y + p0(2), r*z + p0(3));
         end
         
+        function setWorld(this,world)
+            this.world = world;
+            this.cpCalc = ClosestPointCalculator(world);
+        end
+        
     end
     
     properties(Access = public, Hidden = true)
         kin;
         jointTypes;
         handles;
-        lowResolution;
         plotInitialized;
         kinInitialized;
         lighting;
-        frameType;
         frame;
         drawNow;
         radius;
     end
     
-    properties(Access = private, Hidden = true)
+    properties(Access = public, Hidden = true)
         prevGravTorqueAngles;
         prevGravTorques;
         prevJacobianAngles;
         prevJacobian;
+        
+        world
+        cpCalc
     end
 
 end
