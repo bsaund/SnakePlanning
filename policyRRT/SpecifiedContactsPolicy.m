@@ -17,13 +17,17 @@ classdef SpecifiedContactsPolicy < handle
             end
             
             lastCon = max(find(contacts))
-            contacts(lastCon) = 0;
+            new_contacts = contacts;
+            new_contacts(lastCon) = 0;
             if(lastCon <= 1)
                 return
             end
-            contacts(lastCon-1) = 1
+            new_contacts(lastCon-1) = 1
 
-            [u, contacts, success] = this.getPolicy(x,contacts);
+            [u, new_contacts, success] = this.getPolicy(x,new_contacts);
+            if(success)
+                contacts = new_contacts;
+            end
         end
             
         function [u, success]=getPolicyFixedContacts(this, x, contacts)
@@ -65,7 +69,9 @@ classdef SpecifiedContactsPolicy < handle
             cContact = ((100*this.sphereModel.getContactDistance(angles, contacts)))';
             cObstalce = 100*this.sphereModel.getObstacleDistance(angles)';
             cGoal = 20*(fk(1:3,4) - this.goal);
-            c = [cTorque; cContact; cObstalce; cGoal];
+            numGoal = norm(cGoal);
+            % c = [cTorque; cContact; cObstalce; cGoal];
+            c = [cTorque; cContact; cObstalce; 10*sqrt(numGoal)];
             c = c'*c;
 
         end
