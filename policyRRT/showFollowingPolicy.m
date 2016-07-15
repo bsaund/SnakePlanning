@@ -10,11 +10,22 @@ function showFollowingPolicy(start, contacts)
     x = start;
     
     c = [];
-    for i=1:100
+    % profile on
+    for i=1:1000
         c = [c, stp.cost(x, contacts)];
-        x = x + stp.getPolicy(x, contacts);
+        [u, contacts, progress] = stp.getPolicy(x, contacts);
+        x = x + u;
         stp.sphereModel.plot(x);
+        if(stp.reachedGoal(x))
+            break
+        end
+        if(~progress)
+            break
+        end
     end
+    % profile viewer
+    fk = stp.sphereModel.getKin.getFK('EndEffector', x);
+    fk = fk(1:3,4)
     figure()
     plot(c)
 end

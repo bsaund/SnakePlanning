@@ -44,6 +44,7 @@ classdef SpherePlotter < handle
             this.drawNow = strcmp(p.Results.drawWhen, 'now');
             this.radius = .028;
             this.frame = eye(4);
+            warning('off', 'MATLAB:rankDeficientMatrix');
         end
         
         function plot(this, angles)
@@ -114,7 +115,7 @@ classdef SpherePlotter < handle
             grav = this.getGravTorques(angles);
             J_con = J_full(:,:,contacts>.5);
             J = [];
-            for(i=1:size(J_con,3));
+            for(i=2:size(J_con,3));
                 J = [J; J_con(1:3,:,i)];
             end
             
@@ -125,6 +126,7 @@ classdef SpherePlotter < handle
             end
             
             f = lsqlin(J', grav);
+            % f = (J*J')\J*grav;
             tau = -J'*f+grav;
         end
         
