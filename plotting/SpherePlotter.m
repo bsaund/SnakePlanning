@@ -132,14 +132,21 @@ classdef SpherePlotter < handle
         
         function d = getContactDistance(this, angles, contacts)
             p = this.getPoints(angles);
-            cp = this.cpCalc.getClosestPointsFast(p);
+            [cp, face] = this.cpCalc.getClosestPointsFast(p);
+            n=  this.world.normals(face,:)';
             d = (sqrt(sum((p-cp).^2)) - this.radius).*contacts;
+            
         end
         
         function d = getObstacleDistance(this, angles)
+        %Returns the distance each sphere has penetrated into the
+        %world mesh (0 if no collision)
             p = this.getPoints(angles);
-            cp = this.cpCalc.getClosestPointsFast(p);
-            d = (sqrt(sum((p-cp).^2)) - this.radius);
+            [cp, face] = this.cpCalc.getClosestPointsFast(p);
+            % d = (sqrt(sum((p-cp).^2)) - this.radius);
+            n=  this.world.normals(face,:)';
+            d = p-n*this.radius - cp;
+            d = dot(d,n);
             d = -d.*(d<0);
         end
         
@@ -175,6 +182,11 @@ classdef SpherePlotter < handle
             this.setKinematicsFromJointTypes(this.jointTypes);
             this.setBaseFrame(this.frame);
             this.plotInitialized = false;
+        end
+        
+        function fk = getFK(this, angles)
+            fk = kin.getFK('EndEffector', angles);
+            fk = fk(1:3,4);
         end
         
         function J = getJacobian(this, angles)
