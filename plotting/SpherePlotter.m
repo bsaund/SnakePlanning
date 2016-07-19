@@ -185,7 +185,7 @@ classdef SpherePlotter < handle
         end
         
         function fk = getFK(this, angles)
-            fk = kin.getFK('EndEffector', angles);
+            fk = this.kin.getFK('EndEffector', angles);
             fk = fk(1:3,4);
         end
         

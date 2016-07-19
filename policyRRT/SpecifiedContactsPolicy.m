@@ -48,9 +48,13 @@ classdef SpecifiedContactsPolicy < handle
             J = this.sphereModel.getKin().getJacobian('EndEffector', q);
             J = sqrt(sum(J(1:3,:).^2));
             
+            maxMove = 0.01;
+            if(~this.useAngleGoal)
+                maxMove = min(maxMove, norm(this.sphereModel.getFK(q)- ...
+                                            this.goal))
+            end
             
-            % maxMove = min(0.02, 
-            u = 0.02/(abs(u)*J')*u;
+            u = maxMove/(abs(u)*J')*u;
             
             
             q_new = q+u;
@@ -87,22 +91,22 @@ classdef SpecifiedContactsPolicy < handle
         function c = cost(this, angles, contacts)
         %Returns the cost of point angles with contacts c
             % this.sphereModel.getPoints(angles);
-            fk = this.sphereModel.getKin().getFK('EndEffector',angles);
+            fk = this.sphereModel.getFK(angles);
             % cTorque = 0*this.sphereModel.getMinTorques(angles, contacts);
             cContact = ((30*this.sphereModel.getContactDistance(angles, contacts)))';
             cObstacle = 30*this.sphereModel.getObstacleDistance(angles)';
             if(this.useAngleGoal)
                 cGoal = 200*(angles - this.goalAngles);
             else
-                cGoal = 200*(fk(1:3,4) - this.goal);
+                cGoal = 200*(fk - this.goal);
             end
             
             numGoal = norm(cGoal);
             % c = [cTorque; cContact; cObstalce; cGoal];
             % c = [cTorque; cContact; cObstalce; sqrt(numGoal)];
 
-            cContact = norm(cContact)^4
-            cObstacle = norm(cObstacle)^4
+            cContact = norm(cContact)^6
+            cObstacle = norm(cObstacle)^6
             
             
             % c = [cContact; cObstalce; sqrt(numGoal)];
@@ -125,9 +129,8 @@ classdef SpecifiedContactsPolicy < handle
         end
         
         function y = reachedGoal(this, angles)
-            fk = this.sphereModel.getKin().getFK('EndEffector', ...
-                                                 angles);
-            err = fk(1:3,4) - this.goal;
+            fk = this.sphereModel.getFK(angles);
+            err = fk - this.goal;
             % err
             % sqrt(sumsqr(err))
             if(sqrt(sumsqr(err)) < .01)
