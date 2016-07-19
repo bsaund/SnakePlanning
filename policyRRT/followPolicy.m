@@ -5,8 +5,11 @@ function [x, contacts] = followPolicy(start, contacts)
     showWorld(world);
     % stp = SpringTorquePolicy(world);
     stp = SpecifiedContactsPolicy(world);
-    stp.setGoal([0,.3,.1]');
+    stp.setGoal([0,.3,.2]');
+    % stp.setGoal([0,.3,.1]');
     % stp.setGoal([.4,0,.01]');
+    % stp.setGoalAngles([pi/2 pi/2 0 0 0, 0 0 0 0 0, 0])
+    
     stp.sphereModel.plot(start);
     x = start;
     
@@ -27,6 +30,7 @@ function [x, contacts] = followPolicy(start, contacts)
     end
     contacts
     % profile viewer
+    stp.sphereModel.plot(x);
     fk = stp.sphereModel.getKin.getFK('EndEffector', x);
     fk = fk(1:3,4)
     figure()
