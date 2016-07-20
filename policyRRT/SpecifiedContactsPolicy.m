@@ -38,12 +38,6 @@ classdef SpecifiedContactsPolicy < handle
             grad = this.gradient(q, contacts);
             % hess = this.diagHessian(q)
             c = this.cost(q, contacts);
-            scale = c/norm(grad);
-            % u = grad*.0001;
-            u = grad;
-            % if(norm(u) > .1)
-                % u = .05*u/norm(u);
-            % end
             
             %%            scalePolicy
             J = this.sphereModel.getKin().getJacobian('EndEffector', q);
@@ -55,8 +49,7 @@ classdef SpecifiedContactsPolicy < handle
                                             this.goal));
             end
             
-            u = maxMove/(abs(u)*J')*u;
-            
+            u = maxMove/(abs(grad)*J')*grad;
             
             q_new = q+u;
                         
@@ -68,7 +61,6 @@ classdef SpecifiedContactsPolicy < handle
                 return;
             end
             
-            
             tau = this.sphereModel.getMinTorques(q_new, contacts);
             if(max(abs(tau) > 1))
                 disp('Ending: Torque too high')
@@ -76,16 +68,6 @@ classdef SpecifiedContactsPolicy < handle
                 return
             end
             
-            % func = @(p) norm(q_new-p);
-            % function [c, ceq] = nonlinConst(p)
-            %     ceq = [];
-            %     c = this.sphereModel.getContactDistance(p, contacts) ...
-            %         - 0.1;
-            % end
-            % nonlcon = @nonlinConst;
-            % % nonlcon = [];
-            % q_opt = fmincon(func, q_new, [], [], [], [], [], [], nonlcon)
-            % u = q_opt - q;
             success = true;
         end
         
