@@ -5,9 +5,9 @@ function [x, contacts] = followPolicy(start, contacts)
     showWorld(world);
     % stp = SpringTorquePolicy(world);
     stp = SpecifiedContactsPolicy(world);
-    stp.setGoal([0,.3,.2]');
+    stp.setGoal([0,.2,.4]');
     % stp.setGoal([0,.3,.1]');
-    % stp.setGoal([.4,0,.01]');
+    % stp.setGoal([.4,0,.025]');
     % stp.setGoalAngles([pi/2 pi/2 0 0 0, 0 0 0 0 0, 0])
     
     stp.sphereModel.plot(start);

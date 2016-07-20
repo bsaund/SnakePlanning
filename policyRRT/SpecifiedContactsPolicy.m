@@ -11,13 +11,14 @@ classdef SpecifiedContactsPolicy < handle
         function [u, contacts, success] = getPolicy(this, x, contacts)
             [u, success] = this.getPolicyFixedContacts(x, contacts);
             if(~isempty(this.u_prev))
-                % u = .7*u + .3*this.u_prev;
+                u = .7*u + .3*this.u_prev;
             end
             this.u_prev = u;
             if(success)
                 return;
             end
             
+            % contacts = adjustContacts(x, contacts);
             lastCon = max(find(contacts));
             new_contacts = contacts;
             new_contacts(lastCon) = 0;
@@ -51,7 +52,7 @@ classdef SpecifiedContactsPolicy < handle
             maxMove = 0.01;
             if(~this.useAngleGoal)
                 maxMove = min(maxMove, norm(this.sphereModel.getFK(q)- ...
-                                            this.goal))
+                                            this.goal));
             end
             
             u = maxMove/(abs(u)*J')*u;
@@ -101,16 +102,16 @@ classdef SpecifiedContactsPolicy < handle
                 cGoal = 200*(fk - this.goal);
             end
             
-            numGoal = norm(cGoal);
+            goalDist = norm(cGoal);
             % c = [cTorque; cContact; cObstalce; cGoal];
             % c = [cTorque; cContact; cObstalce; sqrt(numGoal)];
 
-            cContact = norm(cContact)^6
-            cObstacle = norm(cObstacle)^6
+            cContact = norm(cContact)^6;
+            cObstacle = norm(cObstacle)^6;
             
             
             % c = [cContact; cObstalce; sqrt(numGoal)];
-            c = cContact + cObstacle + numGoal;
+            c = cContact + cObstacle + goalDist;
             % c = [cContact; sqrt(numGoal)];
             % c = c'*c
             % c = norm(c);
@@ -143,11 +144,13 @@ classdef SpecifiedContactsPolicy < handle
         function setGoal(this, goal)
             this.goal = goal;
             this.useAngleGoal = false;
+            this.u_prev = [];
         end
         
         function setGoalAngles(this, goal)
             this.goalAngles = goal;
             this.useAngleGoal = true;
+            this.u_prev = [];
         end
     end
     
