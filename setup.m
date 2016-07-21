@@ -6,5 +6,7 @@ addpath(fullfile(pwd, 'pathPlanning/contactInvariantOptimization'));
 addpath(fullfile(pwd, 'trajectorySmoothing'));
 addpath(fullfile(pwd, 'kinematics'));
 addpath(fullfile(pwd, 'control'));
+addpath(fullfile(pwd, 'policyRRT'));
+addpath(fullfile(pwd, 'policyRRT/policies'));
 addpath(fullfile(pwd, '../matlab_SEA/plottingTools'));
 addpath(fullfile(pwd, '../matlab_SEA/plottingTools/stl'));
