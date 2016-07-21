@@ -8,8 +8,9 @@ classdef SpecifiedContactsPolicy < handle
             this.goal = [0;0;0];
         end
         
-        function [u, contacts, success] = getPolicy(this, x, contacts)
-            [u, failureReason] = this.getPolicyFixedContacts(x, contacts);
+        function [u, success] = getPolicy(this, x)
+            
+            [u, failureReason] = this.getPolicyFixedContacts(x);
             success = ~failureReason;
             if(~isempty(this.u_prev))
                 u = .7*u + .3*this.u_prev;
@@ -20,21 +21,23 @@ classdef SpecifiedContactsPolicy < handle
                 return;
             end
             
-            [new_contacts, success] = adjustContacts(this, x, contacts, ...
-                                                 failureReason);
+            [new_contacts, success] = adjustContacts(this, x,...
+                                                     failureReason);
             if(~success)
                 return;
             end
-
-            [u, new_contacts, success] = this.getPolicy(x,new_contacts);
+            [angles, contacts] = this.separateState(x);
+            x = this.combineState(angles, new_contacts)
+            [u, success] = this.getPolicy(x);
             if(success)
-                contacts = new_contacts
+                n = length(u);
+                u((n/2+1):end) = new_contacts - contacts;
             end
         end
         
         function [contacts, success] = adjustContacts(this, x, ...
-                                                      contacts, ...
                                                       adjustDirection)
+            [angles, contacts] = this.separateState(x);
             success = true;
             lastCon = max(find(contacts));
             
@@ -57,7 +60,7 @@ classdef SpecifiedContactsPolicy < handle
             end
             
             if(adjustDirection == 2)  %Torque too high
-                if(lastCon == length(x))
+                if(lastCon == length(angles))
                     success = false;
                     return;
                 end
@@ -70,10 +73,11 @@ classdef SpecifiedContactsPolicy < handle
         end
                                                         
             
-        function [u, failureReason]=getPolicyFixedContacts(this, q, contacts)
+        function [u, failureReason]=getPolicyFixedContacts(this, x)
         %Returns the action u 
-            grad = this.gradient(q, contacts);
-            c = this.cost(q, contacts);
+            grad = this.gradient(x);
+            c = this.cost(x);
+            [q, contacts] = this.separateState(x);
             
             %%            scalePolicy
             J = this.sphereModel.getKin().getJacobian('EndEffector', q);
@@ -89,7 +93,8 @@ classdef SpecifiedContactsPolicy < handle
             
             q_new = q+u;
             
-            c_new = this.cost(q_new, contacts);
+            u = [u, zeros(size(contacts))];
+            c_new = this.cost(this.combineState(q_new, contacts));
             if(c_new > c)
                 failureReason = 1;
                 disp('Ending: cost increasing');
@@ -106,8 +111,9 @@ classdef SpecifiedContactsPolicy < handle
             failureReason = 0;
         end
         
-        function c = cost(this, angles, contacts)
+        function c = cost(this, x)
         %Returns the cost of point angles with contacts c
+            [angles, contacts] = this.separateState(x);
             % this.sphereModel.getPoints(angles);
             fk = this.sphereModel.getFK(angles);
             % cTorque = 0*this.sphereModel.getMinTorques(angles, contacts);
@@ -134,25 +140,27 @@ classdef SpecifiedContactsPolicy < handle
             % c = norm(c);
         end
         
-        function g = gradient(this, x, contacts)
+        function g = gradient(this, x)
         %Returns the gradient of the cost function
             eps = 0.0001;
-            c = this.cost(x,contacts);
-            g = zeros(size(x));
+            c = this.cost(x);
+            [a, contacts] = this.separateState(x);
+            g = zeros(size(a));
             for i=1:length(g)
-                xnew = x;
-                xnew(i) = x(i) + eps;
-                g(i) = (c-this.cost(xnew, contacts))/eps;
+                anew = a;
+                anew(i) = a(i) + eps;
+                g(i) = (c-this.cost(this.combineState(anew, contacts)))/eps;
             end
         end
         
-        function y = reachedGoal(this, angles)
+        function y = reachedGoal(this, x)
+            angles = this.separateState(x);
             if(this.useAngleGoal)
                 y = max(abs(angles - this.goalAngles)) < 0.05;
                 return
             end
             fk = this.sphereModel.getFK(angles);
-            err = fk - this.goal
+            err = fk - this.goal;
             % err
             % sqrt(sumsqr(err))
             if(sqrt(sumsqr(err)) < .01)
@@ -172,6 +180,19 @@ classdef SpecifiedContactsPolicy < handle
             this.goalAngles = goal;
             this.useAngleGoal = true;
             this.u_prev = [];
+        end
+        
+    end
+    
+    methods(Static = true)
+        function [angles, contacts] = separateState(state)
+            n = length(state);
+            angles = state(1:n/2);
+            contacts = state((n/2+1):end);
+        end
+        
+        function state = combineState(angles, contacts)
+            state = [angles, contacts];
         end
     end
     
