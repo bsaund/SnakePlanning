@@ -5,10 +5,10 @@ function [x, contacts] = followPolicy(start, contacts)
     showWorld(world);
     % stp = SpringTorquePolicy(world);
     stp = SpecifiedContactsPolicy(world);
-    stp.setGoal([0,.2,.4]');
+    % stp.setGoal([0,.2,.35]');
     % stp.setGoal([0,.3,.1]');
-    % stp.setGoal([.4,0,.025]');
-    % stp.setGoalAngles([pi/2 pi/2 0 0 0, 0 0 0 0 0, 0])
+    % stp.setGoal([.4,.1,.025]');
+    stp.setGoalAngles([1.5 1.5 0 0 0, 0 0 0 0 0, 0])
     
     stp.sphereModel.plot(start);
     x = start;
@@ -19,7 +19,8 @@ function [x, contacts] = followPolicy(start, contacts)
         c = [c, stp.cost(x, contacts)];
         [u, contacts, progress] = stp.getPolicy(x, contacts);
         x = x + u;
-        stp.sphereModel.plot(x);
+        x = bound(x, -1.57, 1.57);
+        % stp.sphereModel.plot(x);
         if(stp.reachedGoal(x))
             disp('Goal Reached')
             break
@@ -35,4 +36,9 @@ function [x, contacts] = followPolicy(start, contacts)
     fk = fk(1:3,4)
     figure()
     plot(c)
+end
+
+function var = bound(var, minval, maxval)
+    one = ones(size(var));
+    var = min(maxval.*one, max(minval.*one, var));
 end
