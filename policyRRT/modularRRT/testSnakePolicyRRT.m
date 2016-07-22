@@ -28,17 +28,22 @@ rng(0) %Seed random number generator
 
 tree = core(start, goal, policy, 2);
 
-path = [policy.separateState(tree.points(end,:))];
+[a, c] = policy.separateState(tree.points(end,:));
+path = [a];
+pathContact = [c];
+
 parent = tree.parents(end);
 
 while(parent >1)
-    path = [policy.separateState(tree.points(parent,:)); path];
+    [a, c] = policy.separateState(tree.points(parent,:));
+    path = [a; path];
+    pathContact = [c; pathContact];
     parent = tree.parents(parent);
 end
 
 while(true)
     for i=1:size(path,1)
-        policy.sphereModel.plot(path(i,:));
+        policy.sphereModel.plot(path(i,:), pathContact(i,:));
     end
     pause(1);
 end

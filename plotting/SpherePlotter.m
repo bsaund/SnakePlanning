@@ -47,7 +47,7 @@ classdef SpherePlotter < handle
             warning('off', 'MATLAB:rankDeficientMatrix');
         end
         
-        function plot(this, angles)
+        function plot(this, angles, contacts)
         % PLOT plots the robot in the configuration specified by
         % angles
             
@@ -67,9 +67,13 @@ classdef SpherePlotter < handle
             end
             if(~this.plotInitialized)
                 initialPlot(this, angles);
-            else
-                updatePlot(this, angles);
             end
+            updatePlot(this, angles);
+            
+            if(nargin >2)
+                this.contactPlotter.plot(this.getPoints(angles), contacts);
+            end
+
             if(this.drawNow)
                 drawnow
             end
@@ -216,6 +220,7 @@ classdef SpherePlotter < handle
         function setWorld(this,world)
             this.world = world;
             this.cpCalc = ClosestPointCalculator(world);
+            this.contactPlotter = ContactPlotter(this.cpCalc);
         end
 
         
@@ -371,6 +376,7 @@ classdef SpherePlotter < handle
         
         world
         cpCalc
+        contactPlotter
     end
 
 end
