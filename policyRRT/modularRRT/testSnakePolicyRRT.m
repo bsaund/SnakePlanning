@@ -5,9 +5,9 @@ close all
 numLinks = 11;
 minConfig = -1.57*ones(1,numLinks);
 maxConfig = 1.57*ones(1,numLinks);
-start = [[1.57, zeros(1,10)], [zeros(1,3) ones(1,8)]];
+start = [[1.57, zeros(1,10)], [zeros(1,6) ones(1,5)]];
 % goal = [0,.2,.30]';
-goal = [-.2,-.05,.25]';
+goal = [-.4,-.05,.25]';
 
 world = loadWorld('worlds/flat.stl');
 showWorld(world);
@@ -37,9 +37,10 @@ while(parent >1)
 end
 
 while(true)
-for i=1:size(path,1)
-    policy.sphereModel.plot(path(i,:));
-end
+    for i=1:size(path,1)
+        policy.sphereModel.plot(path(i,:));
+    end
+    pause(1);
 end
 
 % profile viewer

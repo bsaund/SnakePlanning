@@ -15,7 +15,7 @@ function core = getPolicyRrtCore(policyExtend, sample, goalReached)
         i = 0;
         
         while(~goalReached(tree.points(end,:)));
-            x_rand = sample(i, goal)
+            x_rand = sample(i, goal);
             policyExtend(tree, x_rand, goal, policy);
             i = i+1;
 

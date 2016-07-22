@@ -30,7 +30,7 @@ function extend = getSnakePolicyExtendFunc(maxSteps)
                 parentInd = length(tree.parents);
 
             end
-            if(mod(iter,10) == 0)
+            if(mod(iter,30) == 0)
                 policy.sphereModel.plot(policy.separateState(x));
             end
 
@@ -53,6 +53,14 @@ function extend = getSnakePolicyExtendFunc(maxSteps)
         if(policy.reachedGoal(x))
             tree.add(x, parentInd);
         end
+        
+        if(nearestPoint(originalTree, x) ~= startInd)
+            disp('entered explored region')
+        end
+        if(~progress)
+            disp('Stopped making progress')
+        end
+        % pause(1)
        
         
         % if( sqrt(sumsqr(x - goal)) < .7)
@@ -70,7 +78,8 @@ function extend = getSnakePolicyExtendFunc(maxSteps)
     
     function policyExtend(tree, firstGoal, finalGoal, policy)
         n = length(firstGoal);
-        startInd = nearestPoint(tree.points(:,1:n), firstGoal);
+        % startInd = nearestPoint(tree.points(:,1:n), firstGoal);
+        startInd = nearestPoint(tree.points, [firstGoal, zeros(1,11)]);
         policy.setGoalAngles(firstGoal);
         if(~extendHelper(tree, startInd, ...
                          policy, maxSteps))
