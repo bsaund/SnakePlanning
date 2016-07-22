@@ -12,12 +12,14 @@ classdef SpecifiedContactsPolicy < handle
             
             [u, failureReason] = this.getPolicyFixedContacts(x);
             success = ~failureReason;
-            if(~isempty(this.u_prev))
-                u = .7*u + .3*this.u_prev;
-            end
-            u = bound(x+u, -1.57, 1.57) - x;
-            this.u_prev = u;
             if(success)
+                if(~isempty(this.u_prev))
+                    u = .7*u + .3*this.u_prev;
+                end
+                u = bound(x+u, -1.57, 1.57) - x;
+                
+                this.u_prev = u;
+                success = norm(u) > 0.001;
                 return;
             end
             
@@ -92,6 +94,8 @@ classdef SpecifiedContactsPolicy < handle
             u = maxMove/(abs(grad)*J')*grad;
             
             q_new = q+u;
+            q_new = bound(q_new, -1.57, 1.57);
+            u = q_new - q;
             
             u = [u, zeros(size(contacts))];
             c_new = this.cost(this.combineState(q_new, contacts));
