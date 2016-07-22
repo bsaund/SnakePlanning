@@ -27,7 +27,7 @@ classdef SpecifiedContactsPolicy < handle
                 return;
             end
             [angles, contacts] = this.separateState(x);
-            x = this.combineState(angles, new_contacts)
+            x = this.combineState(angles, new_contacts);
             [u, success] = this.getPolicy(x);
             if(success)
                 n = length(u);
@@ -97,15 +97,15 @@ classdef SpecifiedContactsPolicy < handle
             c_new = this.cost(this.combineState(q_new, contacts));
             if(c_new > c)
                 failureReason = 1;
-                disp('Ending: cost increasing');
+                % disp('Ending: cost increasing');
                 return;
             end
             
             tau = this.sphereModel.getMinTorques(q_new, contacts);
             if(max(abs(tau) > 1))
                 failureReason = 2;
-                disp('Ending: Torque too high')
-                tau
+                % disp('Ending: Torque too high')
+                % tau
                 return
             end
             failureReason = 0;

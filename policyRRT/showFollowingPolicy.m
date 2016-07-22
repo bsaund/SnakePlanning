@@ -5,7 +5,7 @@ function [x, contacts] = showFollowingPolicy(start, contacts)
     showWorld(world);
     % stp = SpringTorquePolicy(world);
     stp = SpecifiedContactsPolicy(world);
-    stp.setGoal([0,.2,.35]');
+    stp.setGoal([-.3,0,.15]');
     % stp.setGoal([0,.3,.1]');
     % stp.setGoal([.4,.1,.025]');
     % stp.setGoalAngles([1.5 1.5 0 0 .4, 0 0 0 0 0, 0])
