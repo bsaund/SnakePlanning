@@ -9,5 +9,8 @@ addpath(fullfile(pwd, 'control'));
 addpath(fullfile(pwd, 'policyRRT'));
 addpath(fullfile(pwd, 'policyRRT/policies'));
 addpath(fullfile(pwd, 'policyRRT/modularRRT'));
+addpath(fullfile(pwd, 'policyRRT/modularRRT/core'));
+addpath(fullfile(pwd, 'policyRRT/modularRRT/extend'));
+addpath(fullfile(pwd, 'policyRRT/modularRRT/sampling'));
 addpath(fullfile(pwd, '../matlab_SEA/plottingTools'));
 addpath(fullfile(pwd, '../matlab_SEA/plottingTools/stl'));
