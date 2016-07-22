@@ -1,6 +1,12 @@
 
 
-g = HebiLookup.newConnectedGroupFromName('SEA-Snake', 'SA017');
+% g = HebiLookup.newConnectedGroupFromName('SEA-Snake', 'SA013');
+gTemp = HebiLookup.newConnectedGroupFromName('SEA-Snake', 'SA013');
+fam = gTemp.getInfo.family;
+name = gTemp.getInfo.name;
+snakeIndex = strcmp(fam, 'SEA-Snake');
+snakeIndex(1) = 0; %Ignore first module, it is trapped by clamp
+g = HebiLookup.newGroupFromNames(fam(snakeIndex), name(snakeIndex));
 cmd=CommandStruct();
 
 extraAngles = interpolateTrajectory(traj.trajectory, 60);
@@ -15,8 +21,8 @@ end
 for(i=1:size(extraAngles,2))
     tic
     fbk = g.getNextFeedback();
-    cmd.position = [0; extraAngles(:,i)]';
-    cmd.torque = [0, kin.getGravCompTorques(fbk.position(2:end), [0 ...
+    cmd.position = [extraAngles(:,i)]';
+    cmd.torque = [kin.getGravCompTorques(fbk.position, [0 ...
                         0 1])];
     g.set(cmd)
     pause(.02)
@@ -26,7 +32,7 @@ end
 disp('DONE')
 
 for(t=0:100)
-    cmd.position = [0; extraAngles(:,end)]';
+    cmd.position = [extraAngles(:,end)]';
     g.set(cmd)
     pause(.1)
 end

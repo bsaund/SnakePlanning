@@ -176,7 +176,7 @@ classdef CioTrajectory < handle
                 % cPh = costPhysics(this.arm, this.world, angles, c);
                 cCI = 100*costContactViolation(this.arm, this.world, ...
                                                angles, con);
-                cTask = 100*pointErr;
+                cTask = 1000*pointErr;
                 cObstacle = 1000*costObjectViolation(this.arm, this.world, angles);
                 c = [cPh; cCI; cTask; cObstacle;];
 
