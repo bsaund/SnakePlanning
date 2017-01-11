@@ -46,7 +46,7 @@ classdef SpringTorquePolicy < handle
             
             c = c'*c;
             
-            % tau = this.sphereModel.getTorques(x, this.world, ...
+            % tau = this.sphereModel.getSpringTorques(x, this.world, ...
             %                                      1000);
             % % c = max(abs(tau));
             % c = tau'*tau;

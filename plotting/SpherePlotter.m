@@ -159,7 +159,7 @@ classdef SpherePlotter < handle
             if(nargin < 5)
                 torque_limit = 2;
             end
-            tau = this.getTorques(angles, world, spring);
+            tau = this.getSpringTorques(angles, world, spring);
             this.drawNow = false;
             this.plot(angles);
             this.updatePlotColors(abs(tau)/torque_limit);

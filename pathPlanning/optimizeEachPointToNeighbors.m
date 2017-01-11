@@ -58,7 +58,7 @@ end
 
 function func = getCostFunction(prev_angles, next_angles, snake, world, spring)
     function c = cost(angles)
-        tau = snake.getTorques(angles, world, spring);
+        tau = snake.getSpringTorques(angles, world, spring);
         prevErr = prev_angles-angles;
         nextErr = next_angles-angles;
         c = [tau; 100*prevErr; 100*nextErr];
