@@ -5,11 +5,12 @@ close all
 numLinks = 11;
 minConfig = -1.57*ones(1,numLinks);
 maxConfig = 1.57*ones(1,numLinks);
-start = [[1.57, zeros(1,10)], [zeros(1,6) ones(1,5)]];
+start = [[1.57 1.57, zeros(1,9)], [zeros(1,6) ones(1,5)]];
 % goal = [0,.2,.30]';
-goal = [-.4,-.05,.25]';
+goal = [.1,.1,.4]';
 
-world = loadWorld('worlds/flat.stl');
+% world = loadWorld('worlds/flat.stl');
+world = loadWorld('worlds/block.stl');
 showWorld(world);
 scatter3(goal(1), goal(2), goal(3));
 policy = SpecifiedContactsPolicy(world);
@@ -24,9 +25,11 @@ core = getPolicyRrtCore(extend, sample, goalReached);
 
 % plotWorld(obs, worldMin, worldMax, start, goal);
 rng(0) %Seed random number generator
-% profile on
+profile on
+
 
 tree = core(start, goal, policy, 2);
+profile viewer
 
 [a, c] = policy.separateState(tree.points(end,:));
 path = [a];

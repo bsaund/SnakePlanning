@@ -32,7 +32,7 @@ function extend = getSnakePolicyExtendFunc(maxSteps)
             end
             if(mod(iter,10) == 0)
                 [angles, contacts] = policy.separateState(x);
-                % policy.sphereModel.plot(angles, contacts);
+                policy.sphereModel.plot(angles, contacts);
             end
 
             

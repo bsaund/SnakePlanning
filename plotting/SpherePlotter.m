@@ -172,9 +172,10 @@ classdef SpherePlotter < handle
                 this.initializeKinematics(length(angles));
             end
             fk = this.kin.getForwardKinematics('CoM',angles);
-            for i = 1:this.kin.getNumBodies()
-                p(1:3,i) = fk(1:3,4,i);
-            end
+            % for i = 1:size(fk,3)
+            %     p(1:3,i) = fk(1:3,4,i);
+            % end
+            p=squeeze(fk(1:3,4,:));
             r = this.radius;
         end
         

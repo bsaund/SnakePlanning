@@ -10,6 +10,7 @@ function pIndex = nearestPoint(list, p)
     dist = @(a,b) norm(a-b);
     list;
     p;
-    S = [1:11 .001*ones(1,11)];
+    % S = [1:11 .001*ones(1,11)];
+    S = [ones(1,11) .001*ones(1,11)];
     [~, pIndex] = pdist2(list, p, 'seuclidean', S, 'Smallest', 1);
 end

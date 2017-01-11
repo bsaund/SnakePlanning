@@ -64,7 +64,7 @@ classdef ContactPlotter < handle
             this.handles = zeros(n, 1);
             cp = this.cpCalc.getClosestPoints(points);
             for i=1:n
-                vert = this.getCircle(cp(:,i))
+                vert = this.getCircle(cp(:,i));
                 this.handles(i,1) = ...
                     fill3(vert(:,1), vert(:,2), vert(:,3), 'r',...
                           'EdgeColor', 'none');
