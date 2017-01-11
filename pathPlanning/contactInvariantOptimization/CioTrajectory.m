@@ -131,7 +131,7 @@ classdef CioTrajectory < handle
                   ones(numel(c),1)*100];
         end
 
-        function func = getTrajectoryCostFunction(this, goal_xyz);
+        function func = getTrajectoryCostFunction(this, goal_xyz)
             function c = cost(state, debug)
                 if(nargin < 2)
                     debug = false;
@@ -144,11 +144,22 @@ classdef CioTrajectory < handle
                 cPh = costPhysics(this.arm, this.world, ...
                                   [this.startAngles, angles],...
                                   con);
-                cCI = 100*costContactViolation(this.arm, this.world, ...
-                                               angles, con);
+                fkCom = this.arm.getKin.getFK('CoM', angles(:,end));                
+                pCenter = squeeze(fkCom(1:3,4,:));
+                [pClosest, closestFace] = ...
+                    this.closestPointCalculator.getClosestPointsFast(pCenter);
+                
+                cCI = 100*costContactViolation(pCenter, pClosest, ...
+                                               this.arm.radius, con);
+
+                % cCI = 100*costContactViolation(this.arm, this.world, ...
+                %                                angles, con);
                 cTask = 1000*pointErr;
                 cDistance = 10*costDistErr([this.startAngles, angles]).^2;
-                cObstacle = 1000*costObjectViolation(this.arm, this.world, angles);
+                % cObstacle = 1000*costObjectViolation(this.arm, ...
+                %                                      this.world, angles);
+                cObstacle = 1000*costObjectViolation(pCenter, pClosest, ...
+                                         this.world.normals(closestFace,:));
                 % c = [cPh; cCI; cTask; cObstacle; cDistance];
                 c = [cPh; cCI; cTask; cObstacle];
                 % c = [cPh; cCI; cTask];
