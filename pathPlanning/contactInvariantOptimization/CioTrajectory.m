@@ -105,7 +105,10 @@ classdef CioTrajectory < handle
             else
                 initial_angles = p.Results.SeedAngles;
             end
-            initial_c = repmat(0*p.Results.InitialAngles, this.numContacts,1) + 10;
+            % initial_c = repmat(0*p.Results.InitialAngles, ...
+            %                    this.numContacts,1) + 10;
+            initial_c = 10*ones(this.numConLoc * this.numContacts, 1);
+
             
             maxIter = p.Results.maxIter;
             display = p.Results.display;
@@ -176,9 +179,9 @@ classdef CioTrajectory < handle
                 % c = [cPh; cCI; cTask];
                 if(debug)
                     cPh = reshape(cPh, this.numJoints, this.numTimeSteps)
-                    cCI = reshape(cCI, this.numJoints*3, this.numTimeSteps)
+                    cCI = reshape(cCI, this.numConLoc*3, this.numTimeSteps)
                     cTask
-                    cObstacle = reshape(cObstacle, this.numJoints, this.numTimeSteps)
+                    cObstacle = reshape(cObstacle, this.numConLoc, this.numTimeSteps)
                 end
             end
             func = @cost;
@@ -218,9 +221,9 @@ classdef CioTrajectory < handle
 
                 if(debug)
                     cPh = reshape(cPh, this.numJoints, this.numTimeSteps)
-                    cCI = reshape(cCI, this.numTimeSteps*3, this.numJoints)'
+                    cCI = reshape(cCI, this.numTimeSteps*3, this.numConLoc)'
                     cTask
-                    cObstacle = reshape(cObstacle, this.numJoints, this.numTimeSteps)
+                    cObstacle = reshape(cObstacle, this.numConLoc, this.numTimeSteps)
                 end
 
                 % c = [cPh; cCI; cTask];

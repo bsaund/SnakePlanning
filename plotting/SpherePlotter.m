@@ -231,13 +231,14 @@ classdef SpherePlotter < handle
             black = [0,0,0];
             
             h = this.handles;
-            for i=1:this.kin.getNumBodies()
+            for i=1:this.kin.getNumDoF()
                 w = weights(i);
                 color = red*w + grey*(1-w);
                 if(w>1)
                     color = black;
                 end
-                set(h(i,1), 'FaceColor', color);
+                body = this.dofToBody(i);
+                set(h(body,1), 'FaceColor', color);
             end
         end
         
@@ -278,12 +279,18 @@ classdef SpherePlotter < handle
             this.kin = HebiKinematics();
             this.jointTypes = types;
             if(length(types) == 0)
-                return;
+
             end
+            dofNum = 0;
             for i = 1:length(types)
                 this.kin.addBody(types{i}{:});
+                if(dofNum < this.kin.getNumDoF())
+                    dofNum = this.kin.getNumDoF();
+                    this.dofToBody(dofNum) = i;
+                end
             end
             this.kinInitialized = true;
+
         end
 
         function this = initialPlot(this, angles)
@@ -374,6 +381,7 @@ classdef SpherePlotter < handle
         world
         cpCalc
         contactPlotter
+        dofToBody
     end
 
 end

@@ -2,7 +2,7 @@ function tau =  snakeContactTorques(p, world, r, spring, J1)
     f = snakeContactForces(p, world, r, spring);
     
     n=size(f,2);
-    J = zeros(n*6, n);
+    J = zeros(n*6, size(J1,2));
     wrench = zeros(6*n,1);
     
     for i=1:n

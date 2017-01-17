@@ -14,6 +14,9 @@ numJoints = 17;
 
 jointTypes = cell(1,numJoints);
 jointTypes(:) = {{'FieldableElbowJoint'}};
+jointTypes(10) = {{'FieldableStraightLink', 'ext1', .5, 'twist', 0}};
+
+
 
 arm = SpherePlotter('JointTypes', jointTypes);
 traj = MultiSegmentTrajectory('arm', arm, 'numTimeSteps', 5,...
@@ -40,7 +43,7 @@ initialAngles = [0; p2; p2; -p2;
                  -p2; p2; p2/2; p2;
                  0; -p2;  p2; p2;
                  p2; -p2; 0; 0;
-                 0];
+                 ];
 
 
 
