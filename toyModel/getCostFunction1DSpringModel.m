@@ -6,7 +6,7 @@ function costFun = getCostFunction1DSpringModel(snake, world, spring, ...
         angles = [theta; 0];
         fk = snake.getKin().getFK('EndEffector', angles);
         pointErr = fk(1,4) - goalX;
-        torques = snake.getTorques(angles, world, spring);
+        torques = snake.getSpringTorques(angles, world, spring);
         
         
         cTask = .5*pointErr;

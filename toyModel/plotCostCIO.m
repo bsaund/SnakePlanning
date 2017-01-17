@@ -38,7 +38,7 @@ function angleCost = plotCostCIO
     
     for i=1:num_points
         for c = 1:length(contactVariables)
-            % torques(i,:) = snake.getTorques(angles(i,:), world, ...
+            % torques(i,:) = snake.getSpringTorques(angles(i,:), world, ...
             %                                              spring);
             fun = getCostFunction1DCio(snake, world, angles(i,1));
             costTemp = fun(contactVariables(c));

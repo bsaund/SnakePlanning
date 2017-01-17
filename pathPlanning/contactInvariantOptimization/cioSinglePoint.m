@@ -65,7 +65,7 @@ function func = getCostFunction(initial_state, goal_xyz, snake, world);
     fk_init = snake.getKin().getFK('EndEffector',initial_angles);
     ee_init = fk_init(1:3, 4);
     function c = cost(state)
-        % tau = snake.getTorques(angles, world, spring);
+        % tau = snake.getSpringTorques(angles, world, spring);
         % angleErr = initial_angles-angles;
 
         [angles, c] = fullStateToVars(state);

@@ -3,63 +3,48 @@ close all
 
 % worldName = '../../worlds/bumpy.stl';
 % worldName = '../../worlds/block.stl';
-% worldName = '../../worlds/flat.stl';
+worldName = '../../worlds/flat.stl';
 % worldName = '../../worlds/ledge.stl';
 % worldName = '../../../worlds/Simplified_wing_section.stl';
-worldName = '../../../worlds/front_wing_section_trimmed.stl';
+% worldName = '../../../worlds/front_wing_section_trimmed.stl';
 
 world = loadWorld(worldName);
-showWorld(world);
-numJoints = 17;
 
-jointTypes = cell(1,numJoints);
-jointTypes(:) = {{'FieldableElbowJoint'}};
+numJoints = 20;
 
-arm = SpherePlotter('JointTypes', jointTypes);
-traj = MultiSegmentTrajectory('arm', arm, 'numTimeSteps', 5,...
+traj = MultiSegmentTrajectory('numJoints', numJoints, 'numTimeSteps', 5,...
                          'numContacts', 5, 'world', world);
 
-rotx = [1  0 0 0;
-        0 0 -1 0;
-        0  1 0 0;
-        0  0 0 1];
-fr=[0, 0, -1,  0;
-    0, 1, 0, 0;
-    1, 0, 0,  0;
-    0, 0, 0,  1;];
-traj.setBaseFrame(rotx*fr);
+traj.setBaseFrame(eye(4));
 
 
 goal=[-.2,-.2,.2]';
 
 
-load('BoeingPartProgress');
-
-p2 = -pi/4;
-initialAngles = [0; p2; p2; -p2;
-                 -p2; p2; p2/2; p2;
-                 0; -p2;  p2; p2;
-                 p2; -p2; 0; 0;
-                 0];
+% load('BoeingPartProgress');
 
 
-
-% initialAngles = [-1.3708, 0.0000, 1.2379, -0.0000, -1.1218,...
-%                  0.0358, 0.6213, 0.0000, 1.4136, -1.3635, ...
-%                  -1.4533, -0.4433, 0.3162, -0.7830, 1.0322,...
-%                  1.5600, -0.9317]';
+% initialAngles = [pi/2, zeros(1,16)]';
+% initialAngles = [zeros(1,numJoints)]';
+initialAngles = [-pi/3, zeros(1,numJoints-1)]';
+% initalAngles = traj.pointOptimizer.arm.getKin().getIK('xyz', goal)
 
 % initialAngles = angles
 % traj.trajOptimizer.arm.plot(initialAngles)
 
 % return
 
+profile on
+
 [angles, c, ee] = traj.pointOptimizer.optimizePoint(...
     'EndEffectorGoal', goal, ...
-    'display', 'raw',...
-    'initialAngles', initialAngles)
-
-
+    'display', 'none',...
+    'InitialAngles', initialAngles,...
+    'maxIter', 10000)
+showWorld(world)
+traj.pointOptimizer.arm.plot(angles);
+profile viewer
+return
 
 
 % p2 = -pi/2;
@@ -92,19 +77,20 @@ traj.trajOptimizer.arm.plot(angles);
 
 
 
-
+% profile on
 traj.addSegment([-.2; -.45; .2], 4);
-traj.addSegment([-.2; -.45; .5], 4);
-traj.addSegment([-.1; -.45; .5], 1);
-traj.addSegment([0; -.45; .5], 1);
-traj.addSegment([.1; -.45; .5], 1);
-traj.addSegment([.2; -.45; .5], 1);
-traj.addSegment([.2; -.45; .2], 4);
-traj.addSegment([.2; .45; .2], 4);
-traj.addSegment([.2; .45; .3], 4);
-traj.addSegment([-.2; .45; .3], 4);
-traj.addSegment([-.2; .45; .2], 4);
-traj.addSegment([-.2; 0; .2], 4);
+% profile viewer
+% traj.addSegment([-.2; -.45; .5], 4);
+% traj.addSegment([-.1; -.45; .5], 1);
+% traj.addSegment([0; -.45; .5], 1);
+% traj.addSegment([.1; -.45; .5], 1);
+% traj.addSegment([.2; -.45; .5], 1);
+% traj.addSegment([.2; -.45; .2], 4);
+% traj.addSegment([.2; .45; .2], 4);
+% traj.addSegment([.2; .45; .3], 4);
+% traj.addSegment([-.2; .45; .3], 4);
+% traj.addSegment([-.2; .45; .2], 4);
+% traj.addSegment([-.2; 0; .2], 4);
 
 save('lastTrajectory', 'traj');
 

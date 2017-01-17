@@ -1,5 +1,5 @@
 function cost = costDistErr(angles)
-%Returns the cost for the applied torque not matching the torque needed
+
     cost = [];
     n = size(angles,2);
     

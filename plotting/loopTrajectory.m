@@ -4,7 +4,8 @@ function loopTrajectory(snake, world, spring, angle_traj, useRealistic)
     if(nargin < 5)
         useRealistic = false;
     end
-    plt = HebiPlotter('resolution','high', 'drawWhen', 'later');
+    plt = HebiPlotter('resolution','high', 'drawWhen', 'later', ...
+                      'figureHandle', gcf);
     plt.setBaseFrame(snake.frame);
     while true
         for i= 1:size(angle_traj, 1)

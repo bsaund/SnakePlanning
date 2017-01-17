@@ -22,37 +22,11 @@ classdef SpherePlotter < handle
     methods(Access = public)
         %Constructor
         function this = SpherePlotter(varargin)
-        %HEBIPLOTTER
-        %Arguments:
-        %
-        %Optional Parameters:
-        %  'resolution'        - 'low' (default), 'high' 
-        %  'lighting'          - 'on' (default), 'off'
-        %  'frame'             - 'base' (default), 'VC'
-        %  'JointTypes'        - cell array of joint types
-        %
-        %Examples:
-        %  plt = HebiPlotter(16)
-        %  plt = HebiPlotter(4, 'resolution', 'high')
-        %
-        %  links = {{'FieldableElbowJoint'},
-        %           {'FieldableStraightLink', 'ext1', .1, 'twist', 0}};
-        %  plt = HebiPlotter('JointTypes', links)  
 
-
-        
             p = inputParser;
             expectedResolutions = {'low', 'high'};
             expectedLighting = {'on','off', 'far'};
-            expectedFrames = {'Base', 'VC'};
             
-            % addRequired(p, 'numLinks', @isnumeric);
-            addParameter(p, 'resolution', 'low', ...
-                         @(x) any(validatestring(x, ...
-                                                 expectedResolutions)));
-            addParameter(p, 'frame', 'Base',...
-                         @(x) any(validatestring(x, expectedFrames)));
-
             addParameter(p, 'lighting', 'on',...
                          @(x) any(validatestring(x, ...
                                                  expectedLighting)));
@@ -62,18 +36,14 @@ classdef SpherePlotter < handle
             parse(p, varargin{:});
             
             
-            this.lowResolution = strcmpi(p.Results.resolution, 'low');
-
-            this.firstRun = true;
             this.lighting = p.Results.lighting;
             this.setKinematicsFromJointTypes(p.Results.JointTypes);
-            this.frameType = p.Results.frame;
             this.drawNow = strcmp(p.Results.drawWhen, 'now');
             this.radius = .028;
-            this.frame = eye(4);
+            warning('off', 'MATLAB:rankDeficientMatrix');
         end
         
-        function plot(this, angles)
+        function plot(this, angles, contacts)
         % PLOT plots the robot in the configuration specified by
         % angles
             
@@ -88,16 +58,34 @@ classdef SpherePlotter < handle
                 
 
 
-                
-            if(this.firstRun)
-                initialPlot(this, angles);
-                this.firstRun = false;
-            else
-                updatePlot(this, angles);
+            if(~this.kinInitialized)
+                this.initializeKinematics(length(angles));
             end
+            if(~this.plotInitialized)
+                initialPlot(this, angles);
+            end
+            updatePlot(this, angles);
+            
+            if(nargin >2)
+                this.contactPlotter.plot(this.getPoints(angles), contacts);
+            end
+
             if(this.drawNow)
                 drawnow
             end
+        end
+        
+        function clearPlot(this)
+        %Clears the plot
+            h = this.handles;
+            if(~ishandle(h(1,1)))
+                error('Plotting window has been closed. Exiting program.');
+            end
+            for i=1:size(h,1)
+                delete(h(i,1));
+            end
+            delete(findall(gcf,'Type','light'))
+            this.plotInitialized = false;
         end
         
         function setBaseFrame(this, frame)
@@ -110,25 +98,64 @@ classdef SpherePlotter < handle
             this.kin.setBaseFrame(frame);
         end
         
-        function [tau, grav] = getTorques(this, angles, world, spring)
-            J = this.kin.getJacobian('CoM', angles);
+        function [tau, grav] = getSpringTorques(this, angles, world, ...
+                                                spring)
             p = this.getPoints(angles);
+            J = this.kin.getJacobian('CoM', angles);
             z_axis = this.frame(1:3, 1:3) * [0;0;1];
             grav = this.kin.getGravCompTorques(angles, -z_axis)';
-            stl.faces = world.faces;
-            stl.vertices = world.vertices;
-            tau = snakeContactTorques(p, stl, this.radius, spring, ...
-                                              J);
+            tau = snakeContactTorques(p, world, this.radius, spring, J);
             tau = tau+grav;
+        end
+        
+        function [tau, grav, f] = getMinTorques(this, angles, ...
+                                                   contacts)
+            % p = this.getPoints(angles);
+            J_full = this.getJacobian(angles);
+            grav = this.getGravTorques(angles);
+            J_con = J_full(:,:,contacts>.5);
+            J = [];
+            for(i=2:size(J_con,3));
+                J = [J; J_con(1:3,:,i)];
+            end
+            
+            if(isempty(J))
+                tau = grav;
+                f = [];
+                return
+            end
+            
+            f = lsqlin(J', grav);
+            % f = (J*J')\J*grav;
+            tau = -J'*f+grav;
+        end
+        
+        function d = getContactDistance(this, angles, contacts)
+            p = this.getPoints(angles);
+            [cp, face] = this.cpCalc.getClosestPointsFast(p);
+            n=  this.world.normals(face,:)';
+            d = (sqrt(sum((p-cp).^2)) - this.radius).*contacts;
             
         end
         
-        function plotTorques(this, angles, world, spring, ...
+        function d = getObstacleDistance(this, angles)
+        %Returns the distance each sphere has penetrated into the
+        %world mesh (0 if no collision)
+            p = this.getPoints(angles);
+            [cp, face] = this.cpCalc.getClosestPointsFast(p);
+            % d = (sqrt(sum((p-cp).^2)) - this.radius);
+            n=  this.world.normals(face,:)';
+            d = p-n*this.radius - cp;
+            d = dot(d,n);
+            d = -d.*(d<0);
+        end
+        
+        function tau = plotTorques(this, angles, world, spring, ...
                              torque_limit)
             if(nargin < 5)
                 torque_limit = 2;
             end
-            tau = this.getTorques(angles, world, spring);
+            tau = this.getSpringTorques(angles, world, spring);
             this.drawNow = false;
             this.plot(angles);
             this.updatePlotColors(abs(tau)/torque_limit);
@@ -137,13 +164,14 @@ classdef SpherePlotter < handle
         end
         
         function [p, r] = getPoints(this, angles)
-            if(this.firstRun)
-                this.plot(angles);
+            if(~this.kinInitialized)
+                this.initializeKinematics(length(angles));
             end
             fk = this.kin.getForwardKinematics('CoM',angles);
-            for i = 1:this.kin.getNumBodies()
-                p(1:3,i) = fk(1:3,4,i);
-            end
+            % for i = 1:size(fk,3)
+            %     p(1:3,i) = fk(1:3,4,i);
+            % end
+            p=squeeze(fk(1:3,4,:));
             r = this.radius;
         end
         
@@ -154,8 +182,44 @@ classdef SpherePlotter < handle
         function remakeKin(this)
             this.setKinematicsFromJointTypes(this.jointTypes);
             this.setBaseFrame(this.frame);
-            this.firstRun = true;
+            this.plotInitialized = false;
         end
+        
+        function fk = getFK(this, angles)
+            fk = this.kin.getFK('EndEffector', angles);
+            fk = fk(1:3,4);
+        end
+        
+        function J = getJacobian(this, angles)
+            if (length(angles) == length(this.prevJacobianAngles) && ...
+                max(abs(angles - this.prevJacobianAngles)) < 0.01)
+                J = this.prevJacobian;
+                return;
+            end
+            this.prevJacobianAngles = angles;
+            J = this.kin.getJacobian('CoM', angles);
+            this.prevJacobian = J;
+        end
+        
+        function tau = getGravTorques(this, angles)
+            if (length(angles) == length(this.prevGravTorqueAngles) && ...
+                max(abs(angles - this.prevGravTorqueAngles)) < 0.01)
+                tau = this.prevGravTorques;
+                return;
+            end
+            
+            this.prevGravTorqueAngles = angles;
+            this.prevGravTorques = ...
+                this.kin.getGravCompTorques(angles, [0 0 -1])';
+            tau = this.prevGravTorques;
+        end
+        
+        function setWorld(this,world)
+            this.world = world;
+            this.cpCalc = ClosestPointCalculator(world);
+            this.contactPlotter = ContactPlotter(this.cpCalc);
+        end
+
         
     end
     
@@ -207,6 +271,7 @@ classdef SpherePlotter < handle
                 this.kin.addBody('FieldableElbowJoint');
                 this.jointTypes{i} = {'FieldableElbowJoint'};
             end
+            this.kinInitialized = true;
         end
         
         function setKinematicsFromJointTypes(this, types)
@@ -218,6 +283,7 @@ classdef SpherePlotter < handle
             for i = 1:length(types)
                 this.kin.addBody(types{i}{:});
             end
+            this.kinInitialized = true;
         end
 
         function this = initialPlot(this, angles)
@@ -225,7 +291,7 @@ classdef SpherePlotter < handle
         %manipulator
             
 
-            this.initializeKinematics(length(angles));
+
             n = this.kin.getNumBodies();
 
             
@@ -265,6 +331,7 @@ classdef SpherePlotter < handle
             xlabel('x');
             ylabel('y');
             zlabel('z');
+            this.plotInitialized = true;
         end
         
         
@@ -283,18 +350,30 @@ classdef SpherePlotter < handle
             cyl = surf2patch(r*x + p0(1), r*y + p0(2), r*z + p0(3));
         end
         
+        
     end
     
     properties(Access = public, Hidden = true)
         kin;
         jointTypes;
         handles;
-        lowResolution;
-        firstRun;
+        plotInitialized = false;
+        kinInitialized = false;
         lighting;
-        frameType;
-        frame;
+        frame = eye(4);
         drawNow;
         radius;
     end
+    
+    properties(Access = public, Hidden = true)
+        prevGravTorqueAngles;
+        prevGravTorques;
+        prevJacobianAngles;
+        prevJacobian;
+        
+        world
+        cpCalc
+        contactPlotter
+    end
+
 end
