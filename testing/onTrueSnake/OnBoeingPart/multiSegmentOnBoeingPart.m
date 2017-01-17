@@ -9,10 +9,14 @@ close all
 worldName = '../../../worlds/front_wing_section_trimmed.stl';
 
 world = loadWorld(worldName);
-
+showWorld(world);
 numJoints = 17;
 
-traj = MultiSegmentTrajectory('numJoints', numJoints, 'numTimeSteps', 5,...
+jointTypes = cell(1,numJoints);
+jointTypes(:) = {{'FieldableElbowJoint'}};
+
+arm = SpherePlotter('JointTypes', jointTypes);
+traj = MultiSegmentTrajectory('arm', arm, 'numTimeSteps', 5,...
                          'numContacts', 5, 'world', world);
 
 rotx = [1  0 0 0;

@@ -36,14 +36,10 @@ classdef SpherePlotter < handle
             parse(p, varargin{:});
             
             
-
-            this.plotInitialized = false;
-            this.kinInitialized = false;
             this.lighting = p.Results.lighting;
             this.setKinematicsFromJointTypes(p.Results.JointTypes);
             this.drawNow = strcmp(p.Results.drawWhen, 'now');
             this.radius = .028;
-            this.frame = eye(4);
             warning('off', 'MATLAB:rankDeficientMatrix');
         end
         
@@ -361,10 +357,10 @@ classdef SpherePlotter < handle
         kin;
         jointTypes;
         handles;
-        plotInitialized;
-        kinInitialized;
+        plotInitialized = false;
+        kinInitialized = false;
         lighting;
-        frame;
+        frame = eye(4);
         drawNow;
         radius;
     end

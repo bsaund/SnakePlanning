@@ -5,23 +5,24 @@ classdef CioTrajectory < handle
         
         function this = CioTrajectory(varargin)
             p = inputParser;
-            p.addParameter('numJoints', 0);
+            p.addParameter('arm', []);
             p.addParameter('numTimeSteps', 0);
             p.addParameter('numContacts', 0);
             p.addParameter('world', []);
             
             p.parse(varargin{:});
             
-            this.numJoints = p.Results.numJoints;
+
             this.numTimeSteps = p.Results.numTimeSteps;
             this.numContacts = p.Results.numContacts;
             this.world = p.Results.world;
+            this.arm = p.Results.arm;
             
             % showWorld(this.world);
             
-            this.arm = SpherePlotter();
+            this.numJoints = this.arm.kin.getNumDoF;
+            this.numConLoc = this.arm.kin.getNumBodies;
             this.closestPointCalculator = ClosestPointCalculator(this.world);
-            this.arm.getPoints(zeros(1,this.numJoints));
         end
         
         function [angles, contacts] = ...
@@ -38,7 +39,7 @@ classdef CioTrajectory < handle
                             this.numJoints,...
                             this.numTimeSteps);
             contacts = reshape(state(n+1:end),...
-                              this.numJoints,...
+                              this.numConLoc,...
                               this.numContacts);
             contacts = repelem(contacts, 1, ceil(this.numTimeSteps/...
                                               this.numContacts));
@@ -267,6 +268,7 @@ classdef CioTrajectory < handle
         arm
         closestPointCalculator;
         numJoints
+        numConLoc
         numTimeSteps
         numContacts
         world
