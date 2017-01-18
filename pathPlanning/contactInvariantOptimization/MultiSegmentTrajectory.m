@@ -66,15 +66,13 @@ classdef MultiSegmentTrajectory < handle
         
         function showTrajectory(this, interpFactor)
             extraAngles = interpolateTrajectory(this.trajectory, interpFactor);        
-            loopTrajectory(this.trajOptimizer.arm, ...
-                           this.trajOptimizer.world, ...
-                           10000, extraAngles, true);
+            % loopTrajectory(this.trajOptimizer.arm, ...
+            %                this.trajOptimizer.world, ...
+            %                10000, extraAngles, true);
+            arm = this.trajOptimizer.arm;
+            loopTrajectory(@arm.plot, extraAngles)
         end
         
-        function setBaseFrame(this,fr)
-            this.trajOptimizer.arm.setBaseFrame(fr);
-            this.pointOptimizer.arm.setBaseFrame(fr);
-        end
         
         function reset(this)
             

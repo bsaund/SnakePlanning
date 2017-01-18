@@ -17,11 +17,6 @@ jointTypes(:) = {{'FieldableElbowJoint'}};
 jointTypes(10) = {{'FieldableStraightLink', 'ext1', .5, 'twist', 0}};
 
 
-
-arm = SpherePlotter('JointTypes', jointTypes);
-traj = MultiSegmentTrajectory('arm', arm, 'numTimeSteps', 5,...
-                         'numContacts', 5, 'world', world);
-
 rotx = [1  0 0 0;
         0 0 -1 0;
         0  1 0 0;
@@ -30,7 +25,16 @@ fr=[0, 0, -1,  0;
     0, 1, 0, 0;
     1, 0, 0,  0;
     0, 0, 0,  1;];
-traj.setBaseFrame(rotx*fr);
+
+arm = SpherePlotter('JointTypes', jointTypes);
+realisticArm = HebiPlotter('JointTypes', jointTypes, ...
+                           'figureHandle', gcf());
+arm.setBaseFrame(rotx*fr);
+realisticArm.setBaseFrame(rotx*fr);
+
+traj = MultiSegmentTrajectory('arm', arm, 'numTimeSteps', 5,...
+                         'numContacts', 5, 'world', world);
+
 
 
 goal=[-.2,-.2,.2]';
@@ -97,19 +101,22 @@ traj.trajOptimizer.arm.plot(angles);
 
 
 traj.addSegment([-.2; -.45; .2], 4);
-traj.addSegment([-.2; -.45; .5], 4);
-traj.addSegment([-.1; -.45; .5], 1);
-traj.addSegment([0; -.45; .5], 1);
-traj.addSegment([.1; -.45; .5], 1);
-traj.addSegment([.2; -.45; .5], 1);
-traj.addSegment([.2; -.45; .2], 4);
-traj.addSegment([.2; .45; .2], 4);
-traj.addSegment([.2; .45; .3], 4);
-traj.addSegment([-.2; .45; .3], 4);
-traj.addSegment([-.2; .45; .2], 4);
-traj.addSegment([-.2; 0; .2], 4);
+% traj.addSegment([-.2; -.45; .5], 4);
+% traj.addSegment([-.1; -.45; .5], 1);
+% traj.addSegment([0; -.45; .5], 1);
+% traj.addSegment([.1; -.45; .5], 1);
+% traj.addSegment([.2; -.45; .5], 1);
+% traj.addSegment([.2; -.45; .2], 4);
+% traj.addSegment([.2; .45; .2], 4);
+% traj.addSegment([.2; .45; .3], 4);
+% traj.addSegment([-.2; .45; .3], 4);
+% traj.addSegment([-.2; .45; .2], 4);
+% traj.addSegment([-.2; 0; .2], 4);
 
-save('lastTrajectory', 'traj');
+% save('lastTrajectory', 'traj');
 
 % save('BoeingPartProgress','angles','traj1','traj2','traj3', 'traj4')
-traj.showTrajectory(10)
+% traj.showTrajectory(10)
+arm.clearPlot();
+finalTrajectory = interpolateTrajectory(traj.trajectory, 10);
+loopTrajectory(@realisticArm.plot, finalTrajectory);

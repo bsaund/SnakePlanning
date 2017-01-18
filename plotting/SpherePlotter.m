@@ -84,7 +84,7 @@ classdef SpherePlotter < handle
             for i=1:size(h,1)
                 delete(h(i,1));
             end
-            delete(findall(gcf,'Type','light'))
+            % delete(findall(gcf,'Type','light'))
             this.plotInitialized = false;
         end
         
