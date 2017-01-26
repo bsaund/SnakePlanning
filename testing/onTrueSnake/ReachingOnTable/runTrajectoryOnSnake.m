@@ -27,7 +27,7 @@ for(i=1:size(extraAngles,2))
     cmd.torque = [kin.getGravCompTorques(fbk.position, ...
                                          [0 0 1])];
     if(mod(i,10) == 0)
-        arm.plot(extraAngles(:,i));
+        % arm.plot(extraAngles(:,i));
     end
     g.set(cmd)
     pause(.05)

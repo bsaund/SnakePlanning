@@ -41,10 +41,10 @@ jointTypes(16) = {{'FieldableElbowJoint'}};
 %         0  1 0 0;
 %         0  0 0 1];
 fr=[1, 0, 0,  .3;
-    0, 1, 0, 0;
-    0, 0, 1,  .3;
+    0, 1, 0, .9;
+    0, 0, 1,  .45;
     0, 0, 0,  1;];
-fr = fr*rotz(-pi/4);
+fr = fr*rotz(0);
 
 arm = SpherePlotter('JointTypes', jointTypes);
 realisticArm = HebiPlotter('JointTypes', jointTypes, ...
@@ -58,7 +58,7 @@ traj = MultiSegmentTrajectory('arm', arm, 'numTimeSteps', 5,...
 
 
 
-goal=[-.2,-.2,.2]';
+% goal=[-.2,-.2,.2]';
 
 
 % load('BoeingPartProgress');
@@ -69,10 +69,17 @@ goal=[-.2,-.2,.2]';
 %                  0; -p2;  p2; p2;
 %                  p2; -p2; 0; 0;
 %                  ];
-initialAngles = zeros(11,1);
-initialAngles(1) = pi/4;
-initialAngles(4) = -pi/4;
-initialAngles(7) = 0;
+% initialAngles = zeros(11,1);
+% initialAngles(1) = pi/4;
+% initialAngles(4) = -pi/4;
+% initialAngles(7) = 0;
+
+
+initialAngles = [0.0388; -1.2968; -0.8412 ; 0.9183 ; 1.37; ...
+                 0.5174;
+                 0.2922; -0.0099 ; 0.3029; -1.1143 ; 0.7576];
+
+                
 
 % initialAngles = [-1.3708, 0.0000, 1.2379, -0.0000, -1.1218,...
 %                  0.0358, 0.6213, 0.0000, 1.4136, -1.3635, ...
@@ -124,10 +131,13 @@ traj.trajOptimizer.arm.plot(initialAngles);
 
 
 % traj.addSegment([.4; -.5; .5], 3);
-traj.addSegment([.3; 0; .5], 4);
-traj.addSegment([-.3; 0; .5], 2);
-% traj.addSegment([-.3; -.5; .5], 2);
-traj.addSegment([-.3; 0; .9], 5);
+% traj.addSegment([.3; .6; .6], 4);
+% traj.addSegment([.1; .1; .6], 3);
+% traj.addSegment([.1; .3; .9], 2);
+traj.addSegment([.1; -.1; .6], 3);
+traj.addSegment([.1; .3; .9], 2);
+traj.addSegment([-.3; .3; .85], 3);
+traj.addSegment([-.6; .3; .85], 3);
 % traj.addSegment([-.5; -.1; .9], 1);
 % traj.addSegment([-.1; -.1; .9], 10);
 % traj.addSegment([-.2; -.45; .5], 4);
