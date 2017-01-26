@@ -308,9 +308,9 @@ classdef SpherePlotter < handle
 
             
             if(strcmp(this.lighting, 'on'))
-                light('Position',[0,0,10]);
-                light('Position',[5,0,10]);
-                light('Position',[-5,0,10]);
+                light('Position',[0,0,100]);
+                light('Position',[5,0,100]);
+                light('Position',[-5,0,100]);
                 lightStyle = 'gouraud';
                 strength = .3;
             elseif(strcmp(this.lighting, 'far'))

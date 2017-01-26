@@ -5,10 +5,10 @@ function loopTrajectory(plottingFunc, angle_traj, varargin)
         for i= 1:size(angle_traj, 1)
             plottingFunc(angle_traj(i,:), varargin{:});
             if(i==1)
-                pause(3)
+                pause(1)
             end
         end
-        pause(3)
+        pause(1)
     end
 end
 
