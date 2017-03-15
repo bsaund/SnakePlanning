@@ -8,9 +8,9 @@ classdef SpecifiedContactsPolicy < handle
             this.goal = [0;0;0];
         end
         
-        function [u, success] = getPolicy(this, x)
+        function [u, success] = getAction(this, x)
             
-            [u, failureReason] = this.getPolicyFixedContacts(x);
+            [u, failureReason] = this.getActionFixedContacts(x);
             success = ~failureReason;
             if(success)
                 if(~isempty(this.u_prev))
@@ -30,7 +30,7 @@ classdef SpecifiedContactsPolicy < handle
             end
             [angles, contacts] = this.separateState(x);
             x = this.combineState(angles, new_contacts);
-            [u, success] = this.getPolicy(x);
+            [u, success] = this.getAction(x);
             if(success)
                 n = length(u);
                 u((n/2+1):end) = new_contacts - contacts;
@@ -75,7 +75,7 @@ classdef SpecifiedContactsPolicy < handle
         end
                                                         
             
-        function [u, failureReason]=getPolicyFixedContacts(this, x)
+        function [u, failureReason]=getActionFixedContacts(this, x)
         %Returns the action u 
             grad = this.gradient(x);
             c = this.cost(x);

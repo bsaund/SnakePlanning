@@ -5,7 +5,7 @@ classdef SpringTorquePolicy < handle
             this.sphereModel = SpherePlotter()
         end
         
-        function u=getPolicy(this, x)
+        function u=getAction(this, x)
         %Returns the action u 
             grad = this.gradient(x)
             % hess = this.diagHessian(x)

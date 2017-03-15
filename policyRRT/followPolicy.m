@@ -17,7 +17,7 @@ function [x, contacts] = followPolicy(start, contacts)
     % profile on
     for i=1:1000
         c = [c, stp.cost(x, contacts)];
-        [u, contacts, progress] = stp.getPolicy(x, contacts);
+        [u, contacts, progress] = stp.getAction(x, contacts);
         x = x + u;
         x = bound(x, -1.57, 1.57);
         % stp.sphereModel.plot(x);

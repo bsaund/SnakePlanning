@@ -12,7 +12,7 @@ function extend = getPolicyExtendFunc(stepSize, maxSteps)
         iter = 0;
         
         prevCost = policy.cost(x);
-        x = x + policy.getPolicy(x)*stepSize;
+        x = x + policy.getAction(x)*stepSize;
         newCost = policy.cost(x);
         
         makingProgress = newCost < prevCost && ...
@@ -27,7 +27,7 @@ function extend = getPolicyExtendFunc(stepSize, maxSteps)
             parentInd = length(tree.parents);
             
             prevCost = newCost;
-            x = x + policy.getPolicy(x)*stepSize;
+            x = x + policy.getAction(x)*stepSize;
             newCost = policy.cost(x);
             makingProgress = newCost < prevCost && ...
                 ~policy.obs.collides(x);

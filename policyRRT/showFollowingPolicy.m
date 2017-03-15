@@ -18,7 +18,7 @@ function [x, contacts] = showFollowingPolicy(start, contacts)
     % profile on
     for i=1:1000
         c = [c, stp.cost(x)];
-        [u, progress] = stp.getPolicy(x);
+        [u, progress] = stp.getAction(x);
         x = x + u;
         % x = bound(x, -1.57, 1.57);
         angles = stp.separateState(x);

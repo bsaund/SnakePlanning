@@ -11,14 +11,14 @@ function extend = getSnakePolicyExtendFunc(maxSteps)
         iter = 0;
         
         % prevCost = policy.cost(x);
-        % x = x + policy.getPolicy(x)*stepSize;
+        % x = x + policy.getAction(x)*stepSize;
         % newCost = policy.cost(x);
         
         % makingProgress = newCost < prevCost && ...
         %     ~policy.obs.collides(x);
         
         % EProgress = (prevCost - newCost)*.2; %minimium expected progress
-        [u, progress] = policy.getPolicy(x);
+        [u, progress] = policy.getAction(x);
         x = x+u;
         while( progress && ...
                ~policy.reachedGoal(x) && ...
@@ -37,7 +37,7 @@ function extend = getSnakePolicyExtendFunc(maxSteps)
 
             
             % prevCost = newCost;
-            [u, progress] = policy.getPolicy(x);
+            [u, progress] = policy.getAction(x);
             x = x+u;
             
             
