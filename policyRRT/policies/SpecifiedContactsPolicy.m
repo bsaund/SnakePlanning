@@ -1,8 +1,8 @@
 classdef SpecifiedContactsPolicy < handle
     methods
-        function this = SpecifiedContactsPolicy(world)
+        function this = SpecifiedContactsPolicy(world, arm_joint_types)
             this.world = world;
-            this.sphereModel = SpherePlotter();
+            this.sphereModel = SpherePlotter('jointTypes', arm_joint_types);
             this.sphereModel.setWorld(world);
             this.useAngleGoal = false;
             this.goal = [0;0;0];
@@ -188,14 +188,15 @@ classdef SpecifiedContactsPolicy < handle
         
     end
     
-    methods(Static = true)
-        function [angles, contacts] = separateState(state)
-            n = length(state);
-            angles = state(1:n/2);
-            contacts = state((n/2+1):end);
+    methods
+        function [angles, contacts] = separateState(this, state)
+            % n_angles = length(state);
+            n_angles = this.sphereModel.kin.getNumDoF;
+            angles = state(1:n_angles);
+            contacts = state((n_angles+1):end);
         end
         
-        function state = combineState(angles, contacts)
+        function state = combineState(this, angles, contacts)
             state = [angles, contacts];
         end
     end

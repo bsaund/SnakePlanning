@@ -3,9 +3,10 @@ close all
 % [obs, worldMin, worldMax, start, goal] = narrowCorridorWorld();
 % [obs, worldMin, worldMax, start, goal] = simpleLocalMin();
 numLinks = 11;
+numContacts = 16;
 minConfig = -1.57*ones(1,numLinks);
 maxConfig = 1.57*ones(1,numLinks);
-start = [[1.57 1.57, zeros(1,9)], [zeros(1,6) ones(1,5)]];
+start = [[1,.35,1,-1,0,0,0,0,0,0,0], [zeros(1,6) ones(1,5), zeros(1,5)]];
 % goal = [0,.2,.30]';
 goal = [.1,.1,.4]';
 
@@ -13,12 +14,13 @@ goal = [.1,.1,.4]';
 world = loadWorld('worlds/block.stl');
 showWorld(world);
 scatter3(goal(1), goal(2), goal(3));
-policy = SpecifiedContactsPolicy(world);
+policy = SpecifiedContactsPolicy(world, getFodbotJointTypes());
 policy.sphereModel.plot(policy.separateState(start));
 % stepSize = .01;
 maxSteps = 61;
 extend = getSnakePolicyExtendFunc(maxSteps);
-sample = getSnakeSampling(20, minConfig, maxConfig);
+% sample = getSnakeSampling(20, minConfig, maxConfig);
+sample = getSnakeContactSampling(minConfig, maxConfig, numContacts);
 goalReached = @policy.reachedGoal;
 core = getPolicyRrtCore(extend, sample, goalReached);
 

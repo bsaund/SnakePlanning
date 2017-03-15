@@ -80,8 +80,8 @@ function extend = getSnakePolicyExtendFunc(maxSteps)
     function policyExtend(tree, firstGoal, finalGoal, policy)
         n = length(firstGoal);
         % startInd = nearestPoint(tree.points(:,1:n), firstGoal);
-        startInd = nearestPoint(tree.points, [firstGoal, zeros(1,11)]);
-        policy.setGoalAngles(firstGoal);
+        startInd = nearestPoint(tree.points, [firstGoal]);
+        policy.setGoalAngles(policy.separateState(firstGoal));
         if(~extendHelper(tree, startInd, ...
                          policy, maxSteps))
             return;
