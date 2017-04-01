@@ -30,10 +30,10 @@ function extend = getSnakePolicyExtendFunc(maxSteps)
                 parentInd = length(tree.parents);
 
             end
-            if(mod(iter,10) == 0)
-                [angles, contacts] = policy.separateState(x);
-                policy.sphereModel.plot(angles, contacts);
-            end
+            % if(mod(iter,10) == 0)
+            %     [angles, contacts] = policy.separateState(x);
+            %     policy.sphereModel.plot(angles, contacts);
+            % end
 
             
             % prevCost = newCost;
@@ -75,6 +75,11 @@ function extend = getSnakePolicyExtendFunc(maxSteps)
         % end
 
         pointAdded = iter > 0;
+        if(pointAdded)
+            [angles, contacts] = policy.separateState(x);
+            policy.sphereModel.plot(angles, contacts);
+        end
+
     end
     
     function policyExtend(tree, firstGoal, finalGoal, policy)

@@ -32,8 +32,10 @@ classdef SpecifiedContactsPolicy < handle
             x = this.combineState(angles, new_contacts);
             [u, success] = this.getAction(x);
             if(success)
-                n = length(u);
-                u((n/2+1):end) = new_contacts - contacts;
+                angle_u = this.separateState(u);
+                u = this.combineState(angle_u, new_contacts - contacts);
+                % n = length(u);
+                % u((n/2+1):end) = new_contacts - contacts;
             end
         end
         
@@ -108,7 +110,7 @@ classdef SpecifiedContactsPolicy < handle
             tau = this.sphereModel.getMinTorques(q_new, contacts);
             if(max(abs(tau) > 1))
                 failureReason = 2;
-                % disp('Ending: Torque too high')
+                disp('Ending: Torque too high')
                 % tau
                 return
             end
@@ -120,7 +122,9 @@ classdef SpecifiedContactsPolicy < handle
             [angles, contacts] = this.separateState(x);
             % this.sphereModel.getPoints(angles);
             fk = this.sphereModel.getFK(angles);
-            % cTorque = 0*this.sphereModel.getMinTorques(angles, contacts);
+            % cTorque = 0*this.sphereModel.getMinTorques(angles,
+            % contacts);
+            % contacts
             cContact = ((30*this.sphereModel.getContactDistance(angles, contacts)))';
             cObstacle = 40*this.sphereModel.getObstacleDistance(angles)';
             if(this.useAngleGoal)
