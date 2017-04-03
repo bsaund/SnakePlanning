@@ -43,57 +43,75 @@ classdef NoContactsPolicy < handle
             
         function [u, success]=getAction(this, angles)
         %Returns the action u 
-            grad = this.gradient(angles);
-            c = this.cost(angles);
+
+            [c, dist] = this.cost(angles);
             q = angles;
             
             %%            scalePolicy
             J = this.sphereModel.getKin().getJacobian('EndEffector', q);
             J = sqrt(sum(J(1:3,:).^2));
             
-            maxMove = 0.01;
-            if(~this.useAngleGoal)
-                maxMove = min(maxMove, norm(this.sphereModel.getFK(q)- ...
-                                            this.goal));
-            end
-            
-            u = maxMove/(abs(grad)*J')*grad;
-            % u;
-            
-            q_new = q+u;
-            q_new = bound(q_new, -1.57, 1.57);
-            u = q_new - q;
-
-            c_new = this.cost(q_new);
-            
-            % norm(u)
             decrease_iter = 0;
-            while (c_new > c && decrease_iter < 10)
-                c
-                this.cost(angles)
+            c_new = inf;
+            dist_new = inf;
+            max_move = 0.01;
+            % while (c_new > c && decrease_iter < 10)
+            while (dist_new > dist && decrease_iter < 10)            
+                grad = this.gradient(q);
+
+                if(~this.useAngleGoal)
+                    max_move = min(max_move, norm(this.sphereModel.getFK(q)- ...
+                                                this.goal));
+                end
+                
+                grad = grad ./J;
+                % u = max_move/(abs(grad)*J')*grad;
+                u = bound(grad, -max_move, max_move);
+                % u = max_move/(norm(grad))*grad;                
+                % u;
+                
+                q = bound(q+u, -1.57, 1.57);
+
+
+                [c_new, dist_new] = this.cost(q);
+                
+                % norm(u)
+                % c
+                % this.cost(angles)
                 
                 
-                u = u*.2;
-                q_new = q+u;
-                q_new = bound(q_new, -1.57, 1.57);
+                % u = u*.2;
+                % q_new = q+u;
+                % q_new = bound(q_new, -1.57, 1.57);
                 
-                c_new = this.cost(q_new)
-                decrease_iter = decrease_iter + 1
-                disp(['Use angle goal: ', num2str(this.useAngleGoal)])
-                pause(.5)
+                % c_new = this.cost(q_new)
+                decrease_iter = decrease_iter + 1;
+                max_move = max_move;
+                % disp(['Use angle goal: ', num2str(this.useAngleGoal)])
+                % pause(.5) 
+                if(decrease_iter > 2)
+                    
+                    decrease_iter
+                    % c_new
+                    disp(['dist : ', num2str(dist)])
+                    this.cost(q, 1);
+                end
             end
             
-            if(c_new > c)
+            u = q - angles;            
+            
+            if(dist_new > dist)
                 success = 0;
 
-                c_new
-                c
+                % c_new
+                % c
                 % for(i=1:10)
                 %     this.sphereModel.plot(q)
                 %     pause(.3)
                 %     this.sphereModel.plot(q_new)                
                 %     pause(1)
                 % end
+                decrease_iter
                 disp('Ending: cost increasing');
                 return;
             end
@@ -101,7 +119,7 @@ classdef NoContactsPolicy < handle
             success = 1;
         end
         
-        function c = cost(this, angles)
+        function [c, goal_dist] = cost(this, angles, debug)
         %Returns the cost of point angles with contacts c
 
             cObstacle = 40*this.sphereModel.getObstacleDistance(angles)';
@@ -109,14 +127,21 @@ classdef NoContactsPolicy < handle
                 cGoal = 200*(angles - this.goalAngles);
             else
                 fk = this.sphereModel.getFK(angles);                
-                cGoal = 2000*(fk - this.goal);
+                cGoal = 200*(fk - this.goal);
             end
             
-            goalDist = norm(cGoal);
+            goal_dist = norm(cGoal);
             cObstacle = norm(cObstacle)^2;
             % cObstacle = 0;            
 
-            c = cObstacle + goalDist;
+            c = cObstacle + goal_dist;
+            
+            if(nargin > 2 && debug)
+                disp(['goal cost: ', num2str(goal_dist)])
+                disp(['ob   cost: ', num2str(cObstacle)])  
+                disp(['tot  cost: ', num2str(c)])                  
+            end
+            
         end
         
         function g = gradient(this, angles)
