@@ -1,4 +1,4 @@
-function sample = getSnakeSampling(sampleGoalLength, minSample, maxSample)
+function sample = getSnakeSampling(minSample, maxSample)
     function sampledPoint = basicSample(i, goal)
         % if(mod(i,sampleGoalLength) == 0)
         %     sampledPoint = goal;

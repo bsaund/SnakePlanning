@@ -76,8 +76,9 @@ function extend = getSnakePolicyExtendFunc(maxSteps)
 
         pointAdded = iter > 0;
         if(pointAdded)
-            [angles, contacts] = policy.separateState(x);
-            policy.sphereModel.plot(angles, contacts);
+            % [angles, contacts] = policy.separateState(x);
+            % policy.sphereModel.plot(angles, contacts);
+            policy.sphereModel.plot(x);
         end
 
     end
@@ -86,7 +87,7 @@ function extend = getSnakePolicyExtendFunc(maxSteps)
         n = length(firstGoal);
         % startInd = nearestPoint(tree.points(:,1:n), firstGoal);
         startInd = nearestPoint(tree.points, [firstGoal]);
-        policy.setGoalAngles(policy.separateState(firstGoal));
+        policy.setGoalAngles(firstGoal);
         if(~extendHelper(tree, startInd, ...
                          policy, maxSteps))
             return;
