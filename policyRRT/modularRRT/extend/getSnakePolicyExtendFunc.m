@@ -22,8 +22,9 @@ function extend = getSnakePolicyExtendFunc(maxSteps)
         x = x+u;
         while( progress && ...
                ~policy.reachedGoal(x) && ...
-               nearestPoint(originalTree, x) == startInd && ...
                iter < numSteps)
+               % nearestPoint(originalTree, x) == startInd && ...
+
             iter = iter + 1;
             if(mod(iter, 10) == 0)
                 tree.add(x, parentInd);
@@ -42,6 +43,8 @@ function extend = getSnakePolicyExtendFunc(maxSteps)
             
             
             
+            % policy.sphereModel.plot(x);
+            % pause(.1)
             % if( sqrt(sumsqr(x - goal)) < .7)
             %     makingProgress
             %     nearestPoint(originalTree, x) == startInd
@@ -55,9 +58,9 @@ function extend = getSnakePolicyExtendFunc(maxSteps)
             tree.add(x, parentInd);
         end
         
-        if(nearestPoint(originalTree, x) ~= startInd)
-            disp('entered explored region')
-        end
+        % if(nearestPoint(originalTree, x) ~= startInd)
+        %     disp('entered explored region')
+        % end
         if(~progress)
             disp('Stopped making progress')
         end
@@ -92,6 +95,7 @@ function extend = getSnakePolicyExtendFunc(maxSteps)
                          policy, maxSteps))
             return;
         end
+        print('attempting towards goal')
         policy.setGoal(finalGoal);
         extendHelper(tree, size(tree.points,1), ...
                      policy, inf);

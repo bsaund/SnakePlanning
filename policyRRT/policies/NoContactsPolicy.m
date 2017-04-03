@@ -51,7 +51,7 @@ classdef NoContactsPolicy < handle
             J = this.sphereModel.getKin().getJacobian('EndEffector', q);
             J = sqrt(sum(J(1:3,:).^2));
             
-            maxMove = 0.011;
+            maxMove = 0.01;
             if(~this.useAngleGoal)
                 maxMove = min(maxMove, norm(this.sphereModel.getFK(q)- ...
                                             this.goal));
@@ -73,13 +73,14 @@ classdef NoContactsPolicy < handle
                 this.cost(angles)
                 
                 
-                u = u*.5;
+                u = u*.2;
                 q_new = q+u;
                 q_new = bound(q_new, -1.57, 1.57);
                 
                 c_new = this.cost(q_new)
                 decrease_iter = decrease_iter + 1
-                % pause(.5)
+                disp(['Use angle goal: ', num2str(this.useAngleGoal)])
+                pause(.5)
             end
             
             if(c_new > c)
@@ -108,7 +109,7 @@ classdef NoContactsPolicy < handle
                 cGoal = 200*(angles - this.goalAngles);
             else
                 fk = this.sphereModel.getFK(angles);                
-                cGoal = 200*(fk - this.goal);
+                cGoal = 2000*(fk - this.goal);
             end
             
             goalDist = norm(cGoal);
