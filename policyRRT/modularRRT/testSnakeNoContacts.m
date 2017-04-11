@@ -9,7 +9,8 @@ maxConfig = 1.57*ones(1,numLinks);
 start = [1,.15,1,-1,0,0,-1,0,-1,0,0];
 % goal = [0,.2,.30]';
 % goal = [.1,.2,.3]';
-goal = [-.3,-.6,.1]';
+% goal = [-.3,-.6,.1]';
+goal = [0, -.5, .4]';
 
 world = loadWorld('worlds/wing_with_floor.stl');
 % world = loadWorld('worlds/flat.stl');

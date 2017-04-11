@@ -99,7 +99,7 @@ function extend = getSnakePolicyExtendFunc(maxSteps)
         disp('attempting towards goal')
         policy.setGoal(finalGoal);
         extendHelper(tree, size(tree.points,1), ...
-                     policy, inf);
+                     policy, maxSteps);
     end
     
     extend = @policyExtend;

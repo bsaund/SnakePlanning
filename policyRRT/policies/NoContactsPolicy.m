@@ -55,8 +55,8 @@ classdef NoContactsPolicy < handle
             c_new = inf;
             dist_new = inf;
             max_move = 0.01;
-            % while (c_new > c && decrease_iter < 10)
-            while (dist_new > dist && decrease_iter < 10)            
+            while (c_new > c && decrease_iter < 10)
+            % while (dist_new > dist && decrease_iter < 10)            
                 grad = this.gradient(q);
 
                 if(~this.useAngleGoal)
@@ -100,7 +100,8 @@ classdef NoContactsPolicy < handle
             
             u = q - angles;            
             
-            if(dist_new > dist)
+            % if(dist_new > dist)
+            if(c_new > c)            
                 success = 0;
 
                 % c_new
@@ -115,14 +116,14 @@ classdef NoContactsPolicy < handle
                 disp('Ending: cost increasing');
                 return;
             end
-
+            c
             success = 1;
         end
         
         function [c, goal_dist] = cost(this, angles, debug)
         %Returns the cost of point angles with contacts c
 
-            cObstacle = 40*this.sphereModel.getObstacleDistance(angles)';
+            cObstacle = 100*this.sphereModel.getObstacleDistance(angles)';
             if(this.useAngleGoal)
                 cGoal = 200*(angles - this.goalAngles);
             else
