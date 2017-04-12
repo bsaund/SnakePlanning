@@ -141,13 +141,33 @@ classdef SpherePlotter < handle
         function d = getObstacleDistance(this, angles)
         %Returns the distance each sphere has penetrated into the
         %world mesh (0 if no collision)
-            p = this.getPoints(angles);
-            [cp, face] = this.cpCalc.getClosestPointsFast(p);
+            centers = this.getPoints(angles);
+            
+            %cwp is closest world point to the sphere center
+            %fsp is the furthest-penetrating sphere point 
+            [cwp, face] = this.cpCalc.getClosestPointsFast(centers);
             % d = (sqrt(sum((p-cp).^2)) - this.radius);
             n=  this.world.normals(face,:)';
-            d = p-n*this.radius - cp;
-            d = dot(d,n);
-            d = -d.*(d<0);
+            % d = centers-n*this.radius - cwp;
+            % d = dot(d,n);
+            % d = -d.*(d<0);
+            
+            centers_to_cwp = cwp - centers;
+            
+            %vector from center to boundary point on sphere closest
+            %to cwp
+            to_edge = this.radius*centers_to_cwp./ ...
+                      repmat(sqrt(sum(centers_to_cwp.^2)),3,1);
+            
+            %to_edge, possibly reversed if center of sphere is far
+            %penetrated
+            rev = (dot(to_edge,n)>0);
+            rev = repmat(1 - 2*rev,3,1);
+            to_edge = rev.*to_edge;
+            
+            d = dot((centers + to_edge - cwp), to_edge/this.radius);
+            d = d.*(d>0);
+            
         end
         
         function tau = plotTorques(this, angles, world, spring, ...
@@ -161,6 +181,14 @@ classdef SpherePlotter < handle
             this.updatePlotColors(abs(tau)/torque_limit);
             this.drawNow = true;
             drawnow;
+        end
+        
+        function plotColored(this, angles, colors)
+            this.drawNow = false;
+            this.plot(angles);
+            this.updatePlotColors(colors);
+            this.drawNow = true;            
+            drawnow;            
         end
         
         function [p, r] = getPoints(this, angles)
@@ -226,19 +254,36 @@ classdef SpherePlotter < handle
     methods(Access = private, Hidden = true)
         
         function updatePlotColors(this, weights)
+        % sets the colors of links based on the weights passed in
+        % weights are clipped at 1
+        % Weights should be a vector of either length getNumDoF, or getNumBodies
             red = [1,0,0];
             grey = [.7,.7,.7];
             black = [0,0,0];
             
             h = this.handles;
-            for i=1:this.kin.getNumDoF()
-                w = weights(i);
-                color = red*w + grey*(1-w);
-                if(w>1)
-                    color = black;
+            
+            if(length(weights) == this.kin.getNumDoF())
+                for i=1:this.kin.getNumDoF()
+                    w = weights(i);
+                    color = red*w + grey*(1-w);
+                    if(w>1)
+                        color = black;
+                    end
+                    body = this.dofToBody(i);
+                    set(h(body,1), 'FaceColor', color);
                 end
-                body = this.dofToBody(i);
-                set(h(body,1), 'FaceColor', color);
+            elseif(length(weights) == this.kin.getNumBodies())
+                for i=1:this.kin.getNumBodies()
+                    w = weights(i);
+                    color = red*w + grey*(1-w);
+                    if(w>1)
+                        color = black;
+                    end
+                    set(h(i,1), 'FaceColor', color);
+                end
+            else
+                error('Wrong number of weights')
             end
         end
         
