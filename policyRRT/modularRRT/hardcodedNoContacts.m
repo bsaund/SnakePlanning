@@ -6,7 +6,7 @@ numLinks = 11;
 numContacts = 16;
 minConfig = -1.57*ones(1,numLinks);
 maxConfig = 1.57*ones(1,numLinks);
-start = [1,.15,1,-1,0,0,-1,0,-1,0,0];
+start = [1,.15,1,1,0,0,-1,0,-1,0,0];
 % goal = [0,.2,.30]';
 % goal = [.1,.2,.3]';
 % goal = [-.3,-.6,.1]';
@@ -19,7 +19,7 @@ showWorld(world);
 % scatter3(goal(1), goal(2), goal(3));
 
 policy = NoContactsPolicy(world, getFodbotJointTypes());
-policy.sphereModel.radius=0.05;
+policy.sphereModel.radius=0.07;
 policy.sphereModel.plot(start);
 % stepSize = .01;
 maxSteps = 61;
@@ -29,18 +29,36 @@ rng(0) %Seed random number generator
 
 
 
-goals = [[.1, -.9, .1];
-         [0, -.7, .1];
-         [0, -.6, .1];
+
+goals = [[-.5, -.1, .1];
+         [-.4, -.2, .1];
+         [-.3, -.3, .1];
+         [-.2, -.4, .1];
+         [-.1, -.5, .1];
          [0, -.5, .1];
          [0, -.5, .2];
          [0, -.5, .3];
          [0, -.5, .4];
-         [0, -.6, .5];
-         [0, -.7, .5];
-         [0, -.8, .5];
-         [0, -.9, .5];
+         [-0.1, -.5, .5];
+         [-0.2, -.6, .4];
+         [-0.2, -.7, .4];
+         [-0.2, -.8, .4];
+         [-0.2, -.9, .4];
         ]';
+% goals = [[.1, -.9, .1];
+%          [0, -.7, .1];
+%          [0, -.6, .1];
+%          [0, -.5, .1];
+%          [0, -.5, .2];
+%          [0, -.5, .3];
+%          [0, -.5, .4];
+%          [0, -.5, .55];
+%          [0, -.5, .7];         
+%          [0, -.6, .5];
+%          [0, -.7, .5];
+%          [0, -.8, .5];
+%          [0, -.9, .5];
+%         ]';
 % goals = [[0.2, -1, .1];
 %          [-0, -.9, .1];
 %          [-.2, -.8, .1];
@@ -64,14 +82,16 @@ path = start;
 
 delta = 0.3*ones(1,11);
 
-
+view([0.2,2,2])
 for i=1:size(goals,2)
     policy.setGoal(goals(:,i));
     l = path(end,:);
-    new_ang = fmincon(@policy.cost, l,[],[],[],[],l-delta, l+ ...
-                      delta);
+    lb = max(l-delta, 0*l - 1.57);
+    ub = min(l+delta, 0*l + 1.57);
+    new_ang = fmincon(@policy.cost, l,[],[],[],[],lb, ub);
     policy.cost(new_ang, 1)
-    policy.sphereModel.plot(new_ang);
+    % policy.sphereModel.plot(new_ang);
+    policy.plotObCost(new_ang);
     path = [path; new_ang];
 end
 path
@@ -82,7 +102,10 @@ save('hardcoded_path_wing', 'path')
 
 while(true)
     for i=1:size(aug_path,1)
-        policy.sphereModel.plot(aug_path(i,:));
+        ang = aug_path(i,:);
+        % colors = policy.obstacleCost(ang);
+        % policy.sphereModel.plotColored(ang, colors);
+        policy.plotObCost(ang);
     end
     pause(1);
 end
