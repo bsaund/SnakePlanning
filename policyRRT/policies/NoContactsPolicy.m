@@ -120,10 +120,19 @@ classdef NoContactsPolicy < handle
             success = 1;
         end
         
+        function plotObCost(this, ang)
+            colors = this.obstacleCost(ang)/2;
+            this.sphereModel.plotColored(ang, colors);
+        end
+        
+        function cObstacle = obstacleCost(this, angles)
+            cObstacle = 100*this.sphereModel.getObstacleDistance(angles)';
+        end
+        
         function [c, goal_dist] = cost(this, angles, debug)
         %Returns the cost of point angles with contacts c
 
-            cObstacle = 100*this.sphereModel.getObstacleDistance(angles)';
+            cObstacle = this.obstacleCost(angles);
             if(this.useAngleGoal)
                 cGoal = 200*(angles - this.goalAngles);
             else
