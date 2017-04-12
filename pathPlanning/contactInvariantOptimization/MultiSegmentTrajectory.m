@@ -64,6 +64,28 @@ classdef MultiSegmentTrajectory < handle
 
         end
         
+        function optimizeSegment(this, trajectory)
+            initialAngles = trajectory(:,1);
+            goal = this.trajOptimizer.arm.getFK(trajectory(:,end));
+
+            ts = size(trajectory,2);
+            nj = size(trajectory,1);
+            this.trajOptimizer.numTimeSteps = ts
+            this.trajOptimizer.numContacts = ts;
+            
+            seedAngles = reshape(trajectory, nj*ts, 1);
+            
+            [angles, c] = this.trajOptimizer.optimizeTrajectory(...
+                'EndEffectorGoal', goal, ...
+                'display', 'progress',...
+                'initialAngles', initialAngles,...
+                'seedAngles', seedAngles,...
+                'maxIter', 10)
+
+            this.trajectory = [this.trajectory, angles(:,2:end)];
+            
+        end
+        
         function showTrajectory(this, interpFactor)
             extraAngles = interpolateTrajectory(this.trajectory, interpFactor);        
             % loopTrajectory(this.trajOptimizer.arm, ...
