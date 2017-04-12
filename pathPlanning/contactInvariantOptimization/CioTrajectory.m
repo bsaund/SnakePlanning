@@ -47,6 +47,14 @@ classdef CioTrajectory < handle
             % contacts(8:10) = 0;
         end
         
+        function [x] = combineState(this, angles, contacts)
+            angles = reshape(angles, this.numJoints * size(angles,2), ...
+                             1);
+            contacts = reshape(contacts, this.numConLoc * size(contacts,2), ...
+                               1);
+            x = [angles; contacts];
+        end
+        
         function [optimizedAngles, contacts] = optimizeTrajectory(this, varargin)
             [options, initial_angles, initial_c, goal_xyz] = ...
                 this.parseOptimizeInput(varargin{:});
@@ -59,6 +67,7 @@ classdef CioTrajectory < handle
                 lsqnonlin(func, initial_state, lb, ub, options);
             [optimizedAngles, contacts] = this.separateStateWithInitial(x);
             final_cost = func(x, true)
+
         end
         
         function [optimizedAngles, contacts, eePoint] = optimizePoint(this, varargin)
@@ -176,7 +185,7 @@ classdef CioTrajectory < handle
                 end
                     % c = [cPh; cCI; cTask; cObstacle; cDistance];
                 c = [cPh; cCI; cTask; cObstacle];
-                % c = [cPh; cCI; cTask];
+                % c = [cPh; cTask; cObstacle];
                 if(debug)
                     cPh = reshape(cPh, this.numJoints, this.numTimeSteps)
                     cCI = reshape(cCI, this.numConLoc*3, this.numTimeSteps)
