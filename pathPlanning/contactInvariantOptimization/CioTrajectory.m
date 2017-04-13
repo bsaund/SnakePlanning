@@ -66,7 +66,7 @@ classdef CioTrajectory < handle
             [x,resnorm,residual,exitflag,output] = ... 
                 lsqnonlin(func, initial_state, lb, ub, options);
             [optimizedAngles, contacts] = this.separateStateWithInitial(x);
-            final_cost = func(x, true)
+            final_cost = func(x, true);
 
         end
         
@@ -149,6 +149,9 @@ classdef CioTrajectory < handle
                 if(nargin < 2)
                     debug = false;
                 end
+                
+
+                
                 [angles, con] = this.separateState(state);
 
                 fk = this.arm.getKin.getFK('EndEffector', angles(:,end));
@@ -187,10 +190,15 @@ classdef CioTrajectory < handle
                 c = [cPh; cCI; cTask; cObstacle];
                 % c = [cPh; cTask; cObstacle];
                 if(debug)
-                    cPh = reshape(cPh, this.numJoints, this.numTimeSteps)
-                    cCI = reshape(cCI, this.numConLoc*3, this.numTimeSteps)
+                    cPh_re = reshape(cPh, this.numJoints, this.numTimeSteps)
+                    cCI_re = reshape(cCI, this.numConLoc*3, this.numTimeSteps)
                     cTask
-                    cObstacle = reshape(cObstacle, this.numConLoc, this.numTimeSteps)
+                    cObstacle_re = reshape(cObstacle, this.numConLoc, ...
+                                        this.numTimeSteps)
+                    
+                    disp(['Cost CI :', num2str(cCI'*cCI)])
+                    disp(['Cost CPh:', num2str(cPh'*cPh)])
+                    disp(['Cost COb:', num2str(cObstacle'*cObstacle)])
                 end
             end
             func = @cost;

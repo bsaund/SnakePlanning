@@ -24,6 +24,7 @@ classdef MultiSegmentTrajectory < handle
         
         function setStartConfig(this, config)
             this.trajectory = config;
+            this.contacts = zeros(this.trajOptimizer.arm.kin.getNumBodies(),1);
         end
         
         function addSegment(this, goal, numTimeSteps)
@@ -50,14 +51,18 @@ classdef MultiSegmentTrajectory < handle
                 
             seedAngles = reshape(seedAngles, nj*ts, 1);
             
-            angles = this.trajOptimizer.optimizeTrajectory(...
+            [angles, c] = this.trajOptimizer.optimizeTrajectory(...
                 'EndEffectorGoal', goal, ...
                 'display', 'progress',...
                 'initialAngles', initialAngles,...
                 'seedAngles', seedAngles,...
-                'maxIter', 10)
+                'maxIter', 10);
 
+            angles
+            c
+            
             this.trajectory = [this.trajectory, angles(:,2:end)];
+            this.contacts = [this.contacts, c(:,2:end)];
             
             this.trajOptimizer.numTimeSteps = prevNumTS;
             this.trajOptimizer.numContacts = prevNumC;
@@ -83,7 +88,7 @@ classdef MultiSegmentTrajectory < handle
                 'maxIter', 10)
 
             this.trajectory = [this.trajectory, angles(:,2:end)];
-            
+            this.contacts = [this.contacts, c(:,2:end)];            
         end
         
         function showTrajectory(this, interpFactor)
@@ -108,6 +113,7 @@ classdef MultiSegmentTrajectory < handle
          trajOptimizer
          pointOptimizer
          trajectory
+         contacts
      end
 end
     
