@@ -1,0 +1,9 @@
+
+
+
+
+data = load('storedData');
+data = data.data;
+
+for a=data(:)
+end 

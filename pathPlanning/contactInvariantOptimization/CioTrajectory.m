@@ -44,7 +44,10 @@ classdef CioTrajectory < handle
             contacts = repelem(contacts, 1, ceil(this.numTimeSteps/...
                                               this.numContacts));
             contacts = contacts(:, 1:this.numTimeSteps);
-            % contacts(8:10) = 0;
+            
+            %Add this line to force No Contacts!
+            %Used for comparing CIO with plain optimization
+            % contacts = zeros(size(contacts));
         end
         
         function [x] = combineState(this, angles, contacts)

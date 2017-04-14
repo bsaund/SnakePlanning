@@ -118,8 +118,22 @@ initialAngles=[-0.1047;
 traj.setStartConfig(initialAngles);
 traj.trajOptimizer.arm.plot(initialAngles);
 
-trial_name = 'trial_2';
-goal = [-.5; 0; .5];
+% trial_name = 'trial_1';
+% goal = [0; .5; .5];
+
+% trial_name = 'trial_2';
+% goal = [-.5; 0; .5];
+
+% trial_name = 'trial_2';
+% goal = [-.5; 0; .5];
+
+% trial_name = 'trial_2';
+% goal = [-.5; 0; .5];
+
+% trial_name = 'trial_2';
+% goal = [-.5; 0; .5];
+
+% trial_name = [trial_name, '_CIO'];
 
 traj.addSegment(goal, 7);
 % traj.addSegment([0; -.80; .5], 2);
@@ -152,10 +166,10 @@ traj.addSegment(goal, 7);
 % traj.addSegment([-.2; 0; .2], 4);
 
 
-torques = costPhysics(traj.trajOptimizer.arm, traj.trajOptimizer.world, ...
-            traj.trajectory, traj.contacts(:,2:end));
+% torques = costPhysics(traj.trajOptimizer.arm, traj.trajOptimizer.world, ...
+%             traj.trajectory, traj.contacts(:,2:end));
 
-torques = reshape(torques, traj.trajOptimizer.numJoints, [])
+% torques = reshape(torques, traj.trajOptimizer.numJoints, [])
 
 save('lastTrajectory', 'traj', 'realisticArm', 'world',...
      'jointTypes');
@@ -164,14 +178,14 @@ save('lastTrajectory', 'traj', 'realisticArm', 'world',...
 data = load('storedData');
 data = data.data;
 trial.goal = goal;
-trial.torques = torques;
+trial.torques = traj.torques;
+trial.trajectory = traj;
 data = setfield(data, trial_name, trial);
 
 save('storedData', 'data')
 
 
-% save('BoeingPartProgress','angles','traj1','traj2','traj3', 'traj4')
 % traj.showTrajectory(10)
 arm.clearPlot();
 finalTrajectory = interpolateTrajectory(traj.trajectory, 10);
-loopTrajectory(@realisticArm.plot, finalTrajectory);
+% loopTrajectory(@realisticArm.plot, finalTrajectory);

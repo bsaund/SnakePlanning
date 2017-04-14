@@ -25,6 +25,7 @@ classdef MultiSegmentTrajectory < handle
         function setStartConfig(this, config)
             this.trajectory = config;
             this.contacts = zeros(this.trajOptimizer.arm.kin.getNumBodies(),1);
+            this.torques = zeros(size(config));
         end
         
         function addSegment(this, goal, numTimeSteps)
@@ -61,8 +62,15 @@ classdef MultiSegmentTrajectory < handle
             angles
             c
             
+            torques = costPhysics(this.trajOptimizer.arm, ...
+                                  this.trajOptimizer.world, ...
+                                  angles, c(:,2:end));
+            torques = reshape(torques, this.trajOptimizer.numJoints, [])
+
+            
             this.trajectory = [this.trajectory, angles(:,2:end)];
             this.contacts = [this.contacts, c(:,2:end)];
+            this.torques = [this.torques, torques];
             
             this.trajOptimizer.numTimeSteps = prevNumTS;
             this.trajOptimizer.numContacts = prevNumC;
@@ -114,6 +122,7 @@ classdef MultiSegmentTrajectory < handle
          pointOptimizer
          trajectory
          contacts
+         torques
      end
 end
     
