@@ -25,6 +25,7 @@ arm = SpherePlotter('JointTypes', jointTypes);
 realisticArm = HebiPlotter('JointTypes', jointTypes, ...
                            'figureHandle', gcf(),...
                            'lighting', 'on');
+arm.setWorld(world)
 arm.setBaseFrame(fr);
 realisticArm.setBaseFrame(fr);
 

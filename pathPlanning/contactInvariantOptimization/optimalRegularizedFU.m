@@ -10,13 +10,16 @@ function [f, u] = optimalRegularizedFU(J, B, tau, W, R, A, b)
     func = -1*([J; B']*tau)';
     % H = JB'*JB + [W, z; z', R];
     % func = -1*tau'*JB;
-    % options = optimoptions('quadprog','Display','none');
-    % x = quadprog(H, func, A,b,[],[],[],[],[],options);
+    
+    
+    A = [A, zeros(size(A,1), size(B,1))]; %u doesnt affect friction cone, but terms are still needed
+    options = optimoptions('quadprog','Display','none');
+    x = quadprog(H, func, A,b,[],[],[],[],[],options);
     
     % x = quadprog(H, func, [],[],[],[],[],[],[],options);
     
     %With no constraints this is faster
-    x = -H\func';
+    % x = -H\func';
 
 
 
