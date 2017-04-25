@@ -24,7 +24,7 @@ fr = fr*rotz(0)
 arm = SpherePlotter('JointTypes', jointTypes);
 realisticArm = HebiPlotter('JointTypes', jointTypes, ...
                            'figureHandle', gcf(),...
-                           'lighting', 'on');
+                           'lighting', 'off');
 arm.setWorld(world)
 arm.setBaseFrame(fr);
 realisticArm.setBaseFrame(fr);
@@ -48,7 +48,8 @@ traj.trajOptimizer.arm.plot(initial_angles);
 
 
 % traj.addSegment([0; -.50; .3], 2);
-traj.optimizeSegment(hc_path.path');
+% traj.optimizeSegment(hc_path.path');
+traj.optimizeSegment(hc_path.path(1:3,:)');
 
 save('lastTrajectory', 'traj', 'realisticArm', 'world',...
      'jointTypes');
@@ -56,5 +57,13 @@ save('lastTrajectory', 'traj', 'realisticArm', 'world',...
 % save('BoeingPartProgress','angles','traj1','traj2','traj3', 'traj4')
 % traj.showTrajectory(10)
 arm.clearPlot();
+% finalTrajectory = interpolateTrajectory(traj.trajectory, 10);
+% loopTrajectory(@realisticArm.plot, finalTrajectory);
+
+
+f = traj.trajOptimizer.getForceTorques(traj.trajectory, traj.contacts);
+
 finalTrajectory = interpolateTrajectory(traj.trajectory, 10);
-loopTrajectory(@realisticArm.plot, finalTrajectory);
+finalForces = interpolateForces(f, 10);
+% loopTrajectory(@realisticArm.plot, finalTrajectory);
+loopTrajectoryWithForce(realisticArm, arm, finalTrajectory, finalForces)

@@ -75,6 +75,24 @@ classdef SpherePlotter < handle
             end
         end
         
+        function plotForces(this, angles, forces)
+            ps = this.getPoints(angles);
+            h = this.forceHandles;
+            for i=1:size(h,1)
+                if(h(i))
+                    delete(h(i))
+                end
+            end
+            for i=1:size(ps,2)
+                p = ps(:,i);
+                f = forces(:,i);
+                v = [p, p+f/10];
+
+                this.forceHandles(i) = plot3(v(1,:), v(2,:), v(3,:),'r');
+
+            end
+        end
+        
         function clearPlot(this)
         %Clears the plot
             h = this.handles;
@@ -238,7 +256,7 @@ classdef SpherePlotter < handle
             
             this.prevGravTorqueAngles = angles;
             this.prevGravTorques = ...
-                this.kin.getGravCompTorques(angles, [0 0 -1])';
+                this.kin.getGravCompTorques(angles, [0 0 1])';
             tau = this.prevGravTorques;
         end
         
@@ -350,6 +368,8 @@ classdef SpherePlotter < handle
             fk = this.kin.getForwardKinematics('CoM', angles);
             
             this.handles = zeros(n, 1);
+            this.forceHandles = zeros(n,1)
+            
 
             
             if(strcmp(this.lighting, 'on'))
@@ -409,6 +429,7 @@ classdef SpherePlotter < handle
         kin;
         jointTypes;
         handles;
+        forceHandles;
         plotInitialized = false;
         kinInitialized = false;
         lighting;

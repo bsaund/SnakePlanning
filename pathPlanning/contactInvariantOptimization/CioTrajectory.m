@@ -89,6 +89,47 @@ classdef CioTrajectory < handle
             final_cost = func(x, true);
             final_cost_val = final_cost'*final_cost
         end
+        
+        function [f, u] = getForceTorques(this, angles, con)
+            % this.arm
+            % this.world
+            kin = this.arm.kin;
+            % con
+            n= size(angles,2);
+            dt = .1;
+            f = [];
+            u = [];
+            for i=2:n
+                theta = angles(:,i);
+                [J, B, W, R, A, b] = getPhysicsParams(this.arm, this.world, ...
+                                                                theta,...
+                                                                con(:, i));
+                tau = kin.getGravCompTorques(theta, [0 0 1])';
+                
+                if (i > 1) && (i < n)
+                    v = (angles(:,i+1) - angles(:,i-1))/(2*dt);
+                    a = (angles(:,i+1) - 2*theta + angles(:,i-1))/(dt^2);
+            
+                    tau = tau + ...
+                          kin.getDynamicCompTorques(theta, theta, v, a)';
+
+                elseif (i==n)
+                    v = (angles(:,i) - angles(:,i-1))/(dt);
+                    a = (angles(:,i) - 2*theta + angles(:,i-1))/(dt^2);
+            
+                    tau = tau + kin.getDynamicCompTorques(theta, theta,...
+                                                                 v, a)';
+                end
+                
+                [f_tmp, u_tmp] = optimalRegularizedFU(J, B, tau, W, ...
+                                                      R, A, b);
+                f = [f, f_tmp];
+                u = [u, u_tmp];
+            end
+            
+            f = reshape(f,3,[],n-1);
+
+        end
     end
     
     methods(Access = public, Hidden = true)
