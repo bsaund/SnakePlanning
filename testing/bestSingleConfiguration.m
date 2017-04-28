@@ -18,7 +18,7 @@ function optimTraj = bestSingleConfiguration()
 %     traj = lineTrajectory([0, -.30, .2], [0,-.4, .2], num_points);
 %     traj = lineTrajectory([0, .01, .2], [0,-.4, .2], num_points);
     traj = lineTrajectory([0, .3, .35], [0,-.4, .2], num_points);
-    angle_traj = zeros(num_points, num_links);
+    angle_traj = zeros(num_points, num_links)
 
 %     profile on
 

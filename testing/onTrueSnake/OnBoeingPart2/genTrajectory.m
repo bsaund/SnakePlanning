@@ -165,6 +165,15 @@ save('lastTrajectory', 'traj', 'realisticArm', 'world',...
 
 % save('BoeingPartProgress','angles','traj1','traj2','traj3', 'traj4')
 % traj.showTrajectory(10)
+
+%% Plotting section
 arm.clearPlot();
-finalTrajectory = interpolateTrajectory(traj.trajectory, 10);
+
+% Linear Interpolation between the discrete points on trajectory. 
+% Second argument gives the number of interpolation segments
+finalTrajectory = interpolateTrajectory(traj.trajectory, 10); 
+
+% LOOPTRAJECTORY calls the plotting function '@realisticArm.plot' in this
+%case till the program is ended by user. 
+% It plots the trajectory motion of manipulator arm
 loopTrajectory(@realisticArm.plot, finalTrajectory);

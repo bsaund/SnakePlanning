@@ -5,8 +5,8 @@ function [J, B, W, R, A, b] = ...
 
     % J_tmp = arm.getKin().getJacobian('CoM', angles);
     J_tmp = arm.getJacobian(angles);
-    n= size(J_tmp,3);
-    D = size(angles,1);
+    n= size(J_tmp,3); % number of joints
+    D = size(angles,1); % number of degrees of freedom in the character
     J = zeros(3*n, D);
     for i=1:n
         ind = (1:3) + 3*(i-1);

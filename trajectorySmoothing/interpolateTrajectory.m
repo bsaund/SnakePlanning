@@ -1,3 +1,7 @@
+% function [interpAngles] = INTERPOLATETRAJECTORY (angles, interpFactor)
+% Linear Interpolation between the discrete points on trajectory. 
+% interpFactor = equals to the number of interpolation segments
+
 function interpAngles = interpolateTrajectory(angles, interpFactor)
     n = size(angles, 2);
     interpAngles = angles(:,1);

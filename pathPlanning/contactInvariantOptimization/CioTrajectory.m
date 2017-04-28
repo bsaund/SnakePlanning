@@ -62,9 +62,9 @@ classdef CioTrajectory < handle
             [options, initial_angles, initial_c, goal_xyz] = ...
                 this.parseOptimizeInput(varargin{:});
                 
-            func = this.getTrajectoryCostFunction(goal_xyz);
+            func = this.getTrajectoryCostFunction(goal_xyz); % calculate the cost function [lCI, lPhysics, lTask, lHint]
             [lb, ub] = this.getBounds(initial_angles, initial_c);
-            initial_state = [initial_angles; initial_c];
+            initial_state = 10[initial_angles; initial_c];
 
             [x,resnorm,residual,exitflag,output] = ... 
                 lsqnonlin(func, initial_state, lb, ub, options);
@@ -147,23 +147,23 @@ classdef CioTrajectory < handle
                   ones(numel(c),1)*100];
         end
 
+        % calculate the cost function [lCI, lPhysics, lTask, lHint]
         function func = getTrajectoryCostFunction(this, goal_xyz)
             function c = cost(state, debug)
                 if(nargin < 2)
                     debug = false;
                 end
                 
-
-                
                 [angles, con] = this.separateState(state);
 
                 fk = this.arm.getKin.getFK('EndEffector', angles(:,end));
-                pointErr = fk(1:3, 4) - goal_xyz;
-
+                pointErr = fk(1:3, 4) - goal_xyz; 
+                % error in terms of distance and ignoring the error in orientation
+                % corresponds to the cTask or lTask term
                 cPh = costPhysics(this.arm, this.world, ...
                                   [this.startAngles, angles],...
                                   con);
-                cDistance = 10*costDistErr([this.startAngles, angles]).^2;
+                cDistance = 10*costDistErr([this.startAngles, angles]).^2; % not using this terms as of now
                 cTask = 1000*pointErr;
                 
                 

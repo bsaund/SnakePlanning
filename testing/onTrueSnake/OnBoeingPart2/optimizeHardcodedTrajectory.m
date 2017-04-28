@@ -11,7 +11,6 @@ worldName = '../../../worlds/wing_with_floor.stl';
 world = loadWorld(worldName);
 showWorld(world);
 
-
 jointTypes = getFodbotJointTypes();
 
 
@@ -24,7 +23,7 @@ fr = fr*rotz(0)
 arm = SpherePlotter('JointTypes', jointTypes);
 realisticArm = HebiPlotter('JointTypes', jointTypes, ...
                            'figureHandle', gcf(),...
-                           'lighting', 'on');
+                           'lighting', 'off');
 arm.setBaseFrame(fr);
 realisticArm.setBaseFrame(fr);
 
@@ -55,5 +54,12 @@ save('lastTrajectory', 'traj', 'realisticArm', 'world',...
 % save('BoeingPartProgress','angles','traj1','traj2','traj3', 'traj4')
 % traj.showTrajectory(10)
 arm.clearPlot();
+
+%% Linear Interpolation of trajectory
+% Second argument gives the number of interpolation segments
 finalTrajectory = interpolateTrajectory(traj.trajectory, 10);
+
+%% Final Plotting in infinite loops. Press ctrl+C to exit the plotting function
+% LOOPTRAJECTORY uses the plotting function '@realisticArm.plot' 
+% and plots the motion of manipulator arm
 loopTrajectory(@realisticArm.plot, finalTrajectory);

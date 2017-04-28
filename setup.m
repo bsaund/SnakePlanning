@@ -15,3 +15,7 @@ addpath(fullfile(pwd, 'policyRRT/modularRRT/extend'));
 addpath(fullfile(pwd, 'policyRRT/modularRRT/sampling'));
 addpath(fullfile(pwd, '../matlab_SEA/plottingTools'));
 addpath(fullfile(pwd, '../matlab_SEA/plottingTools/stl'));
+addpath(fullfile('/home/puneet/Documents/MATLAB/STLRead/'));
+addpath(genpath('/home/puneet/contactInvariantOptimization/hebi/'));
+addpath(genpath('/home/puneet/contactInvariantOptimization/matlab_SEA/'));
+addpath(fullfile(pwd, '/fkTools/'));
