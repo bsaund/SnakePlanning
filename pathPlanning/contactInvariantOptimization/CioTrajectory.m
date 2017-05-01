@@ -64,10 +64,13 @@ classdef CioTrajectory < handle
                 
             func = this.getTrajectoryCostFunction(goal_xyz); % calculate the cost function [lCI, lPhysics, lTask, lHint]
             [lb, ub] = this.getBounds(initial_angles, initial_c);
-            initial_state = 10[initial_angles; initial_c];
+            initial_state = [initial_angles; initial_c];
 
-            [x,resnorm,residual,exitflag,output] = ... 
+%             [x, resnorm, residual, exitflag, output] = ... 
+%                 lsqnonlin(func, initial_state, lb, ub, options);
+            [x, ~, ~, ~, ~] = ... 
                 lsqnonlin(func, initial_state, lb, ub, options);
+            
             [optimizedAngles, contacts] = this.separateStateWithInitial(x);
             final_cost = func(x, true);
 
@@ -80,7 +83,11 @@ classdef CioTrajectory < handle
             func = this.getStaticCostFunction(goal_xyz);
             [lb, ub] = this.getBounds(initial_angles, initial_c);
             initial_state = [initial_angles; initial_c];
-            [x,resnorm,residual,exitflag,output] = ... 
+            
+%             [x,resnorm,residual,exitflag,output] = ... 
+%                 lsqnonlin(func, initial_state, lb, ub, options);
+
+            [x, ~, ~, ~, ~] = ... 
                 lsqnonlin(func, initial_state, lb, ub, options);
             [optimizedAngles, contacts] = this.separateState(x);
 
@@ -88,6 +95,47 @@ classdef CioTrajectory < handle
             eePoint = fk(1:3,4);
             final_cost = func(x, true);
             final_cost_val = final_cost'*final_cost
+        end
+        
+        function [f, u] = getForceTorques(this, angles, con)
+            % this.arm
+            % this.world
+            kin = this.arm.kin;
+            % con
+            n= size(angles,2);
+            dt = .1;
+            f = [];
+            u = [];
+            for i=2:n
+                theta = angles(:,i);
+                [J, B, W, R, A, b] = getPhysicsParams(this.arm, this.world, ...
+                                                                theta,...
+                                                                con(:, i));
+                tau = kin.getGravCompTorques(theta, [0 0 1])';
+                
+                if (i > 1) && (i < n)
+                    v = (angles(:,i+1) - angles(:,i-1))/(2*dt);
+                    a = (angles(:,i+1) - 2*theta + angles(:,i-1))/(dt^2);
+            
+                    tau = tau + ...
+                          kin.getDynamicCompTorques(theta, theta, v, a)';
+
+                elseif (i==n)
+                    v = (angles(:,i) - angles(:,i-1))/(dt);
+                    a = (angles(:,i) - 2*theta + angles(:,i-1))/(dt^2);
+            
+                    tau = tau + kin.getDynamicCompTorques(theta, theta,...
+                                                                 v, a)';
+                end
+                
+                [f_tmp, u_tmp] = optimalRegularizedFU(J, B, tau, W, ...
+                                                      R, A, b);
+                f = [f, f_tmp];
+                u = [u, u_tmp];
+            end
+            
+            f = reshape(f,3,[],n-1);
+
         end
     end
     
@@ -186,7 +234,7 @@ classdef CioTrajectory < handle
                     % cObstacle = 1000*costObjectViolation(this.arm, ...
                     %                                      this.world, angles);
                     cObstacle = [cObstacle;
-                                 1000*costObjectViolation(pCenter, pClosest, ...
+                                 100*costObjectViolation(pCenter, pClosest, ...
                                       this.world.normals(closestFace,:))];
                 end
                     % c = [cPh; cCI; cTask; cObstacle; cDistance];
@@ -207,7 +255,7 @@ classdef CioTrajectory < handle
             func = @cost;
         end
 
-        function func = getStaticCostFunction(this, goal_xyz);
+        function func = getStaticCostFunction(this, goal_xyz)
             function c = cost(state, debug)
                 if(nargin < 2)
                     debug = false;
@@ -233,7 +281,7 @@ classdef CioTrajectory < handle
                                                this.arm.radius, con);
                 
                 
-                cTask = 100*pointErr;
+                cTask = 1000*pointErr;
                 cObstacle = 1000*costObjectViolation(pCenter, pClosest, ...
                                                      this.world.normals(closestFace,:));
 

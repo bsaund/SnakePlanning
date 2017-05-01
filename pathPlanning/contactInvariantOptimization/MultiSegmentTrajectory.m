@@ -26,6 +26,7 @@ classdef MultiSegmentTrajectory < handle
             this.trajectory = config;
             this.contacts = zeros(this.trajOptimizer.arm.kin.getNumBodies(),1);
             this.torques = zeros(size(config));
+            this.endEffector = this.trajOptimizer.arm.getFK(config);
         end
         
         function addSegment(this, goal, numTimeSteps)
@@ -83,7 +84,7 @@ classdef MultiSegmentTrajectory < handle
 
             ts = size(trajectory,2);
             nj = size(trajectory,1);
-            this.trajOptimizer.numTimeSteps = ts
+            this.trajOptimizer.numTimeSteps = ts;
             this.trajOptimizer.numContacts = ts;
             
             seedAngles = reshape(trajectory, nj*ts, 1);
@@ -97,6 +98,21 @@ classdef MultiSegmentTrajectory < handle
 
             this.trajectory = [this.trajectory, angles(:,2:end)];
             this.contacts = [this.contacts, c(:,2:end)];            
+        end
+        
+        % 'optimizeSingleConfig': Added by Puneet to call the optimize single
+        % instance of configuration. This function calls the 'optimizePoint'
+        % function declared in class 'CIOTrajectory'
+        function optimizeSingleConfig(this, initialAngles, goalPosition)
+            
+            [angles, c, ee] = this.pointOptimizer.optimizePoint(...
+                'EndEffectorGoal', goalPosition, ...
+                'display', 'raw', 'maxIter', 5000, ...
+                'initialAngles', initialAngles);
+
+            this.trajectory = [this.trajectory, angles];
+            this.contacts = [this.contacts, c];
+            this.endEffector = [this.endEffector, ee];
         end
         
         function showTrajectory(this, interpFactor)
@@ -123,6 +139,7 @@ classdef MultiSegmentTrajectory < handle
          trajectory
          contacts
          torques
+         endEffector
      end
 end
     

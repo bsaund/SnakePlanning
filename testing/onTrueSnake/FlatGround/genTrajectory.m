@@ -50,6 +50,9 @@ arm = SpherePlotter('JointTypes', jointTypes);
 realisticArm = HebiPlotter('JointTypes', jointTypes, ...
                            'figureHandle', gcf(),...
                            'lighting', 'on');
+  
+                       
+arm.setWorld(world);
 arm.setBaseFrame(fr);
 realisticArm.setBaseFrame(fr);
 
@@ -119,7 +122,7 @@ traj.setStartConfig(initialAngles);
 traj.trajOptimizer.arm.plot(initialAngles);
 
 % trial_name = 'trial_1';
-% goal = [0; .5; .5];
+goal = [0; .5; .5];
 
 % trial_name = 'trial_2';
 % goal = [-.5; 0; .5];
@@ -135,7 +138,7 @@ traj.trajOptimizer.arm.plot(initialAngles);
 
 % trial_name = [trial_name, '_CIO'];
 
-traj.addSegment(goal, 7);
+traj.addSegment(goal, 3);
 % traj.addSegment([0; -.80; .5], 2);
 % traj.addSegment([0.1; -.90; .5], 2);
 % traj.addSegment([-0.1; -.90; .5], 2);
@@ -175,12 +178,12 @@ save('lastTrajectory', 'traj', 'realisticArm', 'world',...
      'jointTypes');
 
 
-data = load('storedData');
-data = data.data;
-trial.goal = goal;
-trial.torques = traj.torques;
-trial.trajectory = traj;
-data = setfield(data, trial_name, trial);
+%data = load('storedData');
+%data = data.data;
+%trial.goal = goal;
+%trial.torques = traj.torques;
+%trial.trajectory = traj;
+%data = setfield(data, trial_name, trial);
 
 save('storedData', 'data')
 
@@ -188,4 +191,4 @@ save('storedData', 'data')
 % traj.showTrajectory(10)
 arm.clearPlot();
 finalTrajectory = interpolateTrajectory(traj.trajectory, 10);
-% loopTrajectory(@realisticArm.plot, finalTrajectory);
+loopTrajectory(@realisticArm.plot, finalTrajectory);
